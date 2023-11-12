@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="25" height="20" tilewidth="32" tileheight="32" infinite="0" nextlayerid="5" nextobjectid="4">
- <tileset firstgid="1" name="environment-sheet" tilewidth="32" tileheight="32" tilecount="140" columns="20">
-  <image source="environment-sheet.png" width="640" height="224"/>
+ <tileset firstgid="1" name="environment" tilewidth="32" tileheight="32" tilecount="140" columns="20">
+  <image source="environment.png" width="640" height="224"/>
  </tileset>
  <layer id="1" name="Ground" width="25" height="20">
   <data encoding="csv">
