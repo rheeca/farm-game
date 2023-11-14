@@ -31,3 +31,25 @@ const (
 	RIGHT
 	UP
 )
+
+type Location struct {
+	X int
+	Y int
+}
+
+var (
+	TileWidth    int
+	TileHeight   int
+	ChickenPath1 = []Location{
+		{X: 2, Y: 2},
+		{X: 6, Y: 2},
+	}
+	ChickenPath2 = []Location{
+		{X: 4, Y: 3},
+		{X: 4, Y: 6},
+	}
+	DogPath = []Location{
+		{X: 13, Y: 11},
+		{X: 21, Y: 11},
+	}
+)

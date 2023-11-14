@@ -3,35 +3,23 @@ package main
 import (
 	"embed"
 	"fmt"
+	"guion-2d-project3/interfaces"
+	"image"
+	"log"
+	"os"
+	"path"
+	"time"
+
+	"guion-2d-project3/entity/animal"
+	"guion-2d-project3/entity/player"
+	"guion-2d-project3/utils"
+
 	"github.com/co0p/tankism/lib/collision"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/audio"
 	"github.com/hajimehoshi/ebiten/v2/audio/wav"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/lafriks/go-tiled"
-	"guion-2d-project3/utils"
-	"image"
-	"log"
-	"os"
-	"path"
-	"time"
-)
-
-var (
-	TileWidth    int
-	TileHeight   int
-	ChickenPath1 = []Location{
-		{X: 2, Y: 2},
-		{X: 6, Y: 2},
-	}
-	ChickenPath2 = []Location{
-		{X: 4, Y: 3},
-		{X: 4, Y: 6},
-	}
-	DogPath = []Location{
-		{X: 13, Y: 11},
-		{X: 21, Y: 11},
-	}
 )
 
 //go:embed assets/*
@@ -39,8 +27,8 @@ var EmbeddedAssets embed.FS
 
 type Game struct {
 	Environment  Environment
-	Player       Player
-	Animals      []Animal
+	Player       *player.Player
+	Animals      []*animal.Animal
 	CurrentFrame int
 }
 
@@ -51,63 +39,32 @@ type Environment struct {
 	MapHeight int
 }
 
-type Player struct {
-	Spritesheet *ebiten.Image
-	Frame       int
-	Direction   int
-	xLoc        int
-	yLoc        int
-	Width       int
-	Height      int
-}
-
-type Animal struct {
-	Spritesheet *ebiten.Image
-	Frame       int
-	Direction   int
-	xLoc        int
-	yLoc        int
-	Destination int
-	Path        []Location
-	Width       int
-	Height      int
-}
-
-type Location struct {
-	X int
-	Y int
-}
-
-func hasCollision(g *Game, playerX, playerY, objectX, objectY int) bool {
-	playerBounds := collision.BoundingBox{
-		// player bounding box made slightly smaller than the sprite
-		X:      float64(playerX + g.Player.Width/4),
-		Y:      float64(playerY + g.Player.Height/2),
-		Width:  float64(g.Player.Width / 2),
-		Height: float64(g.Player.Height / 2),
-	}
-	objectBounds := collision.BoundingBox{
-		X:      float64(objectX),
-		Y:      float64(objectY),
-		Width:  float64(g.Environment.Map.TileWidth),
-		Height: float64(g.Environment.Map.TileHeight),
-	}
-	if collision.AABBCollision(playerBounds, objectBounds) {
-		return true
-	}
-	return false
-}
-
-func hasMapCollisions(g *Game, playerX, playerY int) bool {
+func hasMapCollisions(g *Game, animObj interfaces.AnimatedSprite) bool {
 	for tileY := 0; tileY < g.Environment.Map.Height; tileY += 1 {
 		for tileX := 0; tileX < g.Environment.Map.Width; tileX += 1 {
-			tileToDraw := g.Environment.Map.Layers[utils.CollisionObjLayer].Tiles[tileY*g.Environment.Map.Width+tileX]
-			if tileToDraw.ID == 0 {
+			tile := g.Environment.Map.Layers[utils.CollisionObjLayer].Tiles[tileY*g.Environment.Map.Width+tileX]
+			if tile.ID == 0 {
 				continue
 			}
 			tileXpos := g.Environment.Map.TileWidth * tileX
 			tileYpos := g.Environment.Map.TileHeight * tileY
-			if hasCollision(g, playerX, playerY, tileXpos, tileYpos) {
+
+			newX := animObj.GetXLoc() + animObj.GetDx()
+			newY := animObj.GetYLoc() + animObj.GetDy()
+			animBounds := collision.BoundingBox{
+				// bounding box for animated object made slightly smaller than the sprite
+				X:      float64(newX + animObj.GetWidth()/4),
+				Y:      float64(newY + animObj.GetHeight()/2),
+				Width:  float64(animObj.GetWidth() / 2),
+				Height: float64(animObj.GetHeight() / 2),
+			}
+			tileBounds := collision.BoundingBox{
+				X:      float64(tileXpos),
+				Y:      float64(tileYpos),
+				Width:  float64(g.Environment.Map.TileWidth),
+				Height: float64(g.Environment.Map.TileHeight),
+			}
+			if collision.AABBCollision(animBounds, tileBounds) {
 				return true
 			}
 		}
@@ -115,65 +72,72 @@ func hasMapCollisions(g *Game, playerX, playerY int) bool {
 	return false
 }
 
-func hasAnimalCollisions(g *Game, playerX, playerY int) bool {
-	for _, animal := range g.Animals {
-		if hasCollision(g, playerX, playerY, animal.xLoc, animal.yLoc) {
+func playerHasCollisions(g *Game) bool {
+	// check for map collisions
+	if hasMapCollisions(g, g.Player) {
+		return true
+	}
+
+	// check for animated entities collisions
+	for _, a := range g.Animals {
+		if g.Player.HasCollisionWith(a) {
 			return true
 		}
 	}
 	return false
 }
 
-func updatePlayerFrame(g *Game) {
-	if g.CurrentFrame%utils.FrameDelay == 0 {
-		g.Player.Frame += 1
-		if g.Player.Frame >= utils.AnimFrameCount {
-			g.Player.Frame = 0
-		}
+func animalHasCollisions(g *Game, animObj interfaces.AnimatedSprite) bool {
+	// check for map collisions
+	if hasMapCollisions(g, animObj) {
+		return true
 	}
-}
 
-func updateAnimalFrame(g *Game, animal Animal) (frame int) {
-	frame = animal.Frame
-	if g.CurrentFrame%utils.AnimalFrameDelay == 0 {
-		frame += 1
-		if frame >= utils.AnimFrameCount {
-			frame = 0
-		}
+	// check for collision with player
+	if animObj.HasCollisionWith(g.Player) {
+		return true
 	}
-	return frame
+	return false
 }
 
 func getPlayerInput(g *Game) {
-	if ebiten.IsKeyPressed(ebiten.KeyArrowLeft) && g.Player.xLoc > 0 {
+	if ebiten.IsKeyPressed(ebiten.KeyArrowLeft) && g.Player.XLoc > 0 {
 		g.Player.Direction = utils.LEFT
-		updatePlayerFrame(g)
-		newX := g.Player.xLoc - utils.MovementSpeed
-		if !hasMapCollisions(g, newX, g.Player.yLoc) && !hasAnimalCollisions(g, newX, g.Player.yLoc) {
-			g.Player.xLoc = newX
+		g.Player.UpdateFrame(g.CurrentFrame)
+		g.Player.Dx -= utils.MovementSpeed
+		if !playerHasCollisions(g) {
+			g.Player.UpdateLocation()
+		} else {
+			g.Player.Dx = 0
 		}
 	} else if ebiten.IsKeyPressed(ebiten.KeyArrowRight) &&
-		g.Player.xLoc < g.Environment.MapWidth-g.Player.Width {
+		g.Player.GetXLoc() < g.Environment.MapWidth-g.Player.GetWidth() {
 		g.Player.Direction = utils.RIGHT
-		updatePlayerFrame(g)
-		newX := g.Player.xLoc + utils.MovementSpeed
-		if !hasMapCollisions(g, newX, g.Player.yLoc) && !hasAnimalCollisions(g, newX, g.Player.yLoc) {
-			g.Player.xLoc = newX
+		g.Player.UpdateFrame(g.CurrentFrame)
+		g.Player.Dx += utils.MovementSpeed
+		if !playerHasCollisions(g) {
+			g.Player.UpdateLocation()
+		} else {
+			g.Player.Dx = 0
 		}
-	} else if ebiten.IsKeyPressed(ebiten.KeyArrowUp) && g.Player.yLoc > 0 {
+	} else if ebiten.IsKeyPressed(ebiten.KeyArrowUp) && g.Player.YLoc > 0 {
 		g.Player.Direction = utils.UP
-		updatePlayerFrame(g)
-		newY := g.Player.yLoc - utils.MovementSpeed
-		if !hasMapCollisions(g, g.Player.xLoc, newY) && !hasAnimalCollisions(g, g.Player.xLoc, newY) {
-			g.Player.yLoc = newY
+		g.Player.UpdateFrame(g.CurrentFrame)
+		g.Player.Dy -= utils.MovementSpeed
+		if !playerHasCollisions(g) {
+			g.Player.UpdateLocation()
+		} else {
+			g.Player.Dy = 0
 		}
 	} else if ebiten.IsKeyPressed(ebiten.KeyArrowDown) &&
-		g.Player.yLoc < g.Environment.MapHeight-g.Player.Height {
+		g.Player.GetYLoc() < g.Environment.MapHeight-g.Player.GetHeight() {
 		g.Player.Direction = utils.DOWN
-		updatePlayerFrame(g)
-		newY := g.Player.yLoc + utils.MovementSpeed
-		if !hasMapCollisions(g, g.Player.xLoc, newY) && !hasAnimalCollisions(g, g.Player.xLoc, newY) {
-			g.Player.yLoc = newY
+		g.Player.UpdateFrame(g.CurrentFrame)
+		g.Player.Dy += utils.MovementSpeed
+		if !playerHasCollisions(g) {
+			g.Player.UpdateLocation()
+		} else {
+			g.Player.Dy = 0
 		}
 	} else {
 		g.Player.Frame = utils.StartingFrame
@@ -181,41 +145,49 @@ func getPlayerInput(g *Game) {
 }
 
 func updateAnimals(g *Game) {
-	for i, animal := range g.Animals {
-		if animal.xLoc == (animal.Path[animal.Destination].X*TileWidth) &&
-			animal.yLoc == (animal.Path[animal.Destination].Y*TileHeight) {
+	for i, a := range g.Animals {
+		if a.XLoc == (a.Path[a.Destination].X*utils.TileWidth) &&
+			a.YLoc == (a.Path[a.Destination].Y*utils.TileHeight) {
 
 			// if animal has reached its destination, give it a new destination
-			g.Animals[i].Destination = (g.Animals[i].Destination + 1) % len(animal.Path)
+			g.Animals[i].Destination = (g.Animals[i].Destination + 1) % len(a.Path)
 		} else {
 			// move animal towards destination
-			if animal.xLoc > animal.Path[animal.Destination].X*TileWidth {
+			if a.XLoc > a.Path[a.Destination].X*utils.TileWidth {
 				g.Animals[i].Direction = utils.LEFT
-				g.Animals[i].Frame = updateAnimalFrame(g, animal)
-				newX := g.Animals[i].xLoc - utils.AnimalMovementSpeed
-				if !hasCollision(g, g.Player.xLoc, g.Player.yLoc, newX, g.Animals[i].yLoc) {
-					g.Animals[i].xLoc = newX
+				g.Animals[i].UpdateFrame(g.CurrentFrame)
+				g.Animals[i].Dx -= utils.AnimalMovementSpeed
+				if !animalHasCollisions(g, g.Animals[i]) {
+					g.Animals[i].UpdateLocation()
+				} else {
+					g.Animals[i].Dx = 0
 				}
-			} else if animal.xLoc < animal.Path[animal.Destination].X*TileWidth {
+			} else if a.XLoc < a.Path[a.Destination].X*utils.TileWidth {
 				g.Animals[i].Direction = utils.RIGHT
-				g.Animals[i].Frame = updateAnimalFrame(g, animal)
-				newX := g.Animals[i].xLoc + utils.AnimalMovementSpeed
-				if !hasCollision(g, g.Player.xLoc, g.Player.yLoc, newX, g.Animals[i].yLoc) {
-					g.Animals[i].xLoc = newX
+				g.Animals[i].UpdateFrame(g.CurrentFrame)
+				g.Animals[i].Dx += utils.AnimalMovementSpeed
+				if !animalHasCollisions(g, g.Animals[i]) {
+					g.Animals[i].UpdateLocation()
+				} else {
+					g.Animals[i].Dx = 0
 				}
-			} else if animal.yLoc > animal.Path[animal.Destination].Y*TileHeight {
+			} else if a.YLoc > a.Path[a.Destination].Y*utils.TileHeight {
 				g.Animals[i].Direction = utils.UP
-				g.Animals[i].Frame = updateAnimalFrame(g, animal)
-				newY := g.Animals[i].yLoc - utils.AnimalMovementSpeed
-				if !hasCollision(g, g.Player.xLoc, g.Player.yLoc, g.Animals[i].xLoc, newY) {
-					g.Animals[i].yLoc = newY
+				g.Animals[i].UpdateFrame(g.CurrentFrame)
+				g.Animals[i].Dy -= utils.AnimalMovementSpeed
+				if !animalHasCollisions(g, g.Animals[i]) {
+					g.Animals[i].UpdateLocation()
+				} else {
+					g.Animals[i].Dy = 0
 				}
-			} else if animal.yLoc < animal.Path[animal.Destination].Y*TileHeight {
+			} else if a.YLoc < a.Path[a.Destination].Y*utils.TileHeight {
 				g.Animals[i].Direction = utils.DOWN
-				g.Animals[i].Frame = updateAnimalFrame(g, animal)
-				newY := g.Animals[i].yLoc + utils.AnimalMovementSpeed
-				if !hasCollision(g, g.Player.xLoc, g.Player.yLoc, g.Animals[i].xLoc, newY) {
-					g.Animals[i].yLoc = newY
+				g.Animals[i].UpdateFrame(g.CurrentFrame)
+				g.Animals[i].Dy += utils.AnimalMovementSpeed
+				if !animalHasCollisions(g, g.Animals[i]) {
+					g.Animals[i].UpdateLocation()
+				} else {
+					g.Animals[i].Dy = 0
 				}
 			}
 		}
@@ -227,8 +199,8 @@ func drawMapLayer(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOpt
 	for tileY := 0; tileY < g.Environment.Map.Height; tileY += 1 {
 		for tileX := 0; tileX < g.Environment.Map.Width; tileX += 1 {
 			drawOptions.GeoM.Reset()
-			TileXpos := float64(TileWidth * tileX)
-			TileYpos := float64(TileHeight * tileY)
+			TileXpos := float64(utils.TileWidth * tileX)
+			TileYpos := float64(utils.TileHeight * tileY)
 			drawOptions.GeoM.Translate(TileXpos, TileYpos)
 			tileToDraw := g.Environment.Map.Layers[layer].Tiles[tileY*g.Environment.Map.Width+tileX]
 			if tileToDraw.ID == 0 {
@@ -237,10 +209,10 @@ func drawMapLayer(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOpt
 			tileToDrawX := int(tileToDraw.ID) % tilesetColumns
 			tileToDrawY := int(tileToDraw.ID) / tilesetColumns
 
-			ebitenTileToDraw := g.Environment.Tileset.SubImage(image.Rect(tileToDrawX*TileWidth,
-				tileToDrawY*TileHeight,
-				tileToDrawX*TileWidth+TileWidth,
-				tileToDrawY*TileHeight+TileHeight)).(*ebiten.Image)
+			ebitenTileToDraw := g.Environment.Tileset.SubImage(image.Rect(tileToDrawX*utils.TileWidth,
+				tileToDrawY*utils.TileHeight,
+				tileToDrawX*utils.TileWidth+utils.TileWidth,
+				tileToDrawY*utils.TileHeight+utils.TileHeight)).(*ebiten.Image)
 			screen.DrawImage(ebitenTileToDraw, &drawOptions)
 		}
 	}
@@ -263,18 +235,18 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	drawMapLayer(g, screen, drawOptions, utils.CollisionObjLayer)
 
 	// draw animals
-	for _, animal := range g.Animals {
+	for _, a := range g.Animals {
 		drawOptions.GeoM.Reset()
-		drawOptions.GeoM.Translate(float64(animal.xLoc), float64(animal.yLoc))
-		screen.DrawImage(animal.Spritesheet.SubImage(image.Rect(animal.Frame*animal.Width,
-			animal.Direction*animal.Height,
-			animal.Frame*animal.Width+animal.Width,
-			animal.Direction*animal.Height+animal.Height)).(*ebiten.Image), &drawOptions)
+		drawOptions.GeoM.Translate(float64(a.XLoc), float64(a.YLoc))
+		screen.DrawImage(a.Spritesheet.SubImage(image.Rect(a.Frame*a.Width,
+			a.Direction*a.Height,
+			a.Frame*a.Width+a.Width,
+			a.Direction*a.Height+a.Height)).(*ebiten.Image), &drawOptions)
 	}
 
 	// draw player
 	drawOptions.GeoM.Reset()
-	drawOptions.GeoM.Translate(float64(g.Player.xLoc), float64(g.Player.yLoc))
+	drawOptions.GeoM.Translate(float64(g.Player.XLoc), float64(g.Player.YLoc))
 	screen.DrawImage(g.Player.Spritesheet.SubImage(image.Rect(g.Player.Frame*g.Player.Width,
 		g.Player.Direction*g.Player.Height,
 		g.Player.Frame*g.Player.Width+g.Player.Width,
@@ -321,8 +293,8 @@ func main() {
 	ebiten.SetWindowSize(windowWidth, windowHeight)
 	ebiten.SetWindowTitle(utils.ProjectTitle)
 
-	TileWidth = gameMap.TileWidth
-	TileHeight = gameMap.TileHeight
+	utils.TileWidth = gameMap.TileWidth
+	utils.TileHeight = gameMap.TileHeight
 
 	// load environment
 	embeddedFile, err := EmbeddedAssets.Open(path.Join("assets", utils.EnvImg))
@@ -357,13 +329,7 @@ func main() {
 	if err != nil {
 		fmt.Println("error loading player image")
 	}
-	player := Player{
-		Spritesheet: playerImage,
-		xLoc:        utils.StartingX * gameMap.TileWidth,
-		yLoc:        utils.StartingY * gameMap.TileHeight,
-		Width:       playerImage.Bounds().Dx() / utils.AnimFrameCount,
-		Height:      playerImage.Bounds().Dy() / utils.AnimFrameCount,
-	}
+	playerChar := player.NewPlayer(playerImage)
 
 	// load chickens
 	embeddedFile, err = EmbeddedAssets.Open(path.Join("assets", utils.ChickenImg))
@@ -374,22 +340,8 @@ func main() {
 	if err != nil {
 		fmt.Println("error loading chicken image")
 	}
-	chicken1 := Animal{
-		Spritesheet: chickenImage,
-		xLoc:        ChickenPath1[0].X * gameMap.TileWidth,
-		yLoc:        ChickenPath1[0].Y * gameMap.TileHeight,
-		Path:        ChickenPath1,
-		Width:       chickenImage.Bounds().Dx() / utils.AnimFrameCount,
-		Height:      chickenImage.Bounds().Dy() / utils.AnimFrameCount,
-	}
-	chicken2 := Animal{
-		Spritesheet: chickenImage,
-		xLoc:        ChickenPath2[0].X * gameMap.TileWidth,
-		yLoc:        ChickenPath2[0].Y * gameMap.TileHeight,
-		Path:        ChickenPath2,
-		Width:       chickenImage.Bounds().Dx() / utils.AnimFrameCount,
-		Height:      chickenImage.Bounds().Dy() / utils.AnimFrameCount,
-	}
+	chicken1 := animal.NewAnimal(chickenImage, utils.ChickenPath1)
+	chicken2 := animal.NewAnimal(chickenImage, utils.ChickenPath2)
 
 	// load dog
 	embeddedFile, err = EmbeddedAssets.Open(path.Join("assets", utils.DogImg))
@@ -400,19 +352,12 @@ func main() {
 	if err != nil {
 		fmt.Println("error loading dog image")
 	}
-	dog := Animal{
-		Spritesheet: dogImage,
-		xLoc:        DogPath[0].X * gameMap.TileWidth,
-		yLoc:        DogPath[0].Y * gameMap.TileHeight,
-		Path:        DogPath,
-		Width:       dogImage.Bounds().Dx() / utils.AnimFrameCount,
-		Height:      dogImage.Bounds().Dy() / utils.AnimFrameCount,
-	}
+	dog := animal.NewAnimal(dogImage, utils.DogPath)
 
 	game := Game{
 		Environment: environment,
-		Player:      player,
-		Animals:     []Animal{chicken1, chicken2, dog},
+		Player:      playerChar,
+		Animals:     []*animal.Animal{chicken1, chicken2, dog},
 	}
 
 	go func(player *audio.Player) {
