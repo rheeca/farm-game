@@ -3,7 +3,6 @@ package main
 import (
 	"embed"
 	"fmt"
-	"guion-2d-project3/interfaces"
 	"image"
 	"log"
 	"os"
@@ -11,7 +10,9 @@ import (
 	"time"
 
 	"guion-2d-project3/entity/animal"
+	"guion-2d-project3/entity/environment"
 	"guion-2d-project3/entity/player"
+	"guion-2d-project3/interfaces"
 	"guion-2d-project3/utils"
 
 	"github.com/co0p/tankism/lib/collision"
@@ -26,28 +27,21 @@ import (
 var EmbeddedAssets embed.FS
 
 type Game struct {
-	Environment  Environment
+	Environment  *environment.Environment
 	Player       *player.Player
 	Animals      []*animal.Animal
 	CurrentFrame int
 }
 
-type Environment struct {
-	Map       *tiled.Map
-	Tileset   *ebiten.Image
-	MapWidth  int
-	MapHeight int
-}
-
 func hasMapCollisions(g *Game, animObj interfaces.AnimatedSprite) bool {
-	for tileY := 0; tileY < g.Environment.Map.Height; tileY += 1 {
-		for tileX := 0; tileX < g.Environment.Map.Width; tileX += 1 {
-			tile := g.Environment.Map.Layers[utils.CollisionObjLayer].Tiles[tileY*g.Environment.Map.Width+tileX]
+	for tileY := 0; tileY < utils.MapTileHeight; tileY += 1 {
+		for tileX := 0; tileX < utils.MapTileWidth; tileX += 1 {
+			tile := g.Environment.Maps[0].Layers[utils.CollisionObjLayer].Tiles[tileY*utils.MapTileWidth+tileX]
 			if tile.ID == 0 {
 				continue
 			}
-			tileXpos := g.Environment.Map.TileWidth * tileX
-			tileYpos := g.Environment.Map.TileHeight * tileY
+			tileXpos := utils.TileWidth * tileX
+			tileYpos := utils.TileHeight * tileY
 
 			newX := animObj.GetXLoc() + animObj.GetDx()
 			newY := animObj.GetYLoc() + animObj.GetDy()
@@ -61,8 +55,8 @@ func hasMapCollisions(g *Game, animObj interfaces.AnimatedSprite) bool {
 			tileBounds := collision.BoundingBox{
 				X:      float64(tileXpos),
 				Y:      float64(tileYpos),
-				Width:  float64(g.Environment.Map.TileWidth),
-				Height: float64(g.Environment.Map.TileHeight),
+				Width:  float64(utils.TileWidth),
+				Height: float64(utils.TileHeight),
 			}
 			if collision.AABBCollision(animBounds, tileBounds) {
 				return true
@@ -73,10 +67,10 @@ func hasMapCollisions(g *Game, animObj interfaces.AnimatedSprite) bool {
 }
 
 func playerHasCollisions(g *Game) bool {
-	// check for map collisions
-	if hasMapCollisions(g, g.Player) {
-		return true
-	}
+	// TODO: check for map collisions
+	//if hasMapCollisions(g, g.Player) {
+	//	return true
+	//}
 
 	// check for animated entities collisions
 	for _, a := range g.Animals {
@@ -88,10 +82,10 @@ func playerHasCollisions(g *Game) bool {
 }
 
 func animalHasCollisions(g *Game, animObj interfaces.AnimatedSprite) bool {
-	// check for map collisions
-	if hasMapCollisions(g, animObj) {
-		return true
-	}
+	// TODO: check for map collisions
+	//if hasMapCollisions(g, animObj) {
+	//	return true
+	//}
 
 	// check for collision with player
 	if animObj.HasCollisionWith(g.Player) {
@@ -111,7 +105,7 @@ func getPlayerInput(g *Game) {
 			g.Player.Dx = 0
 		}
 	} else if ebiten.IsKeyPressed(ebiten.KeyArrowRight) &&
-		g.Player.GetXLoc() < g.Environment.MapWidth-g.Player.GetWidth() {
+		g.Player.XLoc < utils.MapWidth-g.Player.Width {
 		g.Player.Direction = utils.RIGHT
 		g.Player.UpdateFrame(g.CurrentFrame)
 		g.Player.Dx += utils.MovementSpeed
@@ -130,7 +124,7 @@ func getPlayerInput(g *Game) {
 			g.Player.Dy = 0
 		}
 	} else if ebiten.IsKeyPressed(ebiten.KeyArrowDown) &&
-		g.Player.GetYLoc() < g.Environment.MapHeight-g.Player.GetHeight() {
+		g.Player.YLoc < utils.MapHeight-g.Player.Height {
 		g.Player.Direction = utils.DOWN
 		g.Player.UpdateFrame(g.CurrentFrame)
 		g.Player.Dy += utils.MovementSpeed
@@ -194,26 +188,31 @@ func updateAnimals(g *Game) {
 	}
 }
 
-func drawMapLayer(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions, layer int) {
-	tilesetColumns := g.Environment.Map.Tilesets[0].Columns
-	for tileY := 0; tileY < g.Environment.Map.Height; tileY += 1 {
-		for tileX := 0; tileX < g.Environment.Map.Width; tileX += 1 {
-			drawOptions.GeoM.Reset()
-			TileXpos := float64(utils.TileWidth * tileX)
-			TileYpos := float64(utils.TileHeight * tileY)
-			drawOptions.GeoM.Translate(TileXpos, TileYpos)
-			tileToDraw := g.Environment.Map.Layers[layer].Tiles[tileY*g.Environment.Map.Width+tileX]
-			if tileToDraw.ID == 0 {
-				continue
-			}
-			tileToDrawX := int(tileToDraw.ID) % tilesetColumns
-			tileToDrawY := int(tileToDraw.ID) / tilesetColumns
+func drawMap(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions, currMap int) {
+	for _, layer := range g.Environment.Maps[currMap].Layers {
+		for tileY := 0; tileY < utils.MapTileHeight; tileY += 1 {
+			for tileX := 0; tileX < utils.MapTileWidth; tileX += 1 {
+				// find img of tile to draw
+				tileToDraw := layer.Tiles[tileY*utils.MapTileWidth+tileX]
+				if tileToDraw.IsNil() {
+					continue
+				}
 
-			ebitenTileToDraw := g.Environment.Tileset.SubImage(image.Rect(tileToDrawX*utils.TileWidth,
-				tileToDrawY*utils.TileHeight,
-				tileToDrawX*utils.TileWidth+utils.TileWidth,
-				tileToDrawY*utils.TileHeight+utils.TileHeight)).(*ebiten.Image)
-			screen.DrawImage(ebitenTileToDraw, &drawOptions)
+				tileToDrawX := int(tileToDraw.ID) % tileToDraw.Tileset.Columns
+				tileToDrawY := int(tileToDraw.ID) / tileToDraw.Tileset.Columns
+
+				ebitenTileToDraw := g.Environment.Tilesets[tileToDraw.Tileset.Name].SubImage(image.Rect(tileToDrawX*utils.TileWidth,
+					tileToDrawY*utils.TileHeight,
+					tileToDrawX*utils.TileWidth+utils.TileWidth,
+					tileToDrawY*utils.TileHeight+utils.TileHeight)).(*ebiten.Image)
+
+				// draw tile
+				drawOptions.GeoM.Reset()
+				TileXpos := float64(utils.TileWidth * tileX)
+				TileYpos := float64(utils.TileHeight * tileY)
+				drawOptions.GeoM.Translate(TileXpos, TileYpos)
+				screen.DrawImage(ebitenTileToDraw, &drawOptions)
+			}
 		}
 	}
 }
@@ -228,11 +227,7 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	drawOptions := ebiten.DrawImageOptions{}
 
-	// draw map ground
-	drawMapLayer(g, screen, drawOptions, utils.GroundLayer)
-
-	// draw map objects
-	drawMapLayer(g, screen, drawOptions, utils.CollisionObjLayer)
+	drawMap(g, screen, drawOptions, g.Environment.CurrentMap)
 
 	// draw animals
 	for _, a := range g.Animals {
@@ -293,24 +288,15 @@ func main() {
 	ebiten.SetWindowSize(windowWidth, windowHeight)
 	ebiten.SetWindowTitle(utils.ProjectTitle)
 
+	utils.MapWidth = gameMap.Width * gameMap.TileWidth
+	utils.MapHeight = gameMap.Height * gameMap.TileHeight
 	utils.TileWidth = gameMap.TileWidth
 	utils.TileHeight = gameMap.TileHeight
+	utils.MapTileWidth = gameMap.Width
+	utils.MapTileHeight = gameMap.Height
 
 	// load environment
-	embeddedFile, err := EmbeddedAssets.Open(path.Join("assets", utils.EnvImg))
-	if err != nil {
-		log.Fatal("failed to load embedded image:", embeddedFile, err)
-	}
-	mapImage, _, err := ebitenutil.NewImageFromReader(embeddedFile)
-	if err != nil {
-		fmt.Println("error loading map image")
-	}
-	environment := Environment{
-		Map:       gameMap,
-		Tileset:   mapImage,
-		MapWidth:  gameMap.Width * gameMap.TileWidth,
-		MapHeight: gameMap.Height * gameMap.TileHeight,
-	}
+	env := environment.NewEnvironment(EmbeddedAssets, []*tiled.Map{gameMap})
 
 	// load audio
 	audioContext := audio.NewContext(utils.SoundSampleRate)
@@ -321,7 +307,7 @@ func main() {
 	}
 
 	// load player
-	embeddedFile, err = EmbeddedAssets.Open(path.Join("assets", utils.PlayerImg))
+	embeddedFile, err := EmbeddedAssets.Open(path.Join("assets", utils.PlayerImg))
 	if err != nil {
 		log.Fatal("failed to load embedded image:", embeddedFile, err)
 	}
@@ -355,7 +341,7 @@ func main() {
 	dog := animal.NewAnimal(dogImage, utils.DogPath)
 
 	game := Game{
-		Environment: environment,
+		Environment: env,
 		Player:      playerChar,
 		Animals:     []*animal.Animal{chicken1, chicken2, dog},
 	}

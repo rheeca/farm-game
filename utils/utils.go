@@ -2,8 +2,7 @@ package utils
 
 const (
 	ProjectTitle      = "Project 3"
-	MapFile           = "map.tmx"
-	EnvImg            = "environment.png"
+	MapFile           = "farm_map.tmx"
 	PlayerImg         = "player.png"
 	ChickenImg        = "chicken.png"
 	DogImg            = "dog.png"
@@ -32,14 +31,32 @@ const (
 	UP
 )
 
+// Maps
+const (
+	FarmMap = iota
+	TownMap
+	ForestMap
+)
+
 type Location struct {
 	X int
 	Y int
 }
 
 var (
-	TileWidth    int
-	TileHeight   int
+	MapWidth      int
+	MapHeight     int
+	TileWidth     int
+	TileHeight    int
+	MapTileWidth  int
+	MapTileHeight int
+
+	Tilesets = []string{
+		"grass_hill.png",
+		"soil_ground.png",
+		"hills.png",
+		"water.png",
+	}
 	ChickenPath1 = []Location{
 		{X: 2, Y: 2},
 		{X: 6, Y: 2},
