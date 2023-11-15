@@ -18,17 +18,29 @@ const (
 	StartingFrame       = 0
 	AnimFrameCount      = 4
 	FrameDelay          = 4
-	MovementSpeed       = 3
+	MovementSpeed       = 2
 	AnimalFrameDelay    = 12
 	AnimalMovementSpeed = 1
 )
 
 // Directions
 const (
-	DOWN = iota
-	LEFT
-	RIGHT
-	UP
+	Front = iota
+	Back
+	Left
+	Right
+	NumOfDirections
+)
+
+// Player sprite sheet
+const (
+	IdleState = iota
+	WalkState
+	RunState
+	PlayerFrameCount   = 8
+	PlayerFrameDelay   = 8
+	PlayerSpriteWidth  = 96
+	PlayerSpriteHeight = 96
 )
 
 // Maps

@@ -8,24 +8,27 @@ import (
 )
 
 type Player struct {
-	Spritesheet *ebiten.Image
-	Frame       int
-	Direction   int
-	XLoc        int
-	YLoc        int
-	Dy          int
-	Dx          int
-	Width       int
-	Height      int
+	Spritesheet     *ebiten.Image
+	Frame           int
+	State           int
+	Direction       int
+	XLoc            int
+	YLoc            int
+	Dy              int
+	Dx              int
+	SpriteWidth     int
+	SpriteHeight    int
+	CollisionWidth  int
+	CollisionHeight int
 }
 
 func NewPlayer(spritesheet *ebiten.Image) *Player {
 	return &Player{
-		Spritesheet: spritesheet,
-		XLoc:        utils.StartingX * utils.TileWidth,
-		YLoc:        utils.StartingY * utils.TileWidth,
-		Width:       spritesheet.Bounds().Dx() / utils.AnimFrameCount,
-		Height:      spritesheet.Bounds().Dy() / utils.AnimFrameCount,
+		Spritesheet:  spritesheet,
+		XLoc:         utils.StartingX * utils.TileWidth,
+		YLoc:         utils.StartingY * utils.TileWidth,
+		SpriteWidth:  utils.PlayerSpriteWidth,
+		SpriteHeight: utils.PlayerSpriteHeight,
 	}
 }
 
@@ -33,8 +36,8 @@ func (p *Player) HasCollisionWith(object interfaces.AnimatedSprite) bool {
 	playerBounds := collision.BoundingBox{
 		X:      float64(p.XLoc + p.Dx),
 		Y:      float64(p.YLoc + p.Dy),
-		Width:  float64(p.Width),
-		Height: float64(p.Height),
+		Width:  float64(p.SpriteWidth),
+		Height: float64(p.SpriteHeight),
 	}
 	objectBounds := collision.BoundingBox{
 		X:      float64(object.GetXLoc() + object.GetDx()),
@@ -65,11 +68,11 @@ func (p *Player) GetDy() int {
 }
 
 func (p *Player) GetWidth() int {
-	return p.Width
+	return p.SpriteWidth
 }
 
 func (p *Player) GetHeight() int {
-	return p.Height
+	return p.SpriteHeight
 }
 
 func (p *Player) UpdateLocation() {
@@ -80,9 +83,9 @@ func (p *Player) UpdateLocation() {
 }
 
 func (p *Player) UpdateFrame(currentFrame int) {
-	if currentFrame%utils.FrameDelay == 0 {
+	if currentFrame%utils.PlayerFrameDelay == 0 {
 		p.Frame += 1
-		if p.Frame >= utils.AnimFrameCount {
+		if p.Frame >= utils.PlayerFrameCount {
 			p.Frame = 0
 		}
 	}

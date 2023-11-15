@@ -95,9 +95,10 @@ func animalHasCollisions(g *Game, animObj interfaces.AnimatedSprite) bool {
 }
 
 func getPlayerInput(g *Game) {
+	g.Player.UpdateFrame(g.CurrentFrame)
 	if ebiten.IsKeyPressed(ebiten.KeyArrowLeft) && g.Player.XLoc > 0 {
-		g.Player.Direction = utils.LEFT
-		g.Player.UpdateFrame(g.CurrentFrame)
+		g.Player.Direction = utils.Left
+		g.Player.State = utils.WalkState
 		g.Player.Dx -= utils.MovementSpeed
 		if !playerHasCollisions(g) {
 			g.Player.UpdateLocation()
@@ -105,9 +106,9 @@ func getPlayerInput(g *Game) {
 			g.Player.Dx = 0
 		}
 	} else if ebiten.IsKeyPressed(ebiten.KeyArrowRight) &&
-		g.Player.XLoc < utils.MapWidth-g.Player.Width {
-		g.Player.Direction = utils.RIGHT
-		g.Player.UpdateFrame(g.CurrentFrame)
+		g.Player.XLoc < utils.MapWidth-g.Player.SpriteWidth {
+		g.Player.Direction = utils.Right
+		g.Player.State = utils.WalkState
 		g.Player.Dx += utils.MovementSpeed
 		if !playerHasCollisions(g) {
 			g.Player.UpdateLocation()
@@ -115,8 +116,8 @@ func getPlayerInput(g *Game) {
 			g.Player.Dx = 0
 		}
 	} else if ebiten.IsKeyPressed(ebiten.KeyArrowUp) && g.Player.YLoc > 0 {
-		g.Player.Direction = utils.UP
-		g.Player.UpdateFrame(g.CurrentFrame)
+		g.Player.Direction = utils.Back
+		g.Player.State = utils.WalkState
 		g.Player.Dy -= utils.MovementSpeed
 		if !playerHasCollisions(g) {
 			g.Player.UpdateLocation()
@@ -124,9 +125,9 @@ func getPlayerInput(g *Game) {
 			g.Player.Dy = 0
 		}
 	} else if ebiten.IsKeyPressed(ebiten.KeyArrowDown) &&
-		g.Player.YLoc < utils.MapHeight-g.Player.Height {
-		g.Player.Direction = utils.DOWN
-		g.Player.UpdateFrame(g.CurrentFrame)
+		g.Player.YLoc < utils.MapHeight-g.Player.SpriteHeight {
+		g.Player.Direction = utils.Front
+		g.Player.State = utils.WalkState
 		g.Player.Dy += utils.MovementSpeed
 		if !playerHasCollisions(g) {
 			g.Player.UpdateLocation()
@@ -134,7 +135,7 @@ func getPlayerInput(g *Game) {
 			g.Player.Dy = 0
 		}
 	} else {
-		g.Player.Frame = utils.StartingFrame
+		g.Player.State = utils.IdleState
 	}
 }
 
@@ -148,7 +149,7 @@ func updateAnimals(g *Game) {
 		} else {
 			// move animal towards destination
 			if a.XLoc > a.Path[a.Destination].X*utils.TileWidth {
-				g.Animals[i].Direction = utils.LEFT
+				g.Animals[i].Direction = utils.Left
 				g.Animals[i].UpdateFrame(g.CurrentFrame)
 				g.Animals[i].Dx -= utils.AnimalMovementSpeed
 				if !animalHasCollisions(g, g.Animals[i]) {
@@ -157,7 +158,7 @@ func updateAnimals(g *Game) {
 					g.Animals[i].Dx = 0
 				}
 			} else if a.XLoc < a.Path[a.Destination].X*utils.TileWidth {
-				g.Animals[i].Direction = utils.RIGHT
+				g.Animals[i].Direction = utils.Right
 				g.Animals[i].UpdateFrame(g.CurrentFrame)
 				g.Animals[i].Dx += utils.AnimalMovementSpeed
 				if !animalHasCollisions(g, g.Animals[i]) {
@@ -166,7 +167,7 @@ func updateAnimals(g *Game) {
 					g.Animals[i].Dx = 0
 				}
 			} else if a.YLoc > a.Path[a.Destination].Y*utils.TileHeight {
-				g.Animals[i].Direction = utils.UP
+				g.Animals[i].Direction = utils.Back
 				g.Animals[i].UpdateFrame(g.CurrentFrame)
 				g.Animals[i].Dy -= utils.AnimalMovementSpeed
 				if !animalHasCollisions(g, g.Animals[i]) {
@@ -175,7 +176,7 @@ func updateAnimals(g *Game) {
 					g.Animals[i].Dy = 0
 				}
 			} else if a.YLoc < a.Path[a.Destination].Y*utils.TileHeight {
-				g.Animals[i].Direction = utils.DOWN
+				g.Animals[i].Direction = utils.Front
 				g.Animals[i].UpdateFrame(g.CurrentFrame)
 				g.Animals[i].Dy += utils.AnimalMovementSpeed
 				if !animalHasCollisions(g, g.Animals[i]) {
@@ -242,10 +243,10 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	// draw player
 	drawOptions.GeoM.Reset()
 	drawOptions.GeoM.Translate(float64(g.Player.XLoc), float64(g.Player.YLoc))
-	screen.DrawImage(g.Player.Spritesheet.SubImage(image.Rect(g.Player.Frame*g.Player.Width,
-		g.Player.Direction*g.Player.Height,
-		g.Player.Frame*g.Player.Width+g.Player.Width,
-		g.Player.Direction*g.Player.Height+g.Player.Height)).(*ebiten.Image), &drawOptions)
+	screen.DrawImage(g.Player.Spritesheet.SubImage(image.Rect(g.Player.Frame*g.Player.SpriteWidth,
+		(g.Player.State*utils.NumOfDirections+g.Player.Direction)*g.Player.SpriteHeight,
+		g.Player.Frame*g.Player.SpriteWidth+g.Player.SpriteWidth,
+		(g.Player.State*utils.NumOfDirections+g.Player.Direction)*g.Player.SpriteHeight+g.Player.SpriteHeight)).(*ebiten.Image), &drawOptions)
 }
 
 func (g *Game) Layout(oWidth, oHeight int) (sWidth, sHeight int) {
