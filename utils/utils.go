@@ -40,6 +40,9 @@ const (
 	IdleState = iota
 	WalkState
 	RunState
+	HoeState
+	AxeState
+	WateringState
 	PlayerFrameCount   = 8
 	PlayerFrameDelay   = 8
 	PlayerSpriteWidth  = 96

@@ -21,6 +21,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/audio"
 	"github.com/hajimehoshi/ebiten/v2/audio/wav"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/lafriks/go-tiled"
 )
 
@@ -96,8 +97,28 @@ func animalHasCollisions(g *Game, animObj interfaces.AnimatedSprite) bool {
 	return false
 }
 
+func checkMouse(g *Game) {
+	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+		if g.Player.Backpack[g.Player.EquippedItem] == utils.ItemHoe {
+			g.Player.State = utils.HoeState
+			g.Player.Frame = 0
+			g.Player.StateTTL = utils.PlayerFrameCount
+		} else if g.Player.Backpack[g.Player.EquippedItem] == utils.ItemAxe {
+			g.Player.State = utils.AxeState
+			g.Player.Frame = 0
+			g.Player.StateTTL = utils.PlayerFrameCount
+		} else if g.Player.Backpack[g.Player.EquippedItem] == utils.ItemWateringCan {
+			g.Player.State = utils.WateringState
+			g.Player.Frame = 0
+			g.Player.StateTTL = utils.PlayerFrameCount
+		}
+	}
+}
+
 func getPlayerInput(g *Game) {
 	g.Player.UpdateFrame(g.CurrentFrame)
+
+	checkMouse(g)
 	if ebiten.IsKeyPressed(ebiten.KeyA) && g.Player.XLoc > 0 {
 		g.Player.Direction = utils.Left
 		g.Player.State = utils.WalkState
@@ -136,29 +157,29 @@ func getPlayerInput(g *Game) {
 		} else {
 			g.Player.Dy = 0
 		}
-	} else {
+	} else if g.Player.StateTTL == 0 {
 		g.Player.State = utils.IdleState
 	}
 
 	// Equip item
 	if ebiten.IsKeyPressed(ebiten.Key1) {
-		g.Player.EquippedItem = 1
+		g.Player.EquippedItem = 0
 	} else if ebiten.IsKeyPressed(ebiten.Key2) {
-		g.Player.EquippedItem = 2
+		g.Player.EquippedItem = 1
 	} else if ebiten.IsKeyPressed(ebiten.Key3) {
-		g.Player.EquippedItem = 3
+		g.Player.EquippedItem = 2
 	} else if ebiten.IsKeyPressed(ebiten.Key4) {
-		g.Player.EquippedItem = 4
+		g.Player.EquippedItem = 3
 	} else if ebiten.IsKeyPressed(ebiten.Key5) {
-		g.Player.EquippedItem = 5
+		g.Player.EquippedItem = 4
 	} else if ebiten.IsKeyPressed(ebiten.Key6) {
-		g.Player.EquippedItem = 6
+		g.Player.EquippedItem = 5
 	} else if ebiten.IsKeyPressed(ebiten.Key7) {
-		g.Player.EquippedItem = 7
+		g.Player.EquippedItem = 6
 	} else if ebiten.IsKeyPressed(ebiten.Key8) {
-		g.Player.EquippedItem = 8
+		g.Player.EquippedItem = 7
 	} else if ebiten.IsKeyPressed(ebiten.Key9) {
-		g.Player.EquippedItem = 9
+		g.Player.EquippedItem = 8
 	}
 }
 
@@ -277,7 +298,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	screen.DrawImage(g.Images.ToolsUI, &drawOptions)
 
 	drawOptions.GeoM.Reset()
-	drawOptions.GeoM.Translate(float64(utils.ToolsFirstBoxX+((g.Player.EquippedItem-1)*utils.ToolsUIBoxSize)),
+	drawOptions.GeoM.Translate(float64(utils.ToolsFirstBoxX+((g.Player.EquippedItem)*utils.ToolsUIBoxSize)),
 		float64(utils.ToolsFirstBoxY))
 	screen.DrawImage(g.Images.SelectedTool, &drawOptions)
 

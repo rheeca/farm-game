@@ -11,6 +11,7 @@ type Player struct {
 	Spritesheet     *ebiten.Image
 	Frame           int
 	State           int
+	StateTTL        int
 	Direction       int
 	XLoc            int
 	YLoc            int
@@ -32,7 +33,7 @@ func NewPlayer(spritesheet *ebiten.Image) *Player {
 		SpriteWidth:  utils.PlayerSpriteWidth,
 		SpriteHeight: utils.PlayerSpriteHeight,
 		Backpack:     [utils.BackpackSize]int{2, 3, 10, 19, 42},
-		EquippedItem: 1,
+		EquippedItem: 0,
 	}
 }
 
@@ -88,6 +89,13 @@ func (p *Player) UpdateLocation() {
 
 func (p *Player) UpdateFrame(currentFrame int) {
 	if currentFrame%utils.PlayerFrameDelay == 0 {
+		if p.StateTTL > 1 {
+			p.StateTTL -= 1
+		} else if p.StateTTL == 1 {
+			p.StateTTL -= 1
+			p.State = utils.IdleState
+		}
+
 		p.Frame += 1
 		if p.Frame >= utils.PlayerFrameCount {
 			p.Frame = 0
