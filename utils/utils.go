@@ -10,6 +10,8 @@ const (
 	GroundLayer       = 0
 	CollisionObjLayer = 1
 	SoundSampleRate   = 16000
+	UnitSize          = 32
+	ToolsUIBoxSize    = 48
 )
 
 const (
@@ -21,6 +23,7 @@ const (
 	MovementSpeed       = 2
 	AnimalFrameDelay    = 12
 	AnimalMovementSpeed = 1
+	BackpackSize        = 9
 )
 
 // Directions
@@ -63,6 +66,14 @@ var (
 	MapTileWidth  int
 	MapTileHeight int
 
+	ToolsUIX         int
+	ToolsUIY         int
+	FarmItemsColumns int
+	ToolsFirstSlotX  int
+	ToolsFirstSlotY  int
+	ToolsFirstBoxX   int
+	ToolsFirstBoxY   int
+
 	Tilesets = []string{
 		"grass_hill.png",
 		"soil_ground.png",
@@ -81,4 +92,10 @@ var (
 		{X: 13, Y: 11},
 		{X: 21, Y: 11},
 	}
+)
+
+// Error messages
+const (
+	ErrorLoadEmbeddedImage = "failed to load embedded image: %v"
+	ErrorLoadEbitenImage   = "failed to load ebiten image: %v"
 )

@@ -20,6 +20,8 @@ type Player struct {
 	SpriteHeight    int
 	CollisionWidth  int
 	CollisionHeight int
+	Backpack        [utils.BackpackSize]int
+	EquippedItem    int
 }
 
 func NewPlayer(spritesheet *ebiten.Image) *Player {
@@ -29,6 +31,8 @@ func NewPlayer(spritesheet *ebiten.Image) *Player {
 		YLoc:         utils.StartingY * utils.TileWidth,
 		SpriteWidth:  utils.PlayerSpriteWidth,
 		SpriteHeight: utils.PlayerSpriteHeight,
+		Backpack:     [utils.BackpackSize]int{2, 3, 10, 19, 42},
+		EquippedItem: 1,
 	}
 }
 

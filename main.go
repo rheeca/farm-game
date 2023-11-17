@@ -11,6 +11,7 @@ import (
 
 	"guion-2d-project3/entity/animal"
 	"guion-2d-project3/entity/environment"
+	"guion-2d-project3/entity/loader"
 	"guion-2d-project3/entity/player"
 	"guion-2d-project3/interfaces"
 	"guion-2d-project3/utils"
@@ -31,6 +32,7 @@ type Game struct {
 	Player       *player.Player
 	Animals      []*animal.Animal
 	CurrentFrame int
+	Images       loader.ImageCollection
 }
 
 func hasMapCollisions(g *Game, animObj interfaces.AnimatedSprite) bool {
@@ -96,7 +98,7 @@ func animalHasCollisions(g *Game, animObj interfaces.AnimatedSprite) bool {
 
 func getPlayerInput(g *Game) {
 	g.Player.UpdateFrame(g.CurrentFrame)
-	if ebiten.IsKeyPressed(ebiten.KeyArrowLeft) && g.Player.XLoc > 0 {
+	if ebiten.IsKeyPressed(ebiten.KeyA) && g.Player.XLoc > 0 {
 		g.Player.Direction = utils.Left
 		g.Player.State = utils.WalkState
 		g.Player.Dx -= utils.MovementSpeed
@@ -105,7 +107,7 @@ func getPlayerInput(g *Game) {
 		} else {
 			g.Player.Dx = 0
 		}
-	} else if ebiten.IsKeyPressed(ebiten.KeyArrowRight) &&
+	} else if ebiten.IsKeyPressed(ebiten.KeyD) &&
 		g.Player.XLoc < utils.MapWidth-g.Player.SpriteWidth {
 		g.Player.Direction = utils.Right
 		g.Player.State = utils.WalkState
@@ -115,7 +117,7 @@ func getPlayerInput(g *Game) {
 		} else {
 			g.Player.Dx = 0
 		}
-	} else if ebiten.IsKeyPressed(ebiten.KeyArrowUp) && g.Player.YLoc > 0 {
+	} else if ebiten.IsKeyPressed(ebiten.KeyW) && g.Player.YLoc > 0 {
 		g.Player.Direction = utils.Back
 		g.Player.State = utils.WalkState
 		g.Player.Dy -= utils.MovementSpeed
@@ -124,7 +126,7 @@ func getPlayerInput(g *Game) {
 		} else {
 			g.Player.Dy = 0
 		}
-	} else if ebiten.IsKeyPressed(ebiten.KeyArrowDown) &&
+	} else if ebiten.IsKeyPressed(ebiten.KeyS) &&
 		g.Player.YLoc < utils.MapHeight-g.Player.SpriteHeight {
 		g.Player.Direction = utils.Front
 		g.Player.State = utils.WalkState
@@ -136,6 +138,27 @@ func getPlayerInput(g *Game) {
 		}
 	} else {
 		g.Player.State = utils.IdleState
+	}
+
+	// Equip item
+	if ebiten.IsKeyPressed(ebiten.Key1) {
+		g.Player.EquippedItem = 1
+	} else if ebiten.IsKeyPressed(ebiten.Key2) {
+		g.Player.EquippedItem = 2
+	} else if ebiten.IsKeyPressed(ebiten.Key3) {
+		g.Player.EquippedItem = 3
+	} else if ebiten.IsKeyPressed(ebiten.Key4) {
+		g.Player.EquippedItem = 4
+	} else if ebiten.IsKeyPressed(ebiten.Key5) {
+		g.Player.EquippedItem = 5
+	} else if ebiten.IsKeyPressed(ebiten.Key6) {
+		g.Player.EquippedItem = 6
+	} else if ebiten.IsKeyPressed(ebiten.Key7) {
+		g.Player.EquippedItem = 7
+	} else if ebiten.IsKeyPressed(ebiten.Key8) {
+		g.Player.EquippedItem = 8
+	} else if ebiten.IsKeyPressed(ebiten.Key9) {
+		g.Player.EquippedItem = 9
 	}
 }
 
@@ -247,6 +270,29 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		(g.Player.State*utils.NumOfDirections+g.Player.Direction)*g.Player.SpriteHeight,
 		g.Player.Frame*g.Player.SpriteWidth+g.Player.SpriteWidth,
 		(g.Player.State*utils.NumOfDirections+g.Player.Direction)*g.Player.SpriteHeight+g.Player.SpriteHeight)).(*ebiten.Image), &drawOptions)
+
+	// draw tools ui
+	drawOptions.GeoM.Reset()
+	drawOptions.GeoM.Translate(float64(utils.ToolsUIX), float64(utils.ToolsUIY))
+	screen.DrawImage(g.Images.ToolsUI, &drawOptions)
+
+	drawOptions.GeoM.Reset()
+	drawOptions.GeoM.Translate(float64(utils.ToolsFirstBoxX+((g.Player.EquippedItem-1)*utils.ToolsUIBoxSize)),
+		float64(utils.ToolsFirstBoxY))
+	screen.DrawImage(g.Images.SelectedTool, &drawOptions)
+
+	for i, item := range g.Player.Backpack {
+		if item == 0 {
+			continue
+		}
+		drawOptions.GeoM.Reset()
+		drawOptions.GeoM.Translate(float64(utils.ToolsFirstSlotX+(i*utils.ToolsUIBoxSize)), float64(utils.ToolsFirstSlotY))
+
+		screen.DrawImage(g.Images.FarmItems.SubImage(image.Rect((item%utils.FarmItemsColumns)*utils.UnitSize,
+			(item/utils.FarmItemsColumns)*utils.UnitSize,
+			(item%utils.FarmItemsColumns)*utils.UnitSize+utils.UnitSize,
+			(item/utils.FarmItemsColumns)*utils.UnitSize+utils.UnitSize)).(*ebiten.Image), &drawOptions)
+	}
 }
 
 func (g *Game) Layout(oWidth, oHeight int) (sWidth, sHeight int) {
@@ -289,12 +335,11 @@ func main() {
 	ebiten.SetWindowSize(windowWidth, windowHeight)
 	ebiten.SetWindowTitle(utils.ProjectTitle)
 
-	utils.MapWidth = gameMap.Width * gameMap.TileWidth
-	utils.MapHeight = gameMap.Height * gameMap.TileHeight
-	utils.TileWidth = gameMap.TileWidth
-	utils.TileHeight = gameMap.TileHeight
-	utils.MapTileWidth = gameMap.Width
-	utils.MapTileHeight = gameMap.Height
+	images, err := loader.NewImageCollection(EmbeddedAssets)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	setConstants(gameMap, images)
 
 	// load environment
 	env := environment.NewEnvironment(EmbeddedAssets, []*tiled.Map{gameMap})
@@ -303,8 +348,7 @@ func main() {
 	audioContext := audio.NewContext(utils.SoundSampleRate)
 	bgmPlayer, err := loadWavFromEmbedded(utils.FirstTownAudio, audioContext)
 	if err != nil {
-		fmt.Println("shutting down. error:", err)
-		return
+		log.Fatal(err.Error())
 	}
 
 	// load player
@@ -345,6 +389,7 @@ func main() {
 		Environment: env,
 		Player:      playerChar,
 		Animals:     []*animal.Animal{chicken1, chicken2, dog},
+		Images:      images,
 	}
 
 	go func(player *audio.Player) {
@@ -356,4 +401,20 @@ func main() {
 	if err != nil {
 		fmt.Println("failed to run game:", err)
 	}
+}
+
+func setConstants(gameMap *tiled.Map, images loader.ImageCollection) {
+	utils.MapWidth = gameMap.Width * gameMap.TileWidth
+	utils.MapHeight = gameMap.Height * gameMap.TileHeight
+	utils.TileWidth = gameMap.TileWidth
+	utils.TileHeight = gameMap.TileHeight
+	utils.MapTileWidth = gameMap.Width
+	utils.MapTileHeight = gameMap.Height
+	utils.ToolsUIX = (utils.MapWidth / 2) - images.ToolsUI.Bounds().Dx()/2
+	utils.ToolsUIY = utils.MapHeight - 60
+	utils.ToolsFirstSlotX = utils.ToolsUIX + 22
+	utils.ToolsFirstSlotY = utils.ToolsUIY + 10
+	utils.ToolsFirstBoxX = utils.ToolsUIX + 14
+	utils.ToolsFirstBoxY = utils.ToolsUIY + 2
+	utils.FarmItemsColumns = images.FarmItems.Bounds().Dx() / utils.UnitSize
 }
