@@ -7,7 +7,7 @@ const (
 	ChickenImg        = "chicken.png"
 	DogImg            = "dog.png"
 	FirstTownAudio    = "first-town.wav"
-	GroundLayer       = 0
+	GroundLayer       = 1
 	CollisionObjLayer = 1
 	SoundSampleRate   = 16000
 	UnitSize          = 32
@@ -17,9 +17,7 @@ const (
 const (
 	StartingX           = 12
 	StartingY           = 5
-	StartingFrame       = 0
 	AnimFrameCount      = 4
-	FrameDelay          = 4
 	MovementSpeed       = 2
 	AnimalFrameDelay    = 12
 	AnimalMovementSpeed = 1
@@ -56,18 +54,27 @@ const (
 	ForestMap
 )
 
+// Tilesets
+const (
+	TilesetGrassHill        = "grass_hill"
+	TilesetSoilGround       = "soil_ground"
+	TilesetHills            = "hills"
+	TilesetWater            = "water"
+	TilesetDarkerSoilGround = "darker_soil_ground"
+)
+
 type Location struct {
 	X int
 	Y int
 }
 
 var (
-	MapWidth      int
-	MapHeight     int
-	TileWidth     int
-	TileHeight    int
-	MapTileWidth  int
-	MapTileHeight int
+	MapWidth   int
+	MapHeight  int
+	TileWidth  int
+	TileHeight int
+	MapColumns int
+	MapRows    int
 
 	ToolsUIX         int
 	ToolsUIY         int
@@ -82,6 +89,7 @@ var (
 		"soil_ground.png",
 		"hills.png",
 		"water.png",
+		"darker_soil_ground.png",
 	}
 	ChickenPath1 = []Location{
 		{X: 2, Y: 2},

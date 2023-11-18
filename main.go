@@ -32,14 +32,15 @@ type Game struct {
 	Environment  *environment.Environment
 	Player       *player.Player
 	Animals      []*animal.Animal
+	CurrentMap   int
 	CurrentFrame int
 	Images       loader.ImageCollection
 }
 
 func hasMapCollisions(g *Game, animObj interfaces.AnimatedSprite) bool {
-	for tileY := 0; tileY < utils.MapTileHeight; tileY += 1 {
-		for tileX := 0; tileX < utils.MapTileWidth; tileX += 1 {
-			tile := g.Environment.Maps[0].Layers[utils.CollisionObjLayer].Tiles[tileY*utils.MapTileWidth+tileX]
+	for tileY := 0; tileY < utils.MapRows; tileY += 1 {
+		for tileX := 0; tileX < utils.MapColumns; tileX += 1 {
+			tile := g.Environment.Maps[0].Layers[utils.CollisionObjLayer].Tiles[tileY*utils.MapColumns+tileX]
 			if tile.ID == 0 {
 				continue
 			}
@@ -97,12 +98,45 @@ func animalHasCollisions(g *Game, animObj interfaces.AnimatedSprite) bool {
 	return false
 }
 
+func calculateTargetTile(g *Game) (tileX, tileY int) {
+	tileX = (g.Player.Collision.X0 + g.Player.XLoc) / utils.TileWidth
+	tileY = (g.Player.Collision.Y1 + g.Player.YLoc) / utils.TileHeight
+	if g.Player.Direction == utils.Front {
+		tileY += 1
+	} else if g.Player.Direction == utils.Back {
+		tileY -= 1
+	} else if g.Player.Direction == utils.Left {
+		tileX -= 1
+	} else if g.Player.Direction == utils.Right {
+		tileX += 1
+	}
+	return tileX, tileY
+}
+
+func isTile(g *Game, tileX, tileY, tileID int, tileset string) bool {
+	if (int(g.Environment.Maps[g.CurrentMap].Layers[utils.GroundLayer].Tiles[tileY*utils.MapColumns+tileX].ID) == tileID) &&
+		(g.Environment.Maps[g.CurrentMap].Layers[utils.GroundLayer].Tiles[tileY*utils.MapColumns+tileX].Tileset.Name ==
+			tileset) {
+		return true
+	} else {
+		return false
+	}
+}
+
 func checkMouse(g *Game) {
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		if g.Player.Backpack[g.Player.EquippedItem] == utils.ItemHoe {
 			g.Player.State = utils.HoeState
 			g.Player.Frame = 0
 			g.Player.StateTTL = utils.PlayerFrameCount
+
+			tileX, tileY := calculateTargetTile(g)
+			if isTile(g, tileX, tileY, 12, utils.TilesetGrassHill) {
+				// if target tile is a grass tile, make tile into tilled ground
+				g.Environment.Maps[g.CurrentMap].Layers[utils.GroundLayer].Tiles[tileY*utils.MapColumns+tileX].ID = 12
+				g.Environment.Maps[g.CurrentMap].Layers[utils.GroundLayer].Tiles[tileY*utils.MapColumns+tileX].Tileset =
+					g.Environment.Maps[g.CurrentMap].Tilesets[1]
+			}
 		} else if g.Player.Backpack[g.Player.EquippedItem] == utils.ItemAxe {
 			g.Player.State = utils.AxeState
 			g.Player.Frame = 0
@@ -111,6 +145,14 @@ func checkMouse(g *Game) {
 			g.Player.State = utils.WateringState
 			g.Player.Frame = 0
 			g.Player.StateTTL = utils.PlayerFrameCount
+
+			tileX, tileY := calculateTargetTile(g)
+			if isTile(g, tileX, tileY, 12, utils.TilesetSoilGround) {
+				// if target tile is tilled ground, make tile into watered ground
+				g.Environment.Maps[g.CurrentMap].Layers[utils.GroundLayer].Tiles[tileY*utils.MapColumns+tileX].ID = 12
+				g.Environment.Maps[g.CurrentMap].Layers[utils.GroundLayer].Tiles[tileY*utils.MapColumns+tileX].Tileset =
+					g.Environment.Maps[g.CurrentMap].Tilesets[4]
+			}
 		}
 	}
 }
@@ -235,10 +277,10 @@ func updateAnimals(g *Game) {
 
 func drawMap(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions, currMap int) {
 	for _, layer := range g.Environment.Maps[currMap].Layers {
-		for tileY := 0; tileY < utils.MapTileHeight; tileY += 1 {
-			for tileX := 0; tileX < utils.MapTileWidth; tileX += 1 {
+		for tileY := 0; tileY < utils.MapRows; tileY += 1 {
+			for tileX := 0; tileX < utils.MapColumns; tileX += 1 {
 				// find img of tile to draw
-				tileToDraw := layer.Tiles[tileY*utils.MapTileWidth+tileX]
+				tileToDraw := layer.Tiles[tileY*utils.MapColumns+tileX]
 				if tileToDraw.IsNil() {
 					continue
 				}
@@ -272,7 +314,7 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	drawOptions := ebiten.DrawImageOptions{}
 
-	drawMap(g, screen, drawOptions, g.Environment.CurrentMap)
+	drawMap(g, screen, drawOptions, g.CurrentMap)
 
 	// draw animals
 	for _, a := range g.Animals {
@@ -408,6 +450,7 @@ func main() {
 
 	game := Game{
 		Environment: env,
+		CurrentMap:  utils.FarmMap,
 		Player:      playerChar,
 		Animals:     []*animal.Animal{chicken1, chicken2, dog},
 		Images:      images,
@@ -429,8 +472,8 @@ func setConstants(gameMap *tiled.Map, images loader.ImageCollection) {
 	utils.MapHeight = gameMap.Height * gameMap.TileHeight
 	utils.TileWidth = gameMap.TileWidth
 	utils.TileHeight = gameMap.TileHeight
-	utils.MapTileWidth = gameMap.Width
-	utils.MapTileHeight = gameMap.Height
+	utils.MapColumns = gameMap.Width
+	utils.MapRows = gameMap.Height
 	utils.ToolsUIX = (utils.MapWidth / 2) - images.ToolsUI.Bounds().Dx()/2
 	utils.ToolsUIY = utils.MapHeight - 60
 	utils.ToolsFirstSlotX = utils.ToolsUIX + 22

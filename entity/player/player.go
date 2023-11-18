@@ -8,21 +8,27 @@ import (
 )
 
 type Player struct {
-	Spritesheet     *ebiten.Image
-	Frame           int
-	State           int
-	StateTTL        int
-	Direction       int
-	XLoc            int
-	YLoc            int
-	Dy              int
-	Dx              int
-	SpriteWidth     int
-	SpriteHeight    int
-	CollisionWidth  int
-	CollisionHeight int
-	Backpack        [utils.BackpackSize]int
-	EquippedItem    int
+	Spritesheet  *ebiten.Image
+	Frame        int
+	State        int
+	StateTTL     int
+	Direction    int
+	XLoc         int
+	YLoc         int
+	Dy           int
+	Dx           int
+	SpriteWidth  int
+	SpriteHeight int
+	Collision    CollisionBody
+	Backpack     [utils.BackpackSize]int
+	EquippedItem int
+}
+
+type CollisionBody struct {
+	X0 int
+	Y0 int
+	X1 int
+	Y1 int
 }
 
 func NewPlayer(spritesheet *ebiten.Image) *Player {
@@ -32,6 +38,12 @@ func NewPlayer(spritesheet *ebiten.Image) *Player {
 		YLoc:         utils.StartingY * utils.TileWidth,
 		SpriteWidth:  utils.PlayerSpriteWidth,
 		SpriteHeight: utils.PlayerSpriteHeight,
+		Collision: CollisionBody{
+			X0: 39,
+			Y0: 50,
+			X1: 57,
+			Y1: 64,
+		},
 		Backpack:     [utils.BackpackSize]int{2, 3, 10, 19, 42},
 		EquippedItem: 0,
 	}

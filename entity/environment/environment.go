@@ -15,16 +15,14 @@ import (
 )
 
 type Environment struct {
-	Maps       []*tiled.Map
-	Tilesets   map[string]*ebiten.Image
-	CurrentMap int
+	Maps     []*tiled.Map
+	Tilesets map[string]*ebiten.Image
 }
 
 func NewEnvironment(embeddedAssets embed.FS, gameMaps []*tiled.Map) *Environment {
 	return &Environment{
-		Maps:       gameMaps,
-		Tilesets:   loadTilesets(embeddedAssets),
-		CurrentMap: utils.FarmMap,
+		Maps:     gameMaps,
+		Tilesets: loadTilesets(embeddedAssets),
 	}
 }
 
