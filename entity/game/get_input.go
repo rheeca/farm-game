@@ -3,12 +3,13 @@ package game
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
+	"github.com/lafriks/go-tiled"
 	"guion-2d-project3/utils"
 )
 
 func checkMouse(g *Game) {
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
-		if g.Player.Backpack[g.Player.EquippedItem] == utils.ItemHoe {
+		if g.Player.Backpack[g.Player.EquippedItem].ID == utils.ItemHoe {
 			g.Player.State = utils.HoeState
 			g.Player.Frame = 0
 			g.Player.StateTTL = utils.PlayerFrameCount
@@ -20,11 +21,11 @@ func checkMouse(g *Game) {
 				g.Environment.Maps[g.CurrentMap].Layers[utils.GroundLayer].Tiles[tileY*utils.MapColumns+tileX].Tileset =
 					g.Environment.Maps[g.CurrentMap].Tilesets[1]
 			}
-		} else if g.Player.Backpack[g.Player.EquippedItem] == utils.ItemAxe {
+		} else if g.Player.Backpack[g.Player.EquippedItem].ID == utils.ItemAxe {
 			g.Player.State = utils.AxeState
 			g.Player.Frame = 0
 			g.Player.StateTTL = utils.PlayerFrameCount
-		} else if g.Player.Backpack[g.Player.EquippedItem] == utils.ItemWateringCan {
+		} else if g.Player.Backpack[g.Player.EquippedItem].ID == utils.ItemWateringCan {
 			g.Player.State = utils.WateringState
 			g.Player.Frame = 0
 			g.Player.StateTTL = utils.PlayerFrameCount
@@ -35,6 +36,24 @@ func checkMouse(g *Game) {
 				g.Environment.Maps[g.CurrentMap].Layers[utils.GroundLayer].Tiles[tileY*utils.MapColumns+tileX].ID = 12
 				g.Environment.Maps[g.CurrentMap].Layers[utils.GroundLayer].Tiles[tileY*utils.MapColumns+tileX].Tileset =
 					g.Environment.Maps[g.CurrentMap].Tilesets[4]
+			}
+		}
+	} else if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonRight) {
+		tileX, tileY := calculateTargetTile(g)
+
+		// pick up objects from the map
+		emptyTile := tiled.LayerTile{Nil: true}
+		if isMapObject(g, tileX, tileY, utils.MapWood, utils.TilesetTrees) {
+			if g.Player.AddToBackpack(utils.ItemWood2) {
+				g.Environment.Maps[g.CurrentMap].Layers[utils.ObjectsLayer].Tiles[tileY*utils.MapColumns+tileX] = &emptyTile
+			} else {
+				// TODO: alert player that backpack is full
+			}
+		} else if isMapObject(g, tileX, tileY, utils.MapStone3, utils.TilesetFlowersStones) {
+			if g.Player.AddToBackpack(utils.ItemRock1) {
+				g.Environment.Maps[g.CurrentMap].Layers[utils.ObjectsLayer].Tiles[tileY*utils.MapColumns+tileX] = &emptyTile
+			} else {
+				// TODO: alert player that backpack is full
 			}
 		}
 	}

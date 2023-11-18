@@ -1,17 +1,17 @@
 package utils
 
 const (
-	ProjectTitle      = "Project 3"
-	MapFile           = "farm_map.tmx"
-	PlayerImg         = "player.png"
-	ChickenImg        = "chicken.png"
-	DogImg            = "dog.png"
-	FirstTownAudio    = "first-town.wav"
-	GroundLayer       = 1
-	CollisionObjLayer = 1
-	SoundSampleRate   = 16000
-	UnitSize          = 32
-	ToolsUIBoxSize    = 48
+	ProjectTitle    = "Project 3"
+	MapFile         = "farm_map.tmx"
+	PlayerImg       = "player.png"
+	ChickenImg      = "chicken.png"
+	DogImg          = "dog.png"
+	FirstTownAudio  = "first-town.wav"
+	GroundLayer     = 1
+	ObjectsLayer    = 2
+	SoundSampleRate = 16000
+	UnitSize        = 32
+	ToolsUIBoxSize  = 48
 )
 
 const (
@@ -61,6 +61,8 @@ const (
 	TilesetHills            = "hills"
 	TilesetWater            = "water"
 	TilesetDarkerSoilGround = "darker_soil_ground"
+	TilesetFlowersStones    = "flowers_stones"
+	TilesetTrees            = "trees"
 )
 
 type Location struct {
@@ -90,6 +92,8 @@ var (
 		"hills.png",
 		"water.png",
 		"darker_soil_ground.png",
+		"flowers_stones.png",
+		"trees.png",
 	}
 	ChickenPath1 = []Location{
 		{X: 2, Y: 2},

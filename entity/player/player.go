@@ -20,7 +20,7 @@ type Player struct {
 	SpriteWidth  int
 	SpriteHeight int
 	Collision    CollisionBody
-	Backpack     [utils.BackpackSize]int
+	Backpack     [utils.BackpackSize]BackpackItem
 	EquippedItem int
 }
 
@@ -29,6 +29,11 @@ type CollisionBody struct {
 	Y0 int
 	X1 int
 	Y1 int
+}
+
+type BackpackItem struct {
+	ID    int
+	Count int
 }
 
 func NewPlayer(spritesheet *ebiten.Image) *Player {
@@ -44,7 +49,11 @@ func NewPlayer(spritesheet *ebiten.Image) *Player {
 			X1: 57,
 			Y1: 64,
 		},
-		Backpack:     [utils.BackpackSize]int{2, 3, 10, 19, 42},
+		Backpack: [utils.BackpackSize]BackpackItem{
+			{ID: 2, Count: 1},
+			{ID: 3, Count: 1},
+			{ID: 10, Count: 1},
+		},
 		EquippedItem: 0,
 	}
 }
@@ -63,6 +72,34 @@ func (p *Player) HasCollisionWith(object interfaces.AnimatedSprite) bool {
 		Height: float64(object.GetHeight()),
 	}
 	if collision.AABBCollision(playerBounds, objectBounds) {
+		return true
+	}
+	return false
+}
+
+func (p *Player) AddToBackpack(itemID int) bool {
+	// if item already exists in backpack and is not a tool, add count by 1
+	for i, v := range p.Backpack {
+		if v.ID == itemID && !isTool(v.ID) {
+			p.Backpack[i].Count += 1
+			return true
+		}
+	}
+	// if there is an empty slot, put new item there
+	for i, v := range p.Backpack {
+		if v.ID == 0 {
+			p.Backpack[i] = BackpackItem{
+				ID:    itemID,
+				Count: 1,
+			}
+			return true
+		}
+	}
+	return false
+}
+
+func isTool(itemID int) bool {
+	if itemID == 2 || itemID == 3 || itemID == 10 {
 		return true
 	}
 	return false

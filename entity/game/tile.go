@@ -28,3 +28,13 @@ func isTile(g *Game, tileX, tileY, tileID int, tileset string) bool {
 		return false
 	}
 }
+
+func isMapObject(g *Game, tileX, tileY, tileID int, tileset string) bool {
+	if (int(g.Environment.Maps[g.CurrentMap].Layers[utils.ObjectsLayer].Tiles[tileY*utils.MapColumns+tileX].ID) == tileID) &&
+		(g.Environment.Maps[g.CurrentMap].Layers[utils.ObjectsLayer].Tiles[tileY*utils.MapColumns+tileX].Tileset.Name ==
+			tileset) {
+		return true
+	} else {
+		return false
+	}
+}

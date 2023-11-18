@@ -9,7 +9,7 @@ import (
 func hasMapCollisions(g *Game, animObj interfaces.AnimatedSprite) bool {
 	for tileY := 0; tileY < utils.MapRows; tileY += 1 {
 		for tileX := 0; tileX < utils.MapColumns; tileX += 1 {
-			tile := g.Environment.Maps[0].Layers[utils.CollisionObjLayer].Tiles[tileY*utils.MapColumns+tileX]
+			tile := g.Environment.Maps[0].Layers[utils.ObjectsLayer].Tiles[tileY*utils.MapColumns+tileX]
 			if tile.ID == 0 {
 				continue
 			}

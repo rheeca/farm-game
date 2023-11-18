@@ -1,7 +1,9 @@
 package game
 
 import (
+	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
+	"golang.org/x/image/font/basicfont"
 	"guion-2d-project3/entity/animal"
 	"guion-2d-project3/entity/environment"
 	"guion-2d-project3/entity/loader"
@@ -60,16 +62,22 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	screen.DrawImage(g.Images.SelectedTool, &drawOptions)
 
 	for i, item := range g.Player.Backpack {
-		if item == 0 {
+		if item.ID == 0 {
 			continue
 		}
 		drawOptions.GeoM.Reset()
 		drawOptions.GeoM.Translate(float64(utils.ToolsFirstSlotX+(i*utils.ToolsUIBoxSize)), float64(utils.ToolsFirstSlotY))
 
-		screen.DrawImage(g.Images.FarmItems.SubImage(image.Rect((item%utils.FarmItemsColumns)*utils.UnitSize,
-			(item/utils.FarmItemsColumns)*utils.UnitSize,
-			(item%utils.FarmItemsColumns)*utils.UnitSize+utils.UnitSize,
-			(item/utils.FarmItemsColumns)*utils.UnitSize+utils.UnitSize)).(*ebiten.Image), &drawOptions)
+		screen.DrawImage(g.Images.FarmItems.SubImage(image.Rect((item.ID%utils.FarmItemsColumns)*utils.UnitSize,
+			(item.ID/utils.FarmItemsColumns)*utils.UnitSize,
+			(item.ID%utils.FarmItemsColumns)*utils.UnitSize+utils.UnitSize,
+			(item.ID/utils.FarmItemsColumns)*utils.UnitSize+utils.UnitSize)).(*ebiten.Image), &drawOptions)
+
+		// draw item count
+		if item.Count > 1 {
+			DrawCenteredText(screen, basicfont.Face7x13, fmt.Sprintf("%d", item.Count),
+				utils.ToolsFirstSlotX+(i*utils.ToolsUIBoxSize)+utils.UnitSize, utils.ToolsFirstSlotY)
+		}
 	}
 }
 
