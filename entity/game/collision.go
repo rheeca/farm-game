@@ -58,6 +58,26 @@ func hasCollision(dx, dy int, bodyA, bodyB model.CollisionBody) bool {
 	return false
 }
 
+func isClicked(x, y int, body model.SpriteBody) bool {
+	// check if mouse clicked on a body
+	aBounds := collision.BoundingBox{
+		X:      float64(x),
+		Y:      float64(y),
+		Width:  1,
+		Height: 1,
+	}
+	bBounds := collision.BoundingBox{
+		X:      float64(body.X),
+		Y:      float64(body.Y),
+		Width:  float64(body.Width),
+		Height: float64(body.Height),
+	}
+	if collision.AABBCollision(aBounds, bBounds) {
+		return true
+	}
+	return false
+}
+
 func playerHasCollisions(g *Game) bool {
 	// TODO: check for map collisions
 	//if hasMapCollisions(g, g.Player) {

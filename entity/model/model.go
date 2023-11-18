@@ -6,3 +6,10 @@ type CollisionBody struct {
 	X1 int
 	Y1 int
 }
+
+type SpriteBody struct {
+	X      int
+	Y      int
+	Width  int
+	Height int
+}

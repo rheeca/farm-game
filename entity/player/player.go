@@ -16,8 +16,7 @@ type Player struct {
 	YLoc         int
 	Dy           int
 	Dx           int
-	SpriteWidth  int
-	SpriteHeight int
+	Sprite       model.SpriteBody
 	Collision    model.CollisionBody
 	Backpack     [utils.BackpackSize]BackpackItem
 	EquippedItem int
@@ -32,11 +31,15 @@ func NewPlayer(spritesheet *ebiten.Image) *Player {
 	xLoc := utils.StartingX * utils.TileWidth
 	yLoc := utils.StartingY * utils.TileWidth
 	return &Player{
-		Spritesheet:  spritesheet,
-		XLoc:         xLoc,
-		YLoc:         yLoc,
-		SpriteWidth:  utils.PlayerSpriteWidth,
-		SpriteHeight: utils.PlayerSpriteHeight,
+		Spritesheet: spritesheet,
+		XLoc:        xLoc,
+		YLoc:        yLoc,
+		Sprite: model.SpriteBody{
+			X:      xLoc,
+			Y:      yLoc,
+			Width:  utils.PlayerSpriteWidth,
+			Height: utils.PlayerSpriteHeight,
+		},
 		Collision: model.CollisionBody{
 			X0: xLoc + 39,
 			Y0: yLoc + 50,
@@ -97,11 +100,11 @@ func (p *Player) GetDy() int {
 }
 
 func (p *Player) GetWidth() int {
-	return p.SpriteWidth
+	return p.Sprite.Width
 }
 
 func (p *Player) GetHeight() int {
-	return p.SpriteHeight
+	return p.Sprite.Height
 }
 
 func (p *Player) UpdateLocation() {

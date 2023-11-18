@@ -36,20 +36,29 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	// draw chickens
 	for _, c := range g.Chickens {
 		drawOptions.GeoM.Reset()
-		drawOptions.GeoM.Translate(float64(c.XLoc), float64(c.YLoc))
-		screen.DrawImage(c.Spritesheet.SubImage(image.Rect(c.Frame*c.SpriteWidth,
-			(c.State*utils.AnimalNumOfDirections+c.Direction)*c.SpriteHeight,
-			c.Frame*c.SpriteWidth+c.SpriteWidth,
-			(c.State*utils.NumOfDirections+c.Direction)*c.SpriteHeight+c.SpriteHeight)).(*ebiten.Image), &drawOptions)
+
+		var spriteHeight, yLoc int
+		if c.State == utils.ChickenHeartState {
+			spriteHeight = utils.UnitSize * 2
+			yLoc = c.YLoc - utils.UnitSize
+		} else {
+			spriteHeight = c.Sprite.Height
+			yLoc = c.YLoc
+		}
+		drawOptions.GeoM.Translate(float64(c.XLoc), float64(yLoc))
+		screen.DrawImage(c.Spritesheet.SubImage(image.Rect(c.Frame*c.Sprite.Width,
+			(c.State*utils.AnimalNumOfDirections+c.Direction)*c.Sprite.Height,
+			c.Frame*c.Sprite.Width+c.Sprite.Width,
+			(c.State*utils.AnimalNumOfDirections+c.Direction)*c.Sprite.Height+spriteHeight)).(*ebiten.Image), &drawOptions)
 	}
 
 	// draw player
 	drawOptions.GeoM.Reset()
 	drawOptions.GeoM.Translate(float64(g.Player.XLoc), float64(g.Player.YLoc))
-	screen.DrawImage(g.Player.Spritesheet.SubImage(image.Rect(g.Player.Frame*g.Player.SpriteWidth,
-		(g.Player.State*utils.NumOfDirections+g.Player.Direction)*g.Player.SpriteHeight,
-		g.Player.Frame*g.Player.SpriteWidth+g.Player.SpriteWidth,
-		(g.Player.State*utils.NumOfDirections+g.Player.Direction)*g.Player.SpriteHeight+g.Player.SpriteHeight)).(*ebiten.Image), &drawOptions)
+	screen.DrawImage(g.Player.Spritesheet.SubImage(image.Rect(g.Player.Frame*g.Player.Sprite.Width,
+		(g.Player.State*utils.NumOfDirections+g.Player.Direction)*g.Player.Sprite.Height,
+		g.Player.Frame*g.Player.Sprite.Width+g.Player.Sprite.Width,
+		(g.Player.State*utils.NumOfDirections+g.Player.Direction)*g.Player.Sprite.Height+g.Player.Sprite.Height)).(*ebiten.Image), &drawOptions)
 
 	// draw tools ui
 	drawOptions.GeoM.Reset()

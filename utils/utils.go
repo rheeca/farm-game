@@ -46,6 +46,7 @@ const (
 // animal sprite sheet
 const (
 	ChickenIdleState      = 0
+	ChickenHeartState     = 8
 	AnimalRight           = 0
 	AnimalLeft            = 1
 	AnimalNumOfDirections = 2
@@ -102,17 +103,9 @@ var (
 		"flowers_stones.png",
 		"trees.png",
 	}
-	ChickenPath1 = []Location{
-		{X: 2, Y: 2},
-		{X: 6, Y: 2},
-	}
-	ChickenPath2 = []Location{
-		{X: 4, Y: 3},
-		{X: 4, Y: 6},
-	}
-	DogPath = []Location{
-		{X: 13, Y: 11},
-		{X: 21, Y: 11},
+	ChickenLocations = []Location{
+		{X: 5, Y: 5},
+		{X: 7, Y: 9},
 	}
 )
 

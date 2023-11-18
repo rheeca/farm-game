@@ -96,13 +96,17 @@ func main() {
 	if err != nil {
 		fmt.Println("error loading chicken image")
 	}
-	chicken := animal.NewChicken(chickenImage)
+	var chickens []*animal.Chicken
+	for _, v := range utils.ChickenLocations {
+		chicken := animal.NewChicken(chickenImage, v.X, v.Y)
+		chickens = append(chickens, chicken)
+	}
 
 	gameObj := game.Game{
 		Environment: env,
 		CurrentMap:  utils.FarmMap,
 		Player:      playerChar,
-		Chickens:    []*animal.Chicken{chicken},
+		Chickens:    chickens,
 		Images:      images,
 	}
 

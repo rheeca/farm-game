@@ -40,6 +40,16 @@ func checkMouse(g *Game) {
 		}
 	} else if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonRight) {
 		tileX, tileY := calculateTargetTile(g)
+		mouseX, mouseY := ebiten.CursorPosition()
+
+		// if target tile has an animated character
+		for _, c := range g.Chickens {
+			if isClicked(mouseX, mouseY, c.Sprite) {
+				c.State = utils.ChickenHeartState
+				c.Frame = 0
+				c.AnimationTTL = utils.AnimalFrameCount
+			}
+		}
 
 		// pick up objects from the map
 		emptyTile := tiled.LayerTile{Nil: true}
@@ -73,7 +83,7 @@ func getPlayerInput(g *Game) {
 			g.Player.Dx = 0
 		}
 	} else if ebiten.IsKeyPressed(ebiten.KeyD) &&
-		g.Player.XLoc < utils.MapWidth-g.Player.SpriteWidth {
+		g.Player.XLoc < utils.MapWidth-g.Player.Sprite.Width {
 		g.Player.Direction = utils.Right
 		g.Player.State = utils.WalkState
 		g.Player.Dx += utils.MovementSpeed
@@ -92,7 +102,7 @@ func getPlayerInput(g *Game) {
 			g.Player.Dy = 0
 		}
 	} else if ebiten.IsKeyPressed(ebiten.KeyS) &&
-		g.Player.YLoc < utils.MapHeight-g.Player.SpriteHeight {
+		g.Player.YLoc < utils.MapHeight-g.Player.Sprite.Height {
 		g.Player.Direction = utils.Front
 		g.Player.State = utils.WalkState
 		g.Player.Dy += utils.MovementSpeed
