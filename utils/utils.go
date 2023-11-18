@@ -5,7 +5,6 @@ const (
 	MapFile         = "farm_map.tmx"
 	PlayerImg       = "player.png"
 	ChickenImg      = "chicken.png"
-	DogImg          = "dog.png"
 	FirstTownAudio  = "first-town.wav"
 	GroundLayer     = 1
 	ObjectsLayer    = 2
@@ -15,13 +14,10 @@ const (
 )
 
 const (
-	StartingX           = 12
-	StartingY           = 5
-	AnimFrameCount      = 4
-	MovementSpeed       = 2
-	AnimalFrameDelay    = 12
-	AnimalMovementSpeed = 1
-	BackpackSize        = 9
+	StartingX     = 12
+	StartingY     = 5
+	MovementSpeed = 2
+	BackpackSize  = 9
 )
 
 // Directions
@@ -45,6 +41,17 @@ const (
 	PlayerFrameDelay   = 8
 	PlayerSpriteWidth  = 96
 	PlayerSpriteHeight = 96
+)
+
+// animal sprite sheet
+const (
+	ChickenIdleState      = 0
+	AnimalRight           = 0
+	AnimalLeft            = 1
+	AnimalNumOfDirections = 2
+	AnimalFrameCount      = 8
+	AnimalFrameDelay      = 12
+	AnimalMovementSpeed   = 1
 )
 
 // Maps

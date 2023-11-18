@@ -15,7 +15,7 @@ import (
 type Game struct {
 	Environment  *environment.Environment
 	Player       *player.Player
-	Animals      []*animal.Animal
+	Chickens     []*animal.Chicken
 	CurrentMap   int
 	CurrentFrame int
 	Images       loader.ImageCollection
@@ -33,14 +33,14 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	drawMap(g, screen, drawOptions, g.CurrentMap)
 
-	// draw animals
-	for _, a := range g.Animals {
+	// draw chickens
+	for _, c := range g.Chickens {
 		drawOptions.GeoM.Reset()
-		drawOptions.GeoM.Translate(float64(a.XLoc), float64(a.YLoc))
-		screen.DrawImage(a.Spritesheet.SubImage(image.Rect(a.Frame*a.Width,
-			a.Direction*a.Height,
-			a.Frame*a.Width+a.Width,
-			a.Direction*a.Height+a.Height)).(*ebiten.Image), &drawOptions)
+		drawOptions.GeoM.Translate(float64(c.XLoc), float64(c.YLoc))
+		screen.DrawImage(c.Spritesheet.SubImage(image.Rect(c.Frame*c.SpriteWidth,
+			(c.State*utils.AnimalNumOfDirections+c.Direction)*c.SpriteHeight,
+			c.Frame*c.SpriteWidth+c.SpriteWidth,
+			(c.State*utils.NumOfDirections+c.Direction)*c.SpriteHeight+c.SpriteHeight)).(*ebiten.Image), &drawOptions)
 	}
 
 	// draw player

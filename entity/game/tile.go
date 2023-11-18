@@ -5,8 +5,8 @@ import (
 )
 
 func calculateTargetTile(g *Game) (tileX, tileY int) {
-	tileX = (g.Player.Collision.X0 + g.Player.XLoc) / utils.TileWidth
-	tileY = (g.Player.Collision.Y1 + g.Player.YLoc) / utils.TileHeight
+	tileX = g.Player.Collision.X0 / utils.TileWidth
+	tileY = g.Player.Collision.Y1 / utils.TileHeight
 	if g.Player.Direction == utils.Front {
 		tileY += 1
 	} else if g.Player.Direction == utils.Back {

@@ -1,9 +1,8 @@
 package player
 
 import (
-	"github.com/co0p/tankism/lib/collision"
 	"github.com/hajimehoshi/ebiten/v2"
-	"guion-2d-project3/interfaces"
+	"guion-2d-project3/entity/model"
 	"guion-2d-project3/utils"
 )
 
@@ -19,16 +18,9 @@ type Player struct {
 	Dx           int
 	SpriteWidth  int
 	SpriteHeight int
-	Collision    CollisionBody
+	Collision    model.CollisionBody
 	Backpack     [utils.BackpackSize]BackpackItem
 	EquippedItem int
-}
-
-type CollisionBody struct {
-	X0 int
-	Y0 int
-	X1 int
-	Y1 int
 }
 
 type BackpackItem struct {
@@ -37,17 +29,19 @@ type BackpackItem struct {
 }
 
 func NewPlayer(spritesheet *ebiten.Image) *Player {
+	xLoc := utils.StartingX * utils.TileWidth
+	yLoc := utils.StartingY * utils.TileWidth
 	return &Player{
 		Spritesheet:  spritesheet,
-		XLoc:         utils.StartingX * utils.TileWidth,
-		YLoc:         utils.StartingY * utils.TileWidth,
+		XLoc:         xLoc,
+		YLoc:         yLoc,
 		SpriteWidth:  utils.PlayerSpriteWidth,
 		SpriteHeight: utils.PlayerSpriteHeight,
-		Collision: CollisionBody{
-			X0: 39,
-			Y0: 50,
-			X1: 57,
-			Y1: 64,
+		Collision: model.CollisionBody{
+			X0: xLoc + 39,
+			Y0: yLoc + 50,
+			X1: xLoc + 57,
+			Y1: yLoc + 64,
 		},
 		Backpack: [utils.BackpackSize]BackpackItem{
 			{ID: 2, Count: 1},
@@ -56,25 +50,6 @@ func NewPlayer(spritesheet *ebiten.Image) *Player {
 		},
 		EquippedItem: 0,
 	}
-}
-
-func (p *Player) HasCollisionWith(object interfaces.AnimatedSprite) bool {
-	playerBounds := collision.BoundingBox{
-		X:      float64(p.XLoc + p.Dx),
-		Y:      float64(p.YLoc + p.Dy),
-		Width:  float64(p.SpriteWidth),
-		Height: float64(p.SpriteHeight),
-	}
-	objectBounds := collision.BoundingBox{
-		X:      float64(object.GetXLoc() + object.GetDx()),
-		Y:      float64(object.GetYLoc() + object.GetDy()),
-		Width:  float64(object.GetWidth()),
-		Height: float64(object.GetHeight()),
-	}
-	if collision.AABBCollision(playerBounds, objectBounds) {
-		return true
-	}
-	return false
 }
 
 func (p *Player) AddToBackpack(itemID int) bool {
@@ -132,6 +107,10 @@ func (p *Player) GetHeight() int {
 func (p *Player) UpdateLocation() {
 	p.XLoc += p.Dx
 	p.YLoc += p.Dy
+	p.Collision.X0 += p.Dx
+	p.Collision.X1 += p.Dx
+	p.Collision.Y0 += p.Dy
+	p.Collision.Y1 += p.Dy
 	p.Dx = 0
 	p.Dy = 0
 }

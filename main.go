@@ -3,17 +3,16 @@ package main
 import (
 	"embed"
 	"fmt"
-	"log"
-	"os"
-	"path"
-	"time"
-
 	"guion-2d-project3/entity/animal"
 	"guion-2d-project3/entity/environment"
 	"guion-2d-project3/entity/game"
 	"guion-2d-project3/entity/loader"
 	"guion-2d-project3/entity/player"
 	"guion-2d-project3/utils"
+	"log"
+	"os"
+	"path"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/audio"
@@ -89,7 +88,7 @@ func main() {
 	playerChar := player.NewPlayer(playerImage)
 
 	// load chickens
-	embeddedFile, err = EmbeddedAssets.Open(path.Join("assets", utils.ChickenImg))
+	embeddedFile, err = EmbeddedAssets.Open(path.Join("assets", "animals", utils.ChickenImg))
 	if err != nil {
 		log.Fatal("failed to load embedded image:", embeddedFile, err)
 	}
@@ -97,25 +96,13 @@ func main() {
 	if err != nil {
 		fmt.Println("error loading chicken image")
 	}
-	chicken1 := animal.NewAnimal(chickenImage, utils.ChickenPath1)
-	chicken2 := animal.NewAnimal(chickenImage, utils.ChickenPath2)
-
-	// load dog
-	embeddedFile, err = EmbeddedAssets.Open(path.Join("assets", utils.DogImg))
-	if err != nil {
-		log.Fatal("failed to load embedded image:", embeddedFile, err)
-	}
-	dogImage, _, err := ebitenutil.NewImageFromReader(embeddedFile)
-	if err != nil {
-		fmt.Println("error loading dog image")
-	}
-	dog := animal.NewAnimal(dogImage, utils.DogPath)
+	chicken := animal.NewChicken(chickenImage)
 
 	gameObj := game.Game{
 		Environment: env,
 		CurrentMap:  utils.FarmMap,
 		Player:      playerChar,
-		Animals:     []*animal.Animal{chicken1, chicken2, dog},
+		Chickens:    []*animal.Chicken{chicken},
 		Images:      images,
 	}
 
