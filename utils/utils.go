@@ -5,6 +5,7 @@ const (
 	MapFile         = "farm_map.tmx"
 	PlayerImg       = "player.png"
 	ChickenImg      = "chicken.png"
+	CowImg          = "cow.png"
 	FirstTownAudio  = "first-town.wav"
 	GroundLayer     = 1
 	ObjectsLayer    = 2
@@ -45,14 +46,20 @@ const (
 
 // animal sprite sheet
 const (
-	ChickenIdleState      = 0
-	ChickenHeartState     = 8
 	AnimalRight           = 0
 	AnimalLeft            = 1
 	AnimalNumOfDirections = 2
 	AnimalFrameCount      = 8
 	AnimalFrameDelay      = 12
 	AnimalMovementSpeed   = 1
+
+	ChickenIdleState  = 0
+	ChickenHeartState = 8
+
+	CowIdleState    = 0
+	CowHeartState   = 8
+	CowSpriteWidth  = 64
+	CowSpriteHeight = 64
 )
 
 // Maps
@@ -105,7 +112,11 @@ var (
 	}
 	ChickenLocations = []Location{
 		{X: 5, Y: 5},
-		{X: 7, Y: 9},
+		{X: 6, Y: 7},
+	}
+	CowLocations = []Location{
+		{X: 5, Y: 11},
+		{X: 7, Y: 13},
 	}
 )
 

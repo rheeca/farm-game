@@ -102,11 +102,27 @@ func main() {
 		chickens = append(chickens, chicken)
 	}
 
+	// load cows
+	embeddedFile, err = EmbeddedAssets.Open(path.Join("assets", "animals", utils.CowImg))
+	if err != nil {
+		log.Fatal("failed to load embedded image:", embeddedFile, err)
+	}
+	cowImage, _, err := ebitenutil.NewImageFromReader(embeddedFile)
+	if err != nil {
+		fmt.Println("error loading cow image")
+	}
+	var cows []*animal.Cow
+	for _, v := range utils.CowLocations {
+		cow := animal.NewCow(cowImage, v.X, v.Y)
+		cows = append(cows, cow)
+	}
+
 	gameObj := game.Game{
 		Environment: env,
 		CurrentMap:  utils.FarmMap,
 		Player:      playerChar,
 		Chickens:    chickens,
+		Cows:        cows,
 		Images:      images,
 	}
 

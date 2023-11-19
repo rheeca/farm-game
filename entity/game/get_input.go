@@ -51,6 +51,14 @@ func checkMouse(g *Game) {
 			}
 		}
 
+		for _, c := range g.Cows {
+			if isClicked(mouseX, mouseY, c.Sprite) {
+				c.State = utils.CowHeartState
+				c.Frame = 0
+				c.AnimationTTL = utils.AnimalFrameCount
+			}
+		}
+
 		// pick up objects from the map
 		emptyTile := tiled.LayerTile{Nil: true}
 		if isMapObject(g, tileX, tileY, utils.MapWood, utils.TilesetTrees) {

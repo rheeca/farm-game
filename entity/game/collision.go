@@ -90,11 +90,17 @@ func playerHasCollisions(g *Game) bool {
 			return true
 		}
 	}
+	for _, c := range g.Cows {
+		if hasCollision(g.Player.Dx, g.Player.Dy, g.Player.Collision, c.Collision) {
+			return true
+		}
+	}
 	return false
 }
 
 func updateAnimals(g *Game) {
 	for i, _ := range g.Chickens {
 		g.Chickens[i].UpdateFrame(g.CurrentFrame)
+		g.Cows[i].UpdateFrame(g.CurrentFrame)
 	}
 }
