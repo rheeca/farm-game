@@ -23,15 +23,6 @@ import (
 //go:embed assets/*
 var EmbeddedAssets embed.FS
 
-func loadMapFromEmbedded(name string) (*tiled.Map, error) {
-	embeddedMap, err := tiled.LoadFile(name,
-		tiled.WithFileSystem(EmbeddedAssets))
-	if err != nil {
-		return nil, err
-	}
-	return embeddedMap, nil
-}
-
 func loadWavFromEmbedded(name string, context *audio.Context) (soundPlayer *audio.Player, err error) {
 	soundFile, err := EmbeddedAssets.Open(path.Join("assets", "sounds", name))
 	if err != nil {
@@ -49,7 +40,7 @@ func loadWavFromEmbedded(name string, context *audio.Context) (soundPlayer *audi
 }
 
 func main() {
-	gameMap, err := loadMapFromEmbedded(path.Join("assets", utils.MapFile))
+	gameMap, err := utils.LoadMapFromEmbedded(EmbeddedAssets, path.Join("assets", utils.FarmMapFile))
 	if err != nil {
 		fmt.Printf("error parsing map: %s", err.Error())
 		os.Exit(2)

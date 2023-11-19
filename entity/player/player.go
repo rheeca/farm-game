@@ -35,10 +35,10 @@ func NewPlayer(spritesheet *ebiten.Image) *Player {
 		XLoc:        xLoc,
 		YLoc:        yLoc,
 		Sprite: model.SpriteBody{
-			X:      xLoc,
-			Y:      yLoc,
-			Width:  utils.PlayerSpriteWidth,
-			Height: utils.PlayerSpriteHeight,
+			X:      xLoc + 39,
+			Y:      yLoc + 35,
+			Width:  20,
+			Height: 30,
 		},
 		Collision: model.CollisionBody{
 			X:      xLoc + 39,
@@ -112,6 +112,8 @@ func (p *Player) UpdateLocation() {
 	p.YLoc += p.Dy
 	p.Collision.X += p.Dx
 	p.Collision.Y += p.Dy
+	p.Sprite.X += p.Dx
+	p.Sprite.Y += p.Dy
 	p.Dx = 0
 	p.Dy = 0
 }

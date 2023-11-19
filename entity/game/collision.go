@@ -9,21 +9,23 @@ import (
 func hasMapCollisions(g *Game, dx, dy int, collisionBody model.CollisionBody) bool {
 	for tileY := 0; tileY < utils.MapRows; tileY += 1 {
 		for tileX := 0; tileX < utils.MapColumns; tileX += 1 {
-			tile := g.Environment.Maps[g.CurrentMap].Layers[utils.ObjectsLayer].Tiles[tileY*utils.MapColumns+tileX]
-			if tile.ID == 0 {
-				continue
-			}
-			tileXpos := utils.TileWidth * tileX
-			tileYpos := utils.TileHeight * tileY
+			for _, layer := range utils.CollisionLayers {
+				tile := g.Environment.Maps[g.CurrentMap].Layers[layer].Tiles[tileY*utils.MapColumns+tileX]
+				if tile.ID == 0 {
+					continue
+				}
+				tileXpos := utils.TileWidth * tileX
+				tileYpos := utils.TileHeight * tileY
 
-			tileCollision := model.CollisionBody{
-				X:      tileXpos,
-				Y:      tileYpos,
-				Width:  utils.TileWidth,
-				Height: utils.TileHeight,
-			}
-			if hasCollision(dx, dy, collisionBody, tileCollision) {
-				return true
+				tileCollision := model.CollisionBody{
+					X:      tileXpos,
+					Y:      tileYpos,
+					Width:  utils.TileWidth,
+					Height: utils.TileHeight,
+				}
+				if hasCollision(dx, dy, collisionBody, tileCollision) {
+					return true
+				}
 			}
 		}
 	}
@@ -90,7 +92,7 @@ func playerHasCollisions(g *Game) bool {
 }
 
 func updateAnimals(g *Game) {
-	for i, _ := range g.Chickens {
+	for i := range g.Chickens {
 		g.Chickens[i].UpdateFrame(g.CurrentFrame)
 		g.Cows[i].UpdateFrame(g.CurrentFrame)
 	}

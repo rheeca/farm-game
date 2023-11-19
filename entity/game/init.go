@@ -66,10 +66,10 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	// draw player
 	drawOptions.GeoM.Reset()
 	drawOptions.GeoM.Translate(float64(g.Player.XLoc), float64(g.Player.YLoc))
-	screen.DrawImage(g.Player.Spritesheet.SubImage(image.Rect(g.Player.Frame*g.Player.Sprite.Width,
-		(g.Player.State*utils.NumOfDirections+g.Player.Direction)*g.Player.Sprite.Height,
-		g.Player.Frame*g.Player.Sprite.Width+g.Player.Sprite.Width,
-		(g.Player.State*utils.NumOfDirections+g.Player.Direction)*g.Player.Sprite.Height+g.Player.Sprite.Height)).(*ebiten.Image), &drawOptions)
+	screen.DrawImage(g.Player.Spritesheet.SubImage(image.Rect(g.Player.Frame*utils.PlayerSpriteWidth,
+		(g.Player.State*utils.NumOfDirections+g.Player.Direction)*utils.PlayerSpriteHeight,
+		g.Player.Frame*utils.PlayerSpriteWidth+utils.PlayerSpriteWidth,
+		(g.Player.State*utils.NumOfDirections+g.Player.Direction)*utils.PlayerSpriteHeight+utils.PlayerSpriteHeight)).(*ebiten.Image), &drawOptions)
 
 	// draw tools ui
 	drawOptions.GeoM.Reset()

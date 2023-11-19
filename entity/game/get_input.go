@@ -81,7 +81,7 @@ func getPlayerInput(g *Game) {
 	g.Player.UpdateFrame(g.CurrentFrame)
 
 	checkMouse(g)
-	if ebiten.IsKeyPressed(ebiten.KeyA) && g.Player.XLoc > 0 {
+	if ebiten.IsKeyPressed(ebiten.KeyA) && g.Player.Sprite.X > 0 {
 		g.Player.Direction = utils.Left
 		g.Player.State = utils.WalkState
 		g.Player.Dx -= utils.MovementSpeed
@@ -91,7 +91,7 @@ func getPlayerInput(g *Game) {
 			g.Player.Dx = 0
 		}
 	} else if ebiten.IsKeyPressed(ebiten.KeyD) &&
-		g.Player.XLoc < utils.MapWidth-g.Player.Sprite.Width {
+		g.Player.Sprite.X < utils.MapWidth-g.Player.Sprite.Width {
 		g.Player.Direction = utils.Right
 		g.Player.State = utils.WalkState
 		g.Player.Dx += utils.MovementSpeed
@@ -100,7 +100,7 @@ func getPlayerInput(g *Game) {
 		} else {
 			g.Player.Dx = 0
 		}
-	} else if ebiten.IsKeyPressed(ebiten.KeyW) && g.Player.YLoc > 0 {
+	} else if ebiten.IsKeyPressed(ebiten.KeyW) && g.Player.Sprite.Y > 0 {
 		g.Player.Direction = utils.Back
 		g.Player.State = utils.WalkState
 		g.Player.Dy -= utils.MovementSpeed
@@ -110,7 +110,7 @@ func getPlayerInput(g *Game) {
 			g.Player.Dy = 0
 		}
 	} else if ebiten.IsKeyPressed(ebiten.KeyS) &&
-		g.Player.YLoc < utils.MapHeight-g.Player.Sprite.Height {
+		g.Player.Sprite.Y < utils.MapHeight-g.Player.Sprite.Height {
 		g.Player.Direction = utils.Front
 		g.Player.State = utils.WalkState
 		g.Player.Dy += utils.MovementSpeed

@@ -4,6 +4,7 @@ import (
 	"embed"
 	"fmt"
 	"log"
+	"os"
 	"path"
 	"strings"
 
@@ -20,6 +21,14 @@ type Environment struct {
 }
 
 func NewEnvironment(embeddedAssets embed.FS, gameMaps []*tiled.Map) *Environment {
+	animalsMap, err := utils.LoadMapFromEmbedded(embeddedAssets,
+		path.Join("assets", utils.AnimalsMapFile))
+	if err != nil {
+		fmt.Printf("error parsing map: %s", err.Error())
+		os.Exit(2)
+	}
+	gameMaps = append(gameMaps, animalsMap)
+
 	return &Environment{
 		Maps:     gameMaps,
 		Tilesets: loadTilesets(embeddedAssets),
