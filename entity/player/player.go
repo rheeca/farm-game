@@ -41,10 +41,10 @@ func NewPlayer(spritesheet *ebiten.Image) *Player {
 			Height: utils.PlayerSpriteHeight,
 		},
 		Collision: model.CollisionBody{
-			X0: xLoc + 39,
-			Y0: yLoc + 50,
-			X1: xLoc + 57,
-			Y1: yLoc + 64,
+			X:      xLoc + 39,
+			Y:      yLoc + 50,
+			Width:  18,
+			Height: 15,
 		},
 		Backpack: [utils.BackpackSize]BackpackItem{
 			{ID: 2, Count: 1},
@@ -110,10 +110,8 @@ func (p *Player) GetHeight() int {
 func (p *Player) UpdateLocation() {
 	p.XLoc += p.Dx
 	p.YLoc += p.Dy
-	p.Collision.X0 += p.Dx
-	p.Collision.X1 += p.Dx
-	p.Collision.Y0 += p.Dy
-	p.Collision.Y1 += p.Dy
+	p.Collision.X += p.Dx
+	p.Collision.Y += p.Dy
 	p.Dx = 0
 	p.Dy = 0
 }

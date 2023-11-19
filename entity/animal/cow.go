@@ -37,10 +37,10 @@ func NewCow(spritesheet *ebiten.Image, tileX, tileY int) *Cow {
 			Height: 30,
 		},
 		Collision: model.CollisionBody{
-			X0: xLoc + 12,
-			Y0: yLoc + 30,
-			X1: xLoc + 54,
-			Y1: yLoc + 57,
+			X:      xLoc + 12,
+			Y:      yLoc + 30,
+			Width:  42,
+			Height: 27,
 		},
 	}
 }

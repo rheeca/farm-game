@@ -37,10 +37,10 @@ func NewChicken(spritesheet *ebiten.Image, tileX, tileY int) *Chicken {
 			Height: utils.UnitSize,
 		},
 		Collision: model.CollisionBody{
-			X0: xLoc + 8,
-			Y0: yLoc + 16,
-			X1: xLoc + 24,
-			Y1: yLoc + 30,
+			X:      xLoc + 8,
+			Y:      yLoc + 16,
+			Width:  16,
+			Height: 14,
 		},
 	}
 }

@@ -3,6 +3,11 @@ package main
 import (
 	"embed"
 	"fmt"
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/audio"
+	"github.com/hajimehoshi/ebiten/v2/audio/wav"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/lafriks/go-tiled"
 	"guion-2d-project3/entity/animal"
 	"guion-2d-project3/entity/environment"
 	"guion-2d-project3/entity/game"
@@ -13,12 +18,6 @@ import (
 	"os"
 	"path"
 	"time"
-
-	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/audio"
-	"github.com/hajimehoshi/ebiten/v2/audio/wav"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
-	"github.com/lafriks/go-tiled"
 )
 
 //go:embed assets/*
