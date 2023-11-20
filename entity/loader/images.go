@@ -2,8 +2,6 @@ package loader
 
 import (
 	"embed"
-	"fmt"
-	"guion-2d-project3/utils"
 	"path"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -14,6 +12,7 @@ type ImageCollection struct {
 	FarmItems    *ebiten.Image
 	ToolsUI      *ebiten.Image
 	SelectedTool *ebiten.Image
+	TreeSprites  *ebiten.Image
 }
 
 func NewImageCollection(EmbeddedAssets embed.FS) (images ImageCollection, err error) {
@@ -21,37 +20,22 @@ func NewImageCollection(EmbeddedAssets embed.FS) (images ImageCollection, err er
 }
 
 func loadImages(EmbeddedAssets embed.FS) (images ImageCollection, err error) {
-
-	embeddedFile, err := EmbeddedAssets.Open(path.Join("assets", "items", "farm_items.png"))
-	if err != nil {
-		return ImageCollection{}, fmt.Errorf(utils.ErrorLoadEmbeddedImage, err)
-	}
-	farmItemsImg, _, err := ebitenutil.NewImageFromReader(embeddedFile)
-	if err != nil {
-		return ImageCollection{}, fmt.Errorf(utils.ErrorLoadEbitenImage, err)
-	}
-
-	embeddedFile, err = EmbeddedAssets.Open(path.Join("assets", "ui", "tools_ui.png"))
-	if err != nil {
-		return ImageCollection{}, fmt.Errorf(utils.ErrorLoadEmbeddedImage, err)
-	}
-	toolsUIImg, _, err := ebitenutil.NewImageFromReader(embeddedFile)
-	if err != nil {
-		return ImageCollection{}, fmt.Errorf(utils.ErrorLoadEbitenImage, err)
-	}
-
-	embeddedFile, err = EmbeddedAssets.Open(path.Join("assets", "ui", "selected_tool.png"))
-	if err != nil {
-		return ImageCollection{}, fmt.Errorf(utils.ErrorLoadEmbeddedImage, err)
-	}
-	selToolImg, _, err := ebitenutil.NewImageFromReader(embeddedFile)
-	if err != nil {
-		return ImageCollection{}, fmt.Errorf(utils.ErrorLoadEbitenImage, err)
-	}
-
 	return ImageCollection{
-		FarmItems:    farmItemsImg,
-		ToolsUI:      toolsUIImg,
-		SelectedTool: selToolImg,
+		FarmItems:    loadImage(EmbeddedAssets, path.Join("assets", "items", "farm_items.png")),
+		ToolsUI:      loadImage(EmbeddedAssets, path.Join("assets", "ui", "tools_ui.png")),
+		SelectedTool: loadImage(EmbeddedAssets, path.Join("assets", "ui", "selected_tool.png")),
+		TreeSprites:  loadImage(EmbeddedAssets, path.Join("assets", "items", "tree_sprites.png")),
 	}, nil
+}
+
+func loadImage(EmbeddedAssets embed.FS, filepath string) *ebiten.Image {
+	embeddedFile, err := EmbeddedAssets.Open(filepath)
+	if err != nil {
+		return nil
+	}
+	image, _, err := ebitenutil.NewImageFromReader(embeddedFile)
+	if err != nil {
+		return nil
+	}
+	return image
 }

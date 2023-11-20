@@ -13,3 +13,13 @@ type SpriteBody struct {
 	Width  int
 	Height int
 }
+
+type Object struct {
+	Type      int
+	XLoc      int
+	YLoc      int
+	Sprite    SpriteBody
+	Collision CollisionBody
+	Frame     int
+	Health    int
+}

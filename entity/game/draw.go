@@ -38,6 +38,17 @@ func drawMap(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions)
 	}
 }
 
+func drawTrees(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+	for _, t := range g.Environment.Trees {
+		drawOptions.GeoM.Reset()
+		drawOptions.GeoM.Translate(float64(t.XLoc), float64(t.YLoc))
+		screen.DrawImage(g.Images.TreeSprites.SubImage(image.Rect(t.Frame*t.Sprite.Width,
+			0,
+			t.Frame*t.Sprite.Width+t.Sprite.Width,
+			t.Sprite.Height)).(*ebiten.Image), &drawOptions)
+	}
+}
+
 // DrawCenteredText %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // from https://github.com/sedyh/ebitengine-cheatsheet
 func DrawCenteredText(screen *ebiten.Image, font font.Face, s string, cx, cy int) {

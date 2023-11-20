@@ -33,6 +33,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	drawOptions := ebiten.DrawImageOptions{}
 
 	drawMap(g, screen, drawOptions)
+	if g.CurrentMap == utils.ForestMap {
+		drawTrees(g, screen, drawOptions)
+	}
 
 	// draw chickens
 	for _, c := range g.Chickens {
