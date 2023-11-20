@@ -72,6 +72,27 @@ func isClicked(x, y int, body model.SpriteBody) bool {
 	return false
 }
 
+func isAtExit(g *Game, exitPoint int) bool {
+	exitToAnimalMap := g.Environment.Maps[g.CurrentMap].Groups[0].ObjectGroups[exitPoint].Objects[0]
+	pointCollision := model.CollisionBody{
+		X:      int(exitToAnimalMap.X),
+		Y:      int(exitToAnimalMap.Y),
+		Width:  1,
+		Height: 1,
+	}
+	if hasCollision(g.Player.Dx, g.Player.Dy, g.Player.Collision, pointCollision) {
+		return true
+	}
+	return false
+}
+
+func changeMap(g *Game, newMap, entryPoint int) {
+	g.CurrentMap = newMap
+	point := g.Environment.Maps[newMap].Groups[0].ObjectGroups[entryPoint].Objects[0]
+	g.Player.ChangeLocation(int(point.X), int(point.Y))
+
+}
+
 func playerHasCollisions(g *Game) bool {
 	if hasMapCollisions(g, g.Player.Dx, g.Player.Dy, g.Player.Collision) {
 		return true
@@ -79,32 +100,18 @@ func playerHasCollisions(g *Game) bool {
 
 	// check for exits
 	if g.CurrentMap == utils.FarmMap {
-		exitToAnimalMap := g.Environment.Maps[g.CurrentMap].Groups[0].ObjectGroups[utils.FarmMapExitToAnimalMapPoint].Objects[0]
-		pointCollision := model.CollisionBody{
-			X:      int(exitToAnimalMap.X),
-			Y:      int(exitToAnimalMap.Y),
-			Width:  1,
-			Height: 1,
-		}
-
-		if hasCollision(g.Player.Dx, g.Player.Dy, g.Player.Collision, pointCollision) {
-			g.CurrentMap = utils.AnimalsMap
-			entryPoint := g.Environment.Maps[utils.AnimalsMap].Groups[0].ObjectGroups[utils.AnimalMapEntryPoint].Objects[0]
-			g.Player.ChangeLocation(int(entryPoint.X), int(entryPoint.Y))
+		if isAtExit(g, utils.FarmMapExitToAnimalMapPoint) {
+			changeMap(g, utils.AnimalsMap, utils.AnimalMapEntryPoint)
+		} else if isAtExit(g, utils.FarmMapExitToForestMapPoint) {
+			changeMap(g, utils.ForestMap, utils.ForestMapEntryPoint)
 		}
 	} else if g.CurrentMap == utils.AnimalsMap {
-		exitToFarmMap := g.Environment.Maps[g.CurrentMap].Groups[0].ObjectGroups[utils.AnimalMapExitPoint].Objects[0]
-		pointCollision := model.CollisionBody{
-			X:      int(exitToFarmMap.X),
-			Y:      int(exitToFarmMap.Y),
-			Width:  1,
-			Height: 1,
+		if isAtExit(g, utils.AnimalMapExitPoint) {
+			changeMap(g, utils.FarmMap, utils.FarmMapEntryFromAnimalMapPoint)
 		}
-
-		if hasCollision(g.Player.Dx, g.Player.Dy, g.Player.Collision, pointCollision) {
-			g.CurrentMap = utils.FarmMap
-			entryPoint := g.Environment.Maps[utils.FarmMap].Groups[0].ObjectGroups[utils.FarmMapEntryFromAnimalMapPoint].Objects[0]
-			g.Player.ChangeLocation(int(entryPoint.X), int(entryPoint.Y))
+	} else if g.CurrentMap == utils.ForestMap {
+		if isAtExit(g, utils.ForestMapExitPoint) {
+			changeMap(g, utils.FarmMap, utils.FarmMapEntryFromForestMapPoint)
 		}
 	}
 

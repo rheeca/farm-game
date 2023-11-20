@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="25" height="20" tilewidth="32" tileheight="32" infinite="0" nextlayerid="8" nextobjectid="4">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="25" height="20" tilewidth="32" tileheight="32" infinite="0" nextlayerid="8" nextobjectid="6">
  <tileset firstgid="1" name="grass_hill" tilewidth="32" tileheight="32" tilecount="77" columns="11">
   <image source="tilesets/grass_hill.png" width="352" height="224"/>
  </tileset>
@@ -209,9 +209,18 @@
     <point/>
    </object>
   </objectgroup>
-  <objectgroup id="3" name="ExitToForestMapPoint"/>
+  <objectgroup id="3" name="ExitToForestMapPoint">
+   <object id="3" x="368" y="19.6667">
+    <point/>
+   </object>
+  </objectgroup>
   <objectgroup id="4" name="EntryFromAnimalMapPoint">
-   <object id="3" x="763.333" y="281.333">
+   <object id="4" x="763.333" y="281.333">
+    <point/>
+   </object>
+  </objectgroup>
+  <objectgroup id="5" name="EntryFromForestMapPoint">
+   <object id="5" x="360.5" y="33">
     <point/>
    </object>
   </objectgroup>

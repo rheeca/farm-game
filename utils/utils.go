@@ -20,6 +20,7 @@ const (
 const (
 	FarmMapFile    = "farm_map.tmx"
 	AnimalsMapFile = "animals_map.tmx"
+	ForestMapFile  = "forest_map.tmx"
 
 	FarmMap    = 0
 	AnimalsMap = 1
@@ -34,9 +35,13 @@ const (
 	FarmMapExitToAnimalMapPoint    = 1
 	FarmMapExitToForestMapPoint    = 2
 	FarmMapEntryFromAnimalMapPoint = 3
+	FarmMapEntryFromForestMapPoint = 4
 
 	AnimalMapEntryPoint = 0
 	AnimalMapExitPoint  = 1
+
+	ForestMapEntryPoint = 0
+	ForestMapExitPoint  = 1
 )
 
 const (

@@ -28,6 +28,13 @@ func NewEnvironment(embeddedAssets embed.FS, gameMaps []*tiled.Map) *Environment
 		os.Exit(2)
 	}
 	gameMaps = append(gameMaps, animalsMap)
+	forestMap, err := utils.LoadMapFromEmbedded(embeddedAssets,
+		path.Join("assets", utils.ForestMapFile))
+	if err != nil {
+		fmt.Printf("error parsing map: %s", err.Error())
+		os.Exit(2)
+	}
+	gameMaps = append(gameMaps, forestMap)
 
 	return &Environment{
 		Maps:     gameMaps,
