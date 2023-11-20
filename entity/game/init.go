@@ -32,7 +32,7 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	drawOptions := ebiten.DrawImageOptions{}
 
-	drawMap(g, screen, drawOptions, g.CurrentMap)
+	drawMap(g, screen, drawOptions)
 
 	// draw chickens
 	for _, c := range g.Chickens {

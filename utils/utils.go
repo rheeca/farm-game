@@ -21,15 +21,25 @@ const (
 	FarmMapFile    = "farm_map.tmx"
 	AnimalsMapFile = "animals_map.tmx"
 
+	FarmMap    = 0
+	AnimalsMap = 1
+	ForestMap  = 2
+
 	GroundLayer        = 1
 	ObjectsLayer       = 2
 	FixedObjectsLayer  = 5
 	FixedObjects2Layer = 6
+
+	FarmMapSpawnPoint              = 0
+	FarmMapExitToAnimalMapPoint    = 1
+	FarmMapExitToForestMapPoint    = 2
+	FarmMapEntryFromAnimalMapPoint = 3
+
+	AnimalMapEntryPoint = 0
+	AnimalMapExitPoint  = 1
 )
 
 const (
-	StartingX     = 12
-	StartingY     = 5
 	MovementSpeed = 2
 	BackpackSize  = 9
 )
@@ -74,13 +84,6 @@ const (
 	CowHeartState   = 8
 	CowSpriteWidth  = 64
 	CowSpriteHeight = 64
-)
-
-// Maps
-const (
-	FarmMap = iota
-	AnimalsMap
-	ForestMap
 )
 
 // Tilesets

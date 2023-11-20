@@ -27,24 +27,22 @@ type BackpackItem struct {
 	Count int
 }
 
-func NewPlayer(spritesheet *ebiten.Image) *Player {
-	xLoc := utils.StartingX * utils.TileWidth
-	yLoc := utils.StartingY * utils.TileWidth
+func NewPlayer(spritesheet *ebiten.Image, startingX, startingY int) *Player {
 	return &Player{
 		Spritesheet: spritesheet,
-		XLoc:        xLoc,
-		YLoc:        yLoc,
+		XLoc:        startingX - 39,
+		YLoc:        startingY - 35,
 		Sprite: model.SpriteBody{
-			X:      xLoc + 39,
-			Y:      yLoc + 35,
+			X:      startingX,
+			Y:      startingY,
 			Width:  20,
 			Height: 30,
 		},
 		Collision: model.CollisionBody{
-			X:      xLoc + 39,
-			Y:      yLoc + 50,
+			X:      startingX,
+			Y:      startingY + 15,
 			Width:  18,
-			Height: 15,
+			Height: 16,
 		},
 		Backpack: [utils.BackpackSize]BackpackItem{
 			{ID: 2, Count: 1},
@@ -110,10 +108,21 @@ func (p *Player) GetHeight() int {
 func (p *Player) UpdateLocation() {
 	p.XLoc += p.Dx
 	p.YLoc += p.Dy
-	p.Collision.X += p.Dx
-	p.Collision.Y += p.Dy
 	p.Sprite.X += p.Dx
 	p.Sprite.Y += p.Dy
+	p.Collision.X += p.Dx
+	p.Collision.Y += p.Dy
+	p.Dx = 0
+	p.Dy = 0
+}
+
+func (p *Player) ChangeLocation(x, y int) {
+	p.XLoc = x - 39
+	p.YLoc = y - 35
+	p.Sprite.X = x
+	p.Sprite.Y = y
+	p.Collision.X = x
+	p.Collision.Y = y + 15
 	p.Dx = 0
 	p.Dy = 0
 }

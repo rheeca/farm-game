@@ -75,7 +75,8 @@ func main() {
 	if err != nil {
 		fmt.Println("error loading player image")
 	}
-	playerChar := player.NewPlayer(playerImage)
+	spawnPoint := gameMap.Groups[0].ObjectGroups[utils.FarmMapSpawnPoint].Objects[0]
+	playerChar := player.NewPlayer(playerImage, int(spawnPoint.X), int(spawnPoint.Y))
 
 	// load chickens
 	embeddedFile, err = EmbeddedAssets.Open(path.Join("assets", "animals", utils.ChickenImg))

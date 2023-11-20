@@ -9,8 +9,8 @@ import (
 	"image"
 )
 
-func drawMap(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions, currMap int) {
-	for _, layer := range g.Environment.Maps[currMap].Layers {
+func drawMap(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+	for _, layer := range g.Environment.Maps[g.CurrentMap].Layers {
 		for tileY := 0; tileY < utils.MapRows; tileY += 1 {
 			for tileX := 0; tileX < utils.MapColumns; tileX += 1 {
 				// find img of tile to draw

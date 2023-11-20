@@ -77,6 +77,37 @@ func playerHasCollisions(g *Game) bool {
 		return true
 	}
 
+	// check for exits
+	if g.CurrentMap == utils.FarmMap {
+		exitToAnimalMap := g.Environment.Maps[g.CurrentMap].Groups[0].ObjectGroups[utils.FarmMapExitToAnimalMapPoint].Objects[0]
+		pointCollision := model.CollisionBody{
+			X:      int(exitToAnimalMap.X),
+			Y:      int(exitToAnimalMap.Y),
+			Width:  1,
+			Height: 1,
+		}
+
+		if hasCollision(g.Player.Dx, g.Player.Dy, g.Player.Collision, pointCollision) {
+			g.CurrentMap = utils.AnimalsMap
+			entryPoint := g.Environment.Maps[utils.AnimalsMap].Groups[0].ObjectGroups[utils.AnimalMapEntryPoint].Objects[0]
+			g.Player.ChangeLocation(int(entryPoint.X), int(entryPoint.Y))
+		}
+	} else if g.CurrentMap == utils.AnimalsMap {
+		exitToFarmMap := g.Environment.Maps[g.CurrentMap].Groups[0].ObjectGroups[utils.AnimalMapExitPoint].Objects[0]
+		pointCollision := model.CollisionBody{
+			X:      int(exitToFarmMap.X),
+			Y:      int(exitToFarmMap.Y),
+			Width:  1,
+			Height: 1,
+		}
+
+		if hasCollision(g.Player.Dx, g.Player.Dy, g.Player.Collision, pointCollision) {
+			g.CurrentMap = utils.FarmMap
+			entryPoint := g.Environment.Maps[utils.FarmMap].Groups[0].ObjectGroups[utils.FarmMapEntryFromAnimalMapPoint].Objects[0]
+			g.Player.ChangeLocation(int(entryPoint.X), int(entryPoint.Y))
+		}
+	}
+
 	// check for animated entities collisions
 	for _, c := range g.Chickens {
 		if hasCollision(g.Player.Dx, g.Player.Dy, g.Player.Collision, c.Collision) {
