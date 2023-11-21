@@ -33,7 +33,7 @@ func checkMouse(g *Game) {
 					// if tree health reaches zero, set the delay function to be executed after the animation
 					g.Environment.Trees[i].Health -= 1
 					var doDelayFcn bool
-					if t.Health <= 0 {
+					if g.Environment.Trees[i].Health <= 0 {
 						doDelayFcn = true
 					} else {
 						doDelayFcn = false
