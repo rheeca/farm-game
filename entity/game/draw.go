@@ -53,8 +53,7 @@ func drawTrees(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOption
 }
 
 func drawObjects(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
-	mapObjects := g.Environment.Objects[g.CurrentMap]
-	for _, o := range mapObjects {
+	for _, o := range g.Environment.Objects[g.CurrentMap] {
 		var x0, y0, x1, y1 int
 		var objImage *ebiten.Image
 

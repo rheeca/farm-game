@@ -16,6 +16,12 @@ const (
 	ToolsUIBoxSize  = 48
 )
 
+// game state
+const (
+	GameStatePlay = iota
+	GameStateCraft
+)
+
 // map
 const (
 	FarmMapFile    = "farm_map.tmx"

@@ -13,6 +13,7 @@ import (
 )
 
 type Game struct {
+	State        int
 	Environment  *environment.Environment
 	Player       *player.Player
 	Chickens     []*animal.Chicken
@@ -23,6 +24,10 @@ type Game struct {
 }
 
 func (g *Game) Update() error {
+	if g.State == utils.GameStateCraft {
+		return nil
+	}
+
 	g.CurrentFrame += 1
 	getPlayerInput(g)
 	updateAnimals(g)
@@ -106,6 +111,12 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			DrawCenteredText(screen, basicfont.Face7x13, fmt.Sprintf("%d", item.Count),
 				utils.ToolsFirstSlotX+(i*utils.ToolsUIBoxSize)+utils.UnitSize, utils.ToolsFirstSlotY)
 		}
+	}
+
+	if g.State == utils.GameStateCraft {
+		drawOptions.GeoM.Reset()
+		drawOptions.GeoM.Translate(0, 0)
+		screen.DrawImage(g.Images.CraftingUI, &drawOptions)
 	}
 }
 

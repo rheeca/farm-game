@@ -133,6 +133,13 @@ func playerHasCollisions(g *Game) bool {
 			return true
 		}
 	}
+
+	// check for objects
+	for _, o := range g.Environment.Objects[g.CurrentMap] {
+		if hasCollision(g.Player.Dx, g.Player.Dy, g.Player.Collision, o.Collision) {
+			return true
+		}
+	}
 	return false
 }
 

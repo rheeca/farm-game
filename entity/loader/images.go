@@ -10,6 +10,7 @@ import (
 
 type ImageCollection struct {
 	CraftingTable *ebiten.Image
+	CraftingUI    *ebiten.Image
 	FarmItems     *ebiten.Image
 	SelectedTool  *ebiten.Image
 	ToolsUI       *ebiten.Image
@@ -19,6 +20,7 @@ type ImageCollection struct {
 func NewImageCollection(EmbeddedAssets embed.FS) (images ImageCollection) {
 	return ImageCollection{
 		CraftingTable: loadImage(EmbeddedAssets, path.Join("assets", "items", "crafting_table.png")),
+		CraftingUI:    loadImage(EmbeddedAssets, path.Join("assets", "ui", "crafting_ui.png")),
 		FarmItems:     loadImage(EmbeddedAssets, path.Join("assets", "items", "farm_items.png")),
 		SelectedTool:  loadImage(EmbeddedAssets, path.Join("assets", "ui", "selected_tool.png")),
 		ToolsUI:       loadImage(EmbeddedAssets, path.Join("assets", "ui", "tools_ui.png")),

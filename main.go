@@ -106,6 +106,7 @@ func main() {
 	}
 
 	gameObj := game.Game{
+		State:       utils.GameStatePlay,
 		Environment: env,
 		CurrentMap:  utils.FarmMap,
 		Player:      playerChar,

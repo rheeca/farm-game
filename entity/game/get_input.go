@@ -71,6 +71,16 @@ func checkMouse(g *Game) {
 		tileX, tileY := calculateTargetTile(g)
 		mouseX, mouseY := ebiten.CursorPosition()
 
+		// if target tile is an object
+		for _, o := range g.Environment.Objects[g.CurrentMap] {
+			if isClicked(mouseX, mouseY, o.Sprite) {
+				if o.Type == utils.ItemCraftingTable {
+					g.State = utils.GameStateCraft
+				}
+				return
+			}
+		}
+
 		// if target tile has an animated character
 		for _, c := range g.Chickens {
 			if isClicked(mouseX, mouseY, c.Sprite) {

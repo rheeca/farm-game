@@ -91,19 +91,20 @@ func loadTrees(tMap *tiled.Map) (trees []model.Object) {
 
 func loadObjects(gameMaps []*tiled.Map) (objects [][]model.Object) {
 	var farmObjects, animalsObjects, forestObjects []model.Object
+	ctObj := gameMaps[utils.FarmMap].Groups[0].ObjectGroups[utils.FarmMapCraftingTablePoint].Objects[0]
 	craftingTable := model.Object{
 		Type: utils.ItemCraftingTable,
-		XLoc: int(gameMaps[utils.FarmMap].Groups[0].ObjectGroups[utils.FarmMapCraftingTablePoint].Objects[0].X),
-		YLoc: int(gameMaps[utils.FarmMap].Groups[0].ObjectGroups[utils.FarmMapCraftingTablePoint].Objects[0].Y),
+		XLoc: int(ctObj.X),
+		YLoc: int(ctObj.Y),
 		Sprite: model.SpriteBody{
-			X:      2,
-			Y:      20,
+			X:      int(ctObj.X) + 2,
+			Y:      int(ctObj.Y) + 20,
 			Width:  60,
 			Height: 40,
 		},
 		Collision: model.CollisionBody{
-			X:      2,
-			Y:      20,
+			X:      int(ctObj.X) + 2,
+			Y:      int(ctObj.Y) + 20,
 			Width:  60,
 			Height: 40,
 		},
