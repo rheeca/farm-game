@@ -46,8 +46,15 @@ const (
 )
 
 const (
-	MovementSpeed = 2
-	BackpackSize  = 9
+	FrameDelay     = 4
+	FrameCountSix  = 6
+	AnimationDelay = 8
+	MovementSpeed  = 2
+	BackpackSize   = 9
+)
+
+const (
+	TreeHitAnimation = 1
 )
 
 // Directions

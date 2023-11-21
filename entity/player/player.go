@@ -53,11 +53,11 @@ func NewPlayer(spritesheet *ebiten.Image, startingX, startingY int) *Player {
 	}
 }
 
-func (p *Player) AddToBackpack(itemID int) bool {
-	// if item already exists in backpack and is not a tool, add count by 1
+func (p *Player) AddToBackpack(itemID, count int) bool {
+	// if item already exists in backpack and is not a tool, add count
 	for i, v := range p.Backpack {
 		if v.ID == itemID && !isTool(v.ID) {
-			p.Backpack[i].Count += 1
+			p.Backpack[i].Count += count
 			return true
 		}
 	}
@@ -66,7 +66,7 @@ func (p *Player) AddToBackpack(itemID int) bool {
 		if v.ID == 0 {
 			p.Backpack[i] = BackpackItem{
 				ID:    itemID,
-				Count: 1,
+				Count: count,
 			}
 			return true
 		}
@@ -125,6 +125,29 @@ func (p *Player) ChangeLocation(x, y int) {
 	p.Collision.Y = y + 15
 	p.Dx = 0
 	p.Dy = 0
+}
+
+func (p *Player) CalcTargetBox() model.CollisionBody {
+	var xLoc, yLoc int
+	if p.Direction == utils.Front {
+		xLoc = p.XLoc + utils.UnitSize
+		yLoc = p.YLoc + utils.UnitSize + utils.UnitSize/2
+	} else if p.Direction == utils.Back {
+		xLoc = p.XLoc + utils.UnitSize
+		yLoc = p.YLoc + utils.UnitSize/2
+	} else if p.Direction == utils.Left {
+		xLoc = p.XLoc + utils.UnitSize/2
+		yLoc = p.YLoc + utils.UnitSize
+	} else if p.Direction == utils.Right {
+		xLoc = p.XLoc + utils.UnitSize + utils.UnitSize/2
+		yLoc = p.YLoc + utils.UnitSize
+	}
+	return model.CollisionBody{
+		X:      xLoc,
+		Y:      yLoc,
+		Width:  utils.UnitSize,
+		Height: utils.UnitSize,
+	}
 }
 
 func (p *Player) UpdateFrame(currentFrame int) {

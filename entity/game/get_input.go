@@ -4,6 +4,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/lafriks/go-tiled"
+	"guion-2d-project3/entity/model"
 	"guion-2d-project3/utils"
 )
 
@@ -25,6 +26,34 @@ func checkMouse(g *Game) {
 			g.Player.State = utils.AxeState
 			g.Player.Frame = 0
 			g.Player.StateTTL = utils.PlayerFrameCount
+
+			for i, t := range g.Environment.Trees {
+				// if tree is in target, chop tree
+				if hasCollision(0, 0, g.Player.CalcTargetBox(), t.Collision) {
+					// if tree health reaches zero, set the delay function to be executed after the animation
+					g.Environment.Trees[i].Health -= 1
+					var doDelayFcn bool
+					if t.Health <= 0 {
+						doDelayFcn = true
+					} else {
+						doDelayFcn = false
+					}
+
+					g.Environment.Trees[i].StartAnimation(utils.TreeHitAnimation, utils.FrameCountSix, utils.AnimationDelay,
+						doDelayFcn,
+						func() {
+							g.Player.AddToBackpack(utils.ItemWood2, 5)
+							// remove chopped trees
+							var newTrees []model.Object
+							for _, t := range g.Environment.Trees {
+								if t.Health > 0 {
+									newTrees = append(newTrees, t)
+								}
+							}
+							g.Environment.Trees = newTrees
+						})
+				}
+			}
 		} else if g.Player.Backpack[g.Player.EquippedItem].ID == utils.ItemWateringCan {
 			g.Player.State = utils.WateringState
 			g.Player.Frame = 0
@@ -62,13 +91,13 @@ func checkMouse(g *Game) {
 		// pick up objects from the map
 		emptyTile := tiled.LayerTile{Nil: true}
 		if isMapObject(g, tileX, tileY, utils.MapWood, utils.TilesetTrees) {
-			if g.Player.AddToBackpack(utils.ItemWood2) {
+			if g.Player.AddToBackpack(utils.ItemWood2, 1) {
 				g.Environment.Maps[g.CurrentMap].Layers[utils.ObjectsLayer].Tiles[tileY*utils.MapColumns+tileX] = &emptyTile
 			} else {
 				// TODO: alert player that backpack is full
 			}
 		} else if isMapObject(g, tileX, tileY, utils.MapStone3, utils.TilesetFlowersStones) {
-			if g.Player.AddToBackpack(utils.ItemRock1) {
+			if g.Player.AddToBackpack(utils.ItemRock1, 1) {
 				g.Environment.Maps[g.CurrentMap].Layers[utils.ObjectsLayer].Tiles[tileY*utils.MapColumns+tileX] = &emptyTile
 			} else {
 				// TODO: alert player that backpack is full

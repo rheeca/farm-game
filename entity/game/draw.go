@@ -11,6 +11,9 @@ import (
 
 func drawMap(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
 	for _, layer := range g.Environment.Maps[g.CurrentMap].Layers {
+		if layer.Name == "Trees" {
+			continue
+		}
 		for tileY := 0; tileY < utils.MapRows; tileY += 1 {
 			for tileX := 0; tileX < utils.MapColumns; tileX += 1 {
 				// find img of tile to draw

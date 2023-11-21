@@ -26,6 +26,10 @@ func (g *Game) Update() error {
 	g.CurrentFrame += 1
 	getPlayerInput(g)
 	updateAnimals(g)
+	for i := range g.Environment.Trees {
+		g.Environment.Trees[i].UpdateFrame(g.CurrentFrame)
+	}
+
 	return nil
 }
 
