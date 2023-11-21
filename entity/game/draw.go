@@ -11,7 +11,7 @@ import (
 
 func drawMap(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
 	for _, layer := range g.Environment.Maps[g.CurrentMap].Layers {
-		if layer.Name == "Trees" {
+		if layer.Name == utils.GuideOnlyLayer {
 			continue
 		}
 		for tileY := 0; tileY < utils.MapRows; tileY += 1 {
@@ -49,6 +49,25 @@ func drawTrees(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOption
 			0,
 			t.Frame*t.Sprite.Width+t.Sprite.Width,
 			t.Sprite.Height)).(*ebiten.Image), &drawOptions)
+	}
+}
+
+func drawObjects(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+	mapObjects := g.Environment.Objects[g.CurrentMap]
+	for _, o := range mapObjects {
+		var x0, y0, x1, y1 int
+		var objImage *ebiten.Image
+
+		drawOptions.GeoM.Reset()
+		if o.Type == utils.ItemCraftingTable {
+			objImage = g.Images.CraftingTable
+			x0, y0 = 0, 0
+			x1 = objImage.Bounds().Dx()
+			y1 = objImage.Bounds().Dx()
+		}
+
+		drawOptions.GeoM.Translate(float64(o.XLoc), float64(o.YLoc))
+		screen.DrawImage(objImage.SubImage(image.Rect(x0, y0, x1, y1)).(*ebiten.Image), &drawOptions)
 	}
 }
 

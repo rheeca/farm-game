@@ -9,23 +9,21 @@ import (
 )
 
 type ImageCollection struct {
-	FarmItems    *ebiten.Image
-	ToolsUI      *ebiten.Image
-	SelectedTool *ebiten.Image
-	TreeSprites  *ebiten.Image
+	CraftingTable *ebiten.Image
+	FarmItems     *ebiten.Image
+	SelectedTool  *ebiten.Image
+	ToolsUI       *ebiten.Image
+	TreeSprites   *ebiten.Image
 }
 
-func NewImageCollection(EmbeddedAssets embed.FS) (images ImageCollection, err error) {
-	return loadImages(EmbeddedAssets)
-}
-
-func loadImages(EmbeddedAssets embed.FS) (images ImageCollection, err error) {
+func NewImageCollection(EmbeddedAssets embed.FS) (images ImageCollection) {
 	return ImageCollection{
-		FarmItems:    loadImage(EmbeddedAssets, path.Join("assets", "items", "farm_items.png")),
-		ToolsUI:      loadImage(EmbeddedAssets, path.Join("assets", "ui", "tools_ui.png")),
-		SelectedTool: loadImage(EmbeddedAssets, path.Join("assets", "ui", "selected_tool.png")),
-		TreeSprites:  loadImage(EmbeddedAssets, path.Join("assets", "items", "tree_sprites.png")),
-	}, nil
+		CraftingTable: loadImage(EmbeddedAssets, path.Join("assets", "items", "crafting_table.png")),
+		FarmItems:     loadImage(EmbeddedAssets, path.Join("assets", "items", "farm_items.png")),
+		SelectedTool:  loadImage(EmbeddedAssets, path.Join("assets", "ui", "selected_tool.png")),
+		ToolsUI:       loadImage(EmbeddedAssets, path.Join("assets", "ui", "tools_ui.png")),
+		TreeSprites:   loadImage(EmbeddedAssets, path.Join("assets", "items", "tree_sprites.png")),
+	}
 }
 
 func loadImage(EmbeddedAssets embed.FS, filepath string) *ebiten.Image {

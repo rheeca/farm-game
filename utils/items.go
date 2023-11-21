@@ -2,11 +2,12 @@ package utils
 
 // farm items
 const (
-	ItemAxe         int = 2
-	ItemHoe             = 3
-	ItemWateringCan     = 10
-	ItemWood2           = 19
-	ItemRock1           = 42
+	ItemAxe           int = 2
+	ItemHoe               = 3
+	ItemWateringCan       = 10
+	ItemWood2             = 19
+	ItemRock1             = 42
+	ItemCraftingTable     = 121
 )
 
 // flowers and stones

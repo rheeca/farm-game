@@ -50,10 +50,7 @@ func main() {
 	ebiten.SetWindowSize(windowWidth, windowHeight)
 	ebiten.SetWindowTitle(utils.ProjectTitle)
 
-	images, err := loader.NewImageCollection(EmbeddedAssets)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
+	images := loader.NewImageCollection(EmbeddedAssets)
 	setConstants(gameMap, images)
 
 	// load environment

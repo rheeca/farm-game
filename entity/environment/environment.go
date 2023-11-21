@@ -20,6 +20,7 @@ type Environment struct {
 	Maps     []*tiled.Map
 	Tilesets map[string]*ebiten.Image
 	Trees    []model.Object
+	Objects  [][]model.Object
 }
 
 func NewEnvironment(embeddedAssets embed.FS, gameMaps []*tiled.Map) *Environment {
@@ -42,6 +43,7 @@ func NewEnvironment(embeddedAssets embed.FS, gameMaps []*tiled.Map) *Environment
 		Maps:     gameMaps,
 		Tilesets: loadTilesets(embeddedAssets),
 		Trees:    loadTrees(forestMap),
+		Objects:  loadObjects(gameMaps),
 	}
 }
 
@@ -85,4 +87,28 @@ func loadTrees(tMap *tiled.Map) (trees []model.Object) {
 		trees = append(trees, tree)
 	}
 	return trees
+}
+
+func loadObjects(gameMaps []*tiled.Map) (objects [][]model.Object) {
+	var farmObjects, animalsObjects, forestObjects []model.Object
+	craftingTable := model.Object{
+		Type: utils.ItemCraftingTable,
+		XLoc: int(gameMaps[utils.FarmMap].Groups[0].ObjectGroups[utils.FarmMapCraftingTablePoint].Objects[0].X),
+		YLoc: int(gameMaps[utils.FarmMap].Groups[0].ObjectGroups[utils.FarmMapCraftingTablePoint].Objects[0].Y),
+		Sprite: model.SpriteBody{
+			X:      2,
+			Y:      20,
+			Width:  60,
+			Height: 40,
+		},
+		Collision: model.CollisionBody{
+			X:      2,
+			Y:      20,
+			Width:  60,
+			Height: 40,
+		},
+	}
+	farmObjects = append(farmObjects, craftingTable)
+	objects = append(objects, farmObjects, animalsObjects, forestObjects)
+	return objects
 }

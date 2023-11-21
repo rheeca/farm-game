@@ -30,12 +30,14 @@ const (
 	ObjectsLayer       = 2
 	FixedObjectsLayer  = 5
 	FixedObjects2Layer = 6
+	GuideOnlyLayer     = "GuideOnly"
 
 	FarmMapSpawnPoint              = 0
 	FarmMapExitToAnimalMapPoint    = 1
 	FarmMapExitToForestMapPoint    = 2
 	FarmMapEntryFromAnimalMapPoint = 3
 	FarmMapEntryFromForestMapPoint = 4
+	FarmMapCraftingTablePoint      = 5
 
 	AnimalMapEntryPoint = 0
 	AnimalMapExitPoint  = 1
