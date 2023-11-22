@@ -120,24 +120,28 @@ func playerHasCollisions(g *Game) bool {
 	}
 
 	// check for animated entities collisions
-	for _, c := range g.Chickens {
-		if hasCollision(g.Player.Dx, g.Player.Dy, g.Player.Collision, c.Collision) {
-			return true
+	if g.CurrentMap == utils.AnimalsMap {
+		for _, c := range g.Chickens {
+			if hasCollision(g.Player.Dx, g.Player.Dy, g.Player.Collision, c.Collision) {
+				return true
+			}
 		}
-	}
-	for _, c := range g.Cows {
-		if hasCollision(g.Player.Dx, g.Player.Dy, g.Player.Collision, c.Collision) {
-			return true
+		for _, c := range g.Cows {
+			if hasCollision(g.Player.Dx, g.Player.Dy, g.Player.Collision, c.Collision) {
+				return true
+			}
 		}
 	}
 
 	// check for trees
-	for _, t := range g.Environment.Trees {
-		if t.IsNil {
-			continue
-		}
-		if hasCollision(g.Player.Dx, g.Player.Dy, g.Player.Collision, t.Collision) {
-			return true
+	if g.CurrentMap == utils.ForestMap {
+		for _, t := range g.Environment.Trees {
+			if t.IsNil {
+				continue
+			}
+			if hasCollision(g.Player.Dx, g.Player.Dy, g.Player.Collision, t.Collision) {
+				return true
+			}
 		}
 	}
 

@@ -68,32 +68,34 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	drawObjects(g, screen, drawOptions)
 
 	// draw chickens
-	for _, c := range g.Chickens {
-		drawOptions.GeoM.Reset()
+	if g.CurrentMap == utils.AnimalsMap {
+		for _, c := range g.Chickens {
+			drawOptions.GeoM.Reset()
 
-		var spriteHeight, yLoc int
-		if c.State == utils.ChickenHeartState {
-			spriteHeight = utils.UnitSize * 2
-			yLoc = c.YLoc - utils.UnitSize
-		} else {
-			spriteHeight = c.Sprite.Height
-			yLoc = c.YLoc
+			var spriteHeight, yLoc int
+			if c.State == utils.ChickenHeartState {
+				spriteHeight = utils.UnitSize * 2
+				yLoc = c.YLoc - utils.UnitSize
+			} else {
+				spriteHeight = c.Sprite.Height
+				yLoc = c.YLoc
+			}
+			drawOptions.GeoM.Translate(float64(c.XLoc), float64(yLoc))
+			screen.DrawImage(c.Spritesheet.SubImage(image.Rect(c.Frame*c.Sprite.Width,
+				(c.State*utils.AnimalNumOfDirections+c.Direction)*c.Sprite.Height,
+				c.Frame*c.Sprite.Width+c.Sprite.Width,
+				(c.State*utils.AnimalNumOfDirections+c.Direction)*c.Sprite.Height+spriteHeight)).(*ebiten.Image), &drawOptions)
 		}
-		drawOptions.GeoM.Translate(float64(c.XLoc), float64(yLoc))
-		screen.DrawImage(c.Spritesheet.SubImage(image.Rect(c.Frame*c.Sprite.Width,
-			(c.State*utils.AnimalNumOfDirections+c.Direction)*c.Sprite.Height,
-			c.Frame*c.Sprite.Width+c.Sprite.Width,
-			(c.State*utils.AnimalNumOfDirections+c.Direction)*c.Sprite.Height+spriteHeight)).(*ebiten.Image), &drawOptions)
-	}
 
-	// draw cows
-	for _, c := range g.Cows {
-		drawOptions.GeoM.Reset()
-		drawOptions.GeoM.Translate(float64(c.XLoc), float64(c.YLoc))
-		screen.DrawImage(c.Spritesheet.SubImage(image.Rect(c.Frame*utils.CowSpriteWidth,
-			(c.State*utils.AnimalNumOfDirections+c.Direction)*utils.CowSpriteHeight,
-			c.Frame*utils.CowSpriteWidth+utils.CowSpriteWidth,
-			(c.State*utils.AnimalNumOfDirections+c.Direction)*utils.CowSpriteHeight+utils.CowSpriteHeight)).(*ebiten.Image), &drawOptions)
+		// draw cows
+		for _, c := range g.Cows {
+			drawOptions.GeoM.Reset()
+			drawOptions.GeoM.Translate(float64(c.XLoc), float64(c.YLoc))
+			screen.DrawImage(c.Spritesheet.SubImage(image.Rect(c.Frame*utils.CowSpriteWidth,
+				(c.State*utils.AnimalNumOfDirections+c.Direction)*utils.CowSpriteHeight,
+				c.Frame*utils.CowSpriteWidth+utils.CowSpriteWidth,
+				(c.State*utils.AnimalNumOfDirections+c.Direction)*utils.CowSpriteHeight+utils.CowSpriteHeight)).(*ebiten.Image), &drawOptions)
+		}
 	}
 
 	// draw player

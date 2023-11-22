@@ -28,28 +28,31 @@ func checkMouse(g *Game) {
 			g.Player.Frame = 0
 			g.Player.StateTTL = utils.PlayerFrameCount
 
-			for i, t := range g.Environment.Trees {
-				if t.IsNil {
-					continue
-				}
-				// if tree is in target, chop tree
-				if hasCollision(0, 0, g.Player.CalcTargetBox(), t.Collision) {
-					// if tree health reaches zero, set the delay function to be executed after the animation
-					g.Environment.Trees[i].Health -= 1
-					var doDelayFcn bool
-					if g.Environment.Trees[i].Health <= 0 {
-						doDelayFcn = true
-					} else {
-						doDelayFcn = false
+			if g.CurrentMap == utils.ForestMap {
+
+				for i, t := range g.Environment.Trees {
+					if t.IsNil {
+						continue
 					}
-					treeHit := i
-					g.Sounds.PlaySound(g.Sounds.SFXChopTree)
-					g.Environment.Trees[i].StartAnimation(utils.TreeHitAnimation, utils.FrameCountSix, utils.AnimationDelay,
-						doDelayFcn,
-						func() {
-							g.Player.AddToBackpack(utils.ItemWood2, 5)
-							g.Environment.Trees[treeHit].IsNil = true
-						})
+					// if tree is in target, chop tree
+					if hasCollision(0, 0, g.Player.CalcTargetBox(), t.Collision) {
+						// if tree health reaches zero, set the delay function to be executed after the animation
+						g.Environment.Trees[i].Health -= 1
+						var doDelayFcn bool
+						if g.Environment.Trees[i].Health <= 0 {
+							doDelayFcn = true
+						} else {
+							doDelayFcn = false
+						}
+						treeHit := i
+						g.Sounds.PlaySound(g.Sounds.SFXChopTree)
+						g.Environment.Trees[i].StartAnimation(utils.TreeHitAnimation, utils.FrameCountSix, utils.AnimationDelay,
+							doDelayFcn,
+							func() {
+								g.Player.AddToBackpack(utils.ItemWood2, 5)
+								g.Environment.Trees[treeHit].IsNil = true
+							})
+					}
 				}
 			}
 		} else if g.Player.Backpack[g.Player.EquippedItem].ID == utils.ItemWateringCan {
@@ -111,21 +114,23 @@ func checkMouse(g *Game) {
 		}
 
 		// if target tile has an animated character
-		for _, c := range g.Chickens {
-			if isClicked(mouseX, mouseY, c.Sprite) {
-				g.Sounds.PlaySound(g.Sounds.SFXChicken)
-				c.State = utils.ChickenHeartState
-				c.Frame = 0
-				c.AnimationTTL = utils.AnimalFrameCount
+		if g.CurrentMap == utils.AnimalsMap {
+			for _, c := range g.Chickens {
+				if isClicked(mouseX, mouseY, c.Sprite) {
+					g.Sounds.PlaySound(g.Sounds.SFXChicken)
+					c.State = utils.ChickenHeartState
+					c.Frame = 0
+					c.AnimationTTL = utils.AnimalFrameCount
+				}
 			}
-		}
 
-		for _, c := range g.Cows {
-			if isClicked(mouseX, mouseY, c.Sprite) {
-				g.Sounds.PlaySound(g.Sounds.SFXCow)
-				c.State = utils.CowHeartState
-				c.Frame = 0
-				c.AnimationTTL = utils.AnimalFrameCount
+			for _, c := range g.Cows {
+				if isClicked(mouseX, mouseY, c.Sprite) {
+					g.Sounds.PlaySound(g.Sounds.SFXCow)
+					c.State = utils.CowHeartState
+					c.Frame = 0
+					c.AnimationTTL = utils.AnimalFrameCount
+				}
 			}
 		}
 
