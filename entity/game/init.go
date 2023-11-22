@@ -24,6 +24,7 @@ type Game struct {
 	CurrentMap   int
 	CurrentFrame int
 	Images       loader.ImageCollection
+	Sounds       loader.SoundCollection
 	UIState      model.UIState
 }
 

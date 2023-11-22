@@ -14,7 +14,6 @@ const (
 	DefaultPlayerImg = "player_white.png"
 	ChickenImg       = "chicken.png"
 	CowImg           = "cow.png"
-	FirstTownAudio   = "first-town.wav"
 	SoundSampleRate  = 16000
 	UnitSize         = 32
 	ToolsUIBoxSize   = 48

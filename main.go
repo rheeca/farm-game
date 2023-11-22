@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/audio"
-	"github.com/hajimehoshi/ebiten/v2/audio/wav"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/lafriks/go-tiled"
 	"guion-2d-project3/entity/animal"
@@ -21,22 +20,6 @@ import (
 
 //go:embed assets/*
 var EmbeddedAssets embed.FS
-
-func loadWavFromEmbedded(name string, context *audio.Context) (soundPlayer *audio.Player, err error) {
-	soundFile, err := EmbeddedAssets.Open(path.Join("assets", "sounds", name))
-	if err != nil {
-		log.Fatal("failed to load embedded audio:", soundFile, err)
-	}
-	sound, err := wav.DecodeWithoutResampling(soundFile)
-	if err != nil {
-		return soundPlayer, fmt.Errorf("failed to interpret sound file: %s", err)
-	}
-	soundPlayer, err = context.NewPlayer(sound)
-	if err != nil {
-		return soundPlayer, fmt.Errorf("failed to create sound player: %s", err)
-	}
-	return soundPlayer, nil
-}
 
 func main() {
 	gameMap, err := utils.LoadMapFromEmbedded(EmbeddedAssets, path.Join("assets", utils.FarmMapFile))
@@ -56,11 +39,7 @@ func main() {
 	env := environment.NewEnvironment(EmbeddedAssets, []*tiled.Map{gameMap})
 
 	// load audio
-	audioContext := audio.NewContext(utils.SoundSampleRate)
-	bgmPlayer, err := loadWavFromEmbedded(utils.FirstTownAudio, audioContext)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
+	sounds := loader.NewSoundCollection(EmbeddedAssets)
 
 	// load player
 	embeddedFile, err := EmbeddedAssets.Open(path.Join("assets", "player", utils.DefaultPlayerImg))
@@ -112,10 +91,11 @@ func main() {
 		Chickens:    chickens,
 		Cows:        cows,
 		Images:      images,
+		Sounds:      sounds,
 	}
 
 	go func(player *audio.Player) {
-		player.SetVolume(0.8)
+		player.SetVolume(0.4)
 		for {
 			if !player.IsPlaying() {
 				err := player.Rewind()
@@ -125,7 +105,7 @@ func main() {
 				player.Play()
 			}
 		}
-	}(bgmPlayer)
+	}(sounds.BGMFirstTown)
 	err = ebiten.RunGame(&gameObj)
 	if err != nil {
 		fmt.Println("failed to run game:", err)

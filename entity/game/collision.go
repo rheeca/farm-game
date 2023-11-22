@@ -101,16 +101,20 @@ func playerHasCollisions(g *Game) bool {
 	// check for exits
 	if g.CurrentMap == utils.FarmMap {
 		if isAtExit(g, utils.FarmMapExitToAnimalMapPoint) {
+			g.Sounds.PlaySound(g.Sounds.SFXChangeMap)
 			changeMap(g, utils.AnimalsMap, utils.AnimalMapEntryPoint)
 		} else if isAtExit(g, utils.FarmMapExitToForestMapPoint) {
+			g.Sounds.PlaySound(g.Sounds.SFXChangeMap)
 			changeMap(g, utils.ForestMap, utils.ForestMapEntryPoint)
 		}
 	} else if g.CurrentMap == utils.AnimalsMap {
 		if isAtExit(g, utils.AnimalMapExitPoint) {
+			g.Sounds.PlaySound(g.Sounds.SFXChangeMap)
 			changeMap(g, utils.FarmMap, utils.FarmMapEntryFromAnimalMapPoint)
 		}
 	} else if g.CurrentMap == utils.ForestMap {
 		if isAtExit(g, utils.ForestMapExitPoint) {
+			g.Sounds.PlaySound(g.Sounds.SFXChangeMap)
 			changeMap(g, utils.FarmMap, utils.FarmMapEntryFromForestMapPoint)
 		}
 	}

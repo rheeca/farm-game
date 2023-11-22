@@ -11,6 +11,7 @@ import (
 func checkMouse(g *Game) {
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		if g.Player.Backpack[g.Player.EquippedItem].ID == utils.ItemHoe {
+			g.Sounds.PlaySound(g.Sounds.SFXTillSoil)
 			g.Player.State = utils.HoeState
 			g.Player.Frame = 0
 			g.Player.StateTTL = utils.PlayerFrameCount
@@ -42,6 +43,7 @@ func checkMouse(g *Game) {
 						doDelayFcn = false
 					}
 					treeHit := i
+					g.Sounds.PlaySound(g.Sounds.SFXChopTree)
 					g.Environment.Trees[i].StartAnimation(utils.TreeHitAnimation, utils.FrameCountSix, utils.AnimationDelay,
 						doDelayFcn,
 						func() {
@@ -51,6 +53,7 @@ func checkMouse(g *Game) {
 				}
 			}
 		} else if g.Player.Backpack[g.Player.EquippedItem].ID == utils.ItemWateringCan {
+			g.Sounds.PlaySound(g.Sounds.SFXWateringCan)
 			g.Player.State = utils.WateringState
 			g.Player.Frame = 0
 			g.Player.StateTTL = utils.PlayerFrameCount
@@ -75,11 +78,13 @@ func checkMouse(g *Game) {
 					g.State = utils.GameStateCraft
 				} else if o.Type == utils.ItemDoor {
 					if o.IsCollision { // door is currently closed
+						g.Sounds.PlaySound(g.Sounds.SFXOpenDoor)
 						g.Environment.Objects[g.CurrentMap][i].StartAnimation(utils.OpenDoorAnimation, utils.FrameCountSix, 0,
 							true, func() {
 								g.Environment.Objects[g.CurrentMap][i].IsCollision = false
 							})
 					} else { // door is currently open
+						g.Sounds.PlaySound(g.Sounds.SFXCloseDoor)
 						g.Environment.Objects[g.CurrentMap][i].StartAnimation(utils.CloseDoorAnimation, utils.FrameCountSix, 0,
 							true, func() {
 								g.Environment.Objects[g.CurrentMap][i].IsCollision = true
@@ -108,6 +113,7 @@ func checkMouse(g *Game) {
 		// if target tile has an animated character
 		for _, c := range g.Chickens {
 			if isClicked(mouseX, mouseY, c.Sprite) {
+				g.Sounds.PlaySound(g.Sounds.SFXChicken)
 				c.State = utils.ChickenHeartState
 				c.Frame = 0
 				c.AnimationTTL = utils.AnimalFrameCount
@@ -116,6 +122,7 @@ func checkMouse(g *Game) {
 
 		for _, c := range g.Cows {
 			if isClicked(mouseX, mouseY, c.Sprite) {
+				g.Sounds.PlaySound(g.Sounds.SFXCow)
 				c.State = utils.CowHeartState
 				c.Frame = 0
 				c.AnimationTTL = utils.AnimalFrameCount
@@ -245,6 +252,7 @@ func checkMouseOnCraftState(g *Game) {
 				items = append(items, model.BackpackItem{ID: item.ID, Count: item.Count})
 			}
 			if g.Player.RemoveFromBackpack(items) {
+				g.Sounds.PlaySound(g.Sounds.SFXCraft)
 				g.Player.AddToBackpack(utils.Recipes[g.UIState.SelectedRecipe], 1)
 			} else {
 				g.SetErrorMessage("Not enough materials!")
