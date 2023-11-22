@@ -119,6 +119,30 @@ func drawCraftingUI(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageO
 	}
 }
 
+func drawCharacterCustomizationUI(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+	// draw box
+	drawOptions.GeoM.Reset()
+	drawOptions.GeoM.Translate(0, 0)
+	screen.DrawImage(g.Images.CharacterCustomizationUI, &drawOptions)
+
+	// draw selected tile
+	drawOptions.GeoM.Reset()
+	drawOptions.GeoM.Translate(float64(utils.CharacterUIFirstBoxX+(utils.CharacterUISpacing*(g.UIState.SelectedCharacter%utils.CharacterUIColumns))),
+		float64(utils.CharacterUIFirstBoxY+(utils.CharacterUISpacing*(g.UIState.SelectedCharacter/utils.CharacterUIColumns))))
+	screen.DrawImage(g.Images.SelectedCharacter, &drawOptions)
+
+	// draw characters
+	for i, img := range g.Images.Characters {
+		drawOptions.GeoM.Reset()
+		drawOptions.GeoM.Translate(float64(utils.CharacterUIFirstSlotX+(utils.CharacterUISpacing*(i%utils.CharacterUIColumns))),
+			float64(utils.CharacterUIFirstSlotY+(utils.CharacterUISpacing*(i/utils.CharacterUIColumns))))
+		screen.DrawImage(img.SubImage(image.Rect(utils.UnitSize,
+			utils.UnitSize,
+			utils.UnitSize*2,
+			utils.UnitSize*2)).(*ebiten.Image), &drawOptions)
+	}
+}
+
 // DrawCenteredText %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // from https://github.com/sedyh/ebitengine-cheatsheet
 func DrawCenteredText(screen *ebiten.Image, font font.Face, s string, cx, cy int) {

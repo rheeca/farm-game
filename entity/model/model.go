@@ -19,9 +19,10 @@ type SpriteBody struct {
 }
 
 type UIState struct {
-	SelectedRecipe  int
-	ErrorMessage    string
-	ErrorMessageTTL int
+	SelectedCharacter int
+	SelectedRecipe    int
+	ErrorMessage      string
+	ErrorMessageTTL   int
 }
 
 type BackpackItem struct {

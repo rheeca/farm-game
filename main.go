@@ -64,7 +64,7 @@ func main() {
 	}
 
 	// load player
-	embeddedFile, err := EmbeddedAssets.Open(path.Join("assets", utils.PlayerImg))
+	embeddedFile, err := EmbeddedAssets.Open(path.Join("assets", "player", utils.DefaultPlayerImg))
 	if err != nil {
 		log.Fatal("failed to load embedded image:", embeddedFile, err)
 	}
@@ -106,7 +106,7 @@ func main() {
 	}
 
 	gameObj := game.Game{
-		State:       utils.GameStatePlay,
+		State:       utils.GameStateCustomChar,
 		Environment: env,
 		CurrentMap:  utils.FarmMap,
 		Player:      playerChar,

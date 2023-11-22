@@ -9,24 +9,38 @@ import (
 )
 
 type ImageCollection struct {
-	CraftingTable *ebiten.Image
-	CraftingUI    *ebiten.Image
-	FarmItems     *ebiten.Image
-	SelectedItem  *ebiten.Image
-	SelectedTool  *ebiten.Image
-	ToolsUI       *ebiten.Image
-	TreeSprites   *ebiten.Image
+	CharacterCustomizationUI *ebiten.Image
+	Characters               []*ebiten.Image
+	CraftingTable            *ebiten.Image
+	CraftingUI               *ebiten.Image
+	FarmItems                *ebiten.Image
+	SelectedCharacter        *ebiten.Image
+	SelectedItem             *ebiten.Image
+	SelectedTool             *ebiten.Image
+	ToolsUI                  *ebiten.Image
+	TreeSprites              *ebiten.Image
 }
 
 func NewImageCollection(EmbeddedAssets embed.FS) (images ImageCollection) {
+	characters := []*ebiten.Image{
+		loadImage(EmbeddedAssets, path.Join("assets", "player", "player_white.png")),
+		loadImage(EmbeddedAssets, path.Join("assets", "player", "player_purple.png")),
+		loadImage(EmbeddedAssets, path.Join("assets", "player", "player_pink.png")),
+		loadImage(EmbeddedAssets, path.Join("assets", "player", "player_aqua.png")),
+		loadImage(EmbeddedAssets, path.Join("assets", "player", "player_green.png")),
+		loadImage(EmbeddedAssets, path.Join("assets", "player", "player_blue.png")),
+	}
 	return ImageCollection{
-		CraftingTable: loadImage(EmbeddedAssets, path.Join("assets", "items", "crafting_table.png")),
-		CraftingUI:    loadImage(EmbeddedAssets, path.Join("assets", "ui", "crafting_ui.png")),
-		FarmItems:     loadImage(EmbeddedAssets, path.Join("assets", "items", "farm_items.png")),
-		SelectedItem:  loadImage(EmbeddedAssets, path.Join("assets", "ui", "selected_item.png")),
-		SelectedTool:  loadImage(EmbeddedAssets, path.Join("assets", "ui", "selected_tool.png")),
-		ToolsUI:       loadImage(EmbeddedAssets, path.Join("assets", "ui", "tools_ui.png")),
-		TreeSprites:   loadImage(EmbeddedAssets, path.Join("assets", "items", "tree_sprites.png")),
+		CharacterCustomizationUI: loadImage(EmbeddedAssets, path.Join("assets", "ui", "character_customization_ui.png")),
+		Characters:               characters,
+		CraftingTable:            loadImage(EmbeddedAssets, path.Join("assets", "items", "crafting_table.png")),
+		CraftingUI:               loadImage(EmbeddedAssets, path.Join("assets", "ui", "crafting_ui.png")),
+		FarmItems:                loadImage(EmbeddedAssets, path.Join("assets", "items", "farm_items.png")),
+		SelectedCharacter:        loadImage(EmbeddedAssets, path.Join("assets", "ui", "selected_character.png")),
+		SelectedItem:             loadImage(EmbeddedAssets, path.Join("assets", "ui", "selected_item.png")),
+		SelectedTool:             loadImage(EmbeddedAssets, path.Join("assets", "ui", "selected_tool.png")),
+		ToolsUI:                  loadImage(EmbeddedAssets, path.Join("assets", "ui", "tools_ui.png")),
+		TreeSprites:              loadImage(EmbeddedAssets, path.Join("assets", "items", "tree_sprites.png")),
 	}
 }
 

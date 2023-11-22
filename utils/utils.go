@@ -10,19 +10,20 @@ import (
 )
 
 const (
-	ProjectTitle    = "Project 3"
-	PlayerImg       = "player.png"
-	ChickenImg      = "chicken.png"
-	CowImg          = "cow.png"
-	FirstTownAudio  = "first-town.wav"
-	SoundSampleRate = 16000
-	UnitSize        = 32
-	ToolsUIBoxSize  = 48
+	ProjectTitle     = "Project 3"
+	DefaultPlayerImg = "player_white.png"
+	ChickenImg       = "chicken.png"
+	CowImg           = "cow.png"
+	FirstTownAudio   = "first-town.wav"
+	SoundSampleRate  = 16000
+	UnitSize         = 32
+	ToolsUIBoxSize   = 48
 )
 
 // game state
 const (
 	GameStatePlay = iota
+	GameStateCustomChar
 	GameStateCraft
 )
 

@@ -27,7 +27,7 @@ type Game struct {
 
 func (g *Game) Update() error {
 	getPlayerInput(g)
-	if g.State == utils.GameStateCraft {
+	if g.State == utils.GameStateCustomChar || g.State == utils.GameStateCraft {
 		return nil
 	}
 
@@ -42,6 +42,10 @@ func (g *Game) Update() error {
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	drawOptions := ebiten.DrawImageOptions{}
+	if g.State == utils.GameStateCustomChar {
+		drawCharacterCustomizationUI(g, screen, drawOptions)
+		return
+	}
 
 	drawMap(g, screen, drawOptions)
 	if g.CurrentMap == utils.ForestMap {

@@ -120,7 +120,10 @@ func checkMouse(g *Game) {
 func getPlayerInput(g *Game) {
 	g.Player.UpdateFrame(g.CurrentFrame)
 
-	if g.State == utils.GameStateCraft {
+	if g.State == utils.GameStateCustomChar {
+		checkMouseOnCustomCharState(g)
+		return
+	} else if g.State == utils.GameStateCraft {
 		checkMouseOnCraftState(g)
 		return
 	}
@@ -223,6 +226,30 @@ func checkMouseOnCraftState(g *Game) {
 			} else {
 				g.SetErrorMessage("Not enough materials!")
 			}
+		}
+	}
+}
+
+func checkMouseOnCustomCharState(g *Game) {
+	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+		mouseX, mouseY := ebiten.CursorPosition()
+		// select character
+		for i := 0; i < utils.CharacterUIBoxCount; i++ {
+			recipeBox := model.SpriteBody{
+				X:      utils.CharacterUIBoxCollisionX + (utils.CharacterUISpacing * (i % utils.CharacterUIColumns)),
+				Y:      utils.CharacterUIBoxCollisionY + (utils.CharacterUISpacing * (i / utils.CharacterUIColumns)),
+				Width:  utils.CharacterUIBoxCollisionWidth,
+				Height: utils.CharacterUIBoxCollisionHeight,
+			}
+			if isClicked(mouseX, mouseY, recipeBox) {
+				g.UIState.SelectedCharacter = i
+			}
+		}
+
+		// play button
+		if isClicked(mouseX, mouseY, model.SpriteBody{X: 294, Y: 387, Width: 212, Height: 55}) {
+			g.Player.Spritesheet = g.Images.Characters[g.UIState.SelectedCharacter]
+			g.State = utils.GameStatePlay
 		}
 	}
 }
