@@ -158,10 +158,63 @@ func loadObjects(gameMaps []*tiled.Map) (objects [][]model.Object) {
 	}
 	farmObjects = append(farmObjects, bed)
 
+	// forest map
+	// rocks
+	for _, stoneObj := range gameMaps[utils.ForestMap].Groups[0].ObjectGroups[utils.ForestRockPoints].Objects {
+		stone := model.Object{
+			Type: utils.ItemMapStone3,
+			XLoc: int(stoneObj.X),
+			YLoc: int(stoneObj.Y),
+			Sprite: model.SpriteBody{
+				X:      int(stoneObj.X),
+				Y:      int(stoneObj.Y),
+				Width:  utils.UnitSize,
+				Height: utils.UnitSize,
+			},
+			Collision: model.CollisionBody{
+				X:      int(stoneObj.X),
+				Y:      int(stoneObj.Y),
+				Width:  utils.UnitSize,
+				Height: utils.UnitSize,
+			},
+			IsCollision: true,
+		}
+		forestObjects = append(forestObjects, stone)
+	}
+	// wood
+	for _, woodObj := range gameMaps[utils.ForestMap].Groups[0].ObjectGroups[utils.ForestWoodPoints].Objects {
+		wood := model.Object{
+			Type: utils.ItemMapWood,
+			XLoc: int(woodObj.X),
+			YLoc: int(woodObj.Y),
+			Sprite: model.SpriteBody{
+				X:      int(woodObj.X),
+				Y:      int(woodObj.Y),
+				Width:  utils.UnitSize,
+				Height: utils.UnitSize,
+			},
+			Collision: model.CollisionBody{
+				X:      int(woodObj.X),
+				Y:      int(woodObj.Y),
+				Width:  utils.UnitSize,
+				Height: utils.UnitSize,
+			},
+			IsCollision: true,
+		}
+		forestObjects = append(forestObjects, wood)
+	}
+
 	objects = append(objects, farmObjects, animalsObjects, forestObjects)
 	return objects
 }
 
 func (e *Environment) ResetDay() {
-	e.Trees = loadTrees(e.Maps[utils.ForestMap])
+	for i := range e.Trees {
+		e.Trees[i].IsNil = false
+	}
+	for i, o := range e.Objects[utils.ForestMap] {
+		if o.IsNil && (o.Type == utils.ItemMapStone3 || o.Type == utils.ItemMapWood) {
+			e.Objects[utils.ForestMap][i].IsNil = false
+		}
+	}
 }

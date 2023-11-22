@@ -45,6 +45,9 @@ func drawMap(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions)
 
 func drawTrees(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
 	for _, t := range g.Environment.Trees {
+		if t.IsNil {
+			continue
+		}
 		drawOptions.GeoM.Reset()
 		drawOptions.GeoM.Translate(float64(t.XLoc), float64(t.YLoc))
 		screen.DrawImage(g.Images.TreeSprites.SubImage(image.Rect(t.Frame*t.Sprite.Width,
@@ -56,6 +59,9 @@ func drawTrees(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOption
 
 func drawObjects(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
 	for _, o := range g.Environment.Objects[g.CurrentMap] {
+		if o.IsNil {
+			continue
+		}
 		var x0, y0, x1, y1 int
 		var objImage *ebiten.Image
 
@@ -82,6 +88,18 @@ func drawObjects(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOpti
 			x0, y0 = 0, 0
 			x1 = objImage.Bounds().Dx()
 			y1 = objImage.Bounds().Dy()
+		} else if o.Type == utils.ItemMapStone3 {
+			objImage = g.Environment.Tilesets[utils.TilesetFlowersStones]
+			x0 = utils.UnitSize * (utils.MapStone3 % 12)
+			y0 = utils.UnitSize * (utils.MapStone3 / 12)
+			x1 = x0 + utils.UnitSize
+			y1 = y0 + utils.UnitSize
+		} else if o.Type == utils.ItemMapWood {
+			objImage = g.Environment.Tilesets[utils.TilesetTrees]
+			x0 = utils.UnitSize * (utils.MapWood % 12)
+			y0 = utils.UnitSize * (utils.MapWood / 12)
+			x1 = x0 + utils.UnitSize
+			y1 = y0 + utils.UnitSize
 		}
 
 		drawOptions.GeoM.Translate(float64(o.XLoc), float64(o.YLoc))

@@ -28,6 +28,9 @@ func checkMouse(g *Game) {
 			g.Player.StateTTL = utils.PlayerFrameCount
 
 			for i, t := range g.Environment.Trees {
+				if t.IsNil {
+					continue
+				}
 				// if tree is in target, chop tree
 				if hasCollision(0, 0, g.Player.CalcTargetBox(), t.Collision) {
 					// if tree health reaches zero, set the delay function to be executed after the animation
@@ -38,19 +41,12 @@ func checkMouse(g *Game) {
 					} else {
 						doDelayFcn = false
 					}
-
+					treeHit := i
 					g.Environment.Trees[i].StartAnimation(utils.TreeHitAnimation, utils.FrameCountSix, utils.AnimationDelay,
 						doDelayFcn,
 						func() {
 							g.Player.AddToBackpack(utils.ItemWood2, 5)
-							// remove chopped trees
-							var newTrees []model.Object
-							for _, t := range g.Environment.Trees {
-								if t.Health > 0 {
-									newTrees = append(newTrees, t)
-								}
-							}
-							g.Environment.Trees = newTrees
+							g.Environment.Trees[treeHit].IsNil = true
 						})
 				}
 			}
@@ -92,6 +88,18 @@ func checkMouse(g *Game) {
 				} else if o.Type == utils.ItemBedPink {
 					g.ShowImage(g.Images.BlackScreen)
 					g.Environment.ResetDay()
+				} else if o.Type == utils.ItemMapStone3 {
+					if g.Player.AddToBackpack(utils.ItemRock1, 1) {
+						g.Environment.Objects[g.CurrentMap][i].IsNil = true
+					} else {
+						g.SetErrorMessage("Backpack is full!")
+					}
+				} else if o.Type == utils.ItemMapWood {
+					if g.Player.AddToBackpack(utils.ItemWood2, 1) {
+						g.Environment.Objects[g.CurrentMap][i].IsNil = true
+					} else {
+						g.SetErrorMessage("Backpack is full!")
+					}
 				}
 				return
 			}

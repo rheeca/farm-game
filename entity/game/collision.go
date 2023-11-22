@@ -129,6 +129,9 @@ func playerHasCollisions(g *Game) bool {
 
 	// check for trees
 	for _, t := range g.Environment.Trees {
+		if t.IsNil {
+			continue
+		}
 		if hasCollision(g.Player.Dx, g.Player.Dy, g.Player.Collision, t.Collision) {
 			return true
 		}
@@ -136,6 +139,9 @@ func playerHasCollisions(g *Game) bool {
 
 	// check for objects
 	for _, o := range g.Environment.Objects[g.CurrentMap] {
+		if o.IsNil {
+			continue
+		}
 		if hasCollision(g.Player.Dx, g.Player.Dy, g.Player.Collision, o.Collision) && o.IsCollision {
 			return true
 		}

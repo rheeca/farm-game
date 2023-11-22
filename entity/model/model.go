@@ -46,6 +46,7 @@ type Object struct {
 	Sprite      SpriteBody
 	Collision   CollisionBody
 	IsCollision bool
+	IsNil       bool
 	Frame       int
 
 	// When object reaches zero health, object will be removed

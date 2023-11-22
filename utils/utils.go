@@ -58,6 +58,8 @@ const (
 	ForestMapEntryPoint = 0
 	ForestMapExitPoint  = 1
 	ForestTreePoints    = 2
+	ForestRockPoints    = 3
+	ForestWoodPoints    = 4
 )
 
 const (

@@ -35,10 +35,16 @@ func (g *Game) Update() error {
 
 	g.CurrentFrame += 1
 	updateAnimals(g)
-	for i := range g.Environment.Trees {
+	for i, t := range g.Environment.Trees {
+		if t.IsNil {
+			continue
+		}
 		g.Environment.Trees[i].UpdateFrame(g.CurrentFrame)
 	}
 	for i, o := range g.Environment.Objects[g.CurrentMap] {
+		if o.IsNil {
+			continue
+		}
 		if o.Type == utils.ItemDoor {
 			g.Environment.Objects[g.CurrentMap][i].UpdateFrame(g.CurrentFrame)
 		}
