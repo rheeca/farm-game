@@ -7,6 +7,7 @@ import (
 	"guion-2d-project3/entity/animal"
 	"guion-2d-project3/entity/environment"
 	"guion-2d-project3/entity/loader"
+	"guion-2d-project3/entity/model"
 	"guion-2d-project3/entity/player"
 	"guion-2d-project3/utils"
 	"image"
@@ -21,15 +22,16 @@ type Game struct {
 	CurrentMap   int
 	CurrentFrame int
 	Images       loader.ImageCollection
+	UIState      model.UIState
 }
 
 func (g *Game) Update() error {
+	getPlayerInput(g)
 	if g.State == utils.GameStateCraft {
 		return nil
 	}
 
 	g.CurrentFrame += 1
-	getPlayerInput(g)
 	updateAnimals(g)
 	for i := range g.Environment.Trees {
 		g.Environment.Trees[i].UpdateFrame(g.CurrentFrame)
@@ -114,9 +116,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	}
 
 	if g.State == utils.GameStateCraft {
-		drawOptions.GeoM.Reset()
-		drawOptions.GeoM.Translate(0, 0)
-		screen.DrawImage(g.Images.CraftingUI, &drawOptions)
+		drawCraftingUI(g, screen, drawOptions)
 	}
 }
 

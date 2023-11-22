@@ -1,10 +1,12 @@
 package game
 
 import (
+	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
 	"golang.org/x/image/colornames"
 	"golang.org/x/image/font"
+	"golang.org/x/image/font/basicfont"
 	"guion-2d-project3/utils"
 	"image"
 )
@@ -67,6 +69,44 @@ func drawObjects(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOpti
 
 		drawOptions.GeoM.Translate(float64(o.XLoc), float64(o.YLoc))
 		screen.DrawImage(objImage.SubImage(image.Rect(x0, y0, x1, y1)).(*ebiten.Image), &drawOptions)
+	}
+}
+
+func drawCraftingUI(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+	// draw box
+	drawOptions.GeoM.Reset()
+	drawOptions.GeoM.Translate(0, 0)
+	screen.DrawImage(g.Images.CraftingUI, &drawOptions)
+
+	// draw selected tile
+	drawOptions.GeoM.Reset()
+	drawOptions.GeoM.Translate(float64(utils.CraftingUIFirstBoxX+(utils.CraftingUISpacing*(g.UIState.SelectedRecipe%utils.CraftingUIColumns))),
+		float64(utils.CraftingUIFirstBoxY+(utils.CraftingUISpacing*(g.UIState.SelectedRecipe/utils.CraftingUIColumns))))
+	screen.DrawImage(g.Images.SelectedItem, &drawOptions)
+
+	// draw recipes
+	var x int
+	for i, itemID := range utils.Recipes {
+		drawOptions.GeoM.Reset()
+		drawOptions.GeoM.Translate(float64(utils.CraftingUIFirstSlotX+(x%(utils.CraftingUIColumns*utils.CraftingUISpacing))),
+			float64(utils.CraftingUIFirstSlotY+(utils.CraftingUISpacing*(i/utils.CraftingUIColumns))))
+		screen.DrawImage(g.Images.FarmItems.SubImage(image.Rect((itemID%utils.FarmItemsColumns)*utils.UnitSize,
+			(itemID/utils.FarmItemsColumns)*utils.UnitSize,
+			(itemID%utils.FarmItemsColumns)*utils.UnitSize+utils.UnitSize,
+			(itemID/utils.FarmItemsColumns)*utils.UnitSize+utils.UnitSize)).(*ebiten.Image), &drawOptions)
+		x += utils.CraftingUISpacing
+	}
+
+	// draw recipe ingredients
+	for i, item := range utils.RecipeDetails[utils.Recipes[g.UIState.SelectedRecipe]] {
+		drawOptions.GeoM.Reset()
+		drawOptions.GeoM.Translate(float64(utils.RecipeItemX+(i*64)),
+			float64(utils.RecipeItemY))
+		screen.DrawImage(g.Images.FarmItems.SubImage(image.Rect((item.ID%utils.FarmItemsColumns)*utils.UnitSize,
+			(item.ID/utils.FarmItemsColumns)*utils.UnitSize,
+			(item.ID%utils.FarmItemsColumns)*utils.UnitSize+utils.UnitSize,
+			(item.ID/utils.FarmItemsColumns)*utils.UnitSize+utils.UnitSize)).(*ebiten.Image), &drawOptions)
+		DrawCenteredText(screen, basicfont.Face7x13, fmt.Sprintf("%v", item.Count), utils.RecipeItemX+(i*64)+32, utils.RecipeItemY)
 	}
 }
 

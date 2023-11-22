@@ -18,6 +18,10 @@ type SpriteBody struct {
 	Height int
 }
 
+type UIState struct {
+	SelectedRecipe int
+}
+
 type delayfcn func()
 
 type Object struct {

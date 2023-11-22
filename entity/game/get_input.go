@@ -75,6 +75,7 @@ func checkMouse(g *Game) {
 		for _, o := range g.Environment.Objects[g.CurrentMap] {
 			if isClicked(mouseX, mouseY, o.Sprite) {
 				if o.Type == utils.ItemCraftingTable {
+					g.UIState.SelectedRecipe = 0
 					g.State = utils.GameStateCraft
 				}
 				return
@@ -118,6 +119,11 @@ func checkMouse(g *Game) {
 
 func getPlayerInput(g *Game) {
 	g.Player.UpdateFrame(g.CurrentFrame)
+
+	if g.State == utils.GameStateCraft {
+		checkMouseOnCraftState(g)
+		return
+	}
 
 	checkMouse(g)
 	if ebiten.IsKeyPressed(ebiten.KeyA) && g.Player.Sprite.X > 0 {
@@ -181,5 +187,33 @@ func getPlayerInput(g *Game) {
 		g.Player.EquippedItem = 7
 	} else if ebiten.IsKeyPressed(ebiten.Key9) {
 		g.Player.EquippedItem = 8
+	}
+}
+
+func checkMouseOnCraftState(g *Game) {
+	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+		mouseX, mouseY := ebiten.CursorPosition()
+		// exit button
+		if isClicked(mouseX, mouseY, model.SpriteBody{X: 654, Y: 106, Width: 36, Height: 40}) {
+			g.State = utils.GameStatePlay
+			return
+		}
+
+		// select recipe
+		for i := 0; i < utils.CraftingUIBoxCount; i++ {
+			recipeBox := model.SpriteBody{
+				X:      utils.CraftingUIBoxCollisionX + (utils.CraftingUISpacing * (i % utils.CraftingUIColumns)),
+				Y:      utils.CraftingUIBoxCollisionY + (utils.CraftingUISpacing * (i / utils.CraftingUIColumns)),
+				Width:  utils.CraftingUIBoxCollisionWidth,
+				Height: utils.CraftingUIBoxCollisionHeight,
+			}
+			if isClicked(mouseX, mouseY, recipeBox) {
+				g.UIState.SelectedRecipe = i
+			}
+		}
+
+		// create button
+		if isClicked(mouseX, mouseY, model.SpriteBody{X: 486, Y: 452, Width: 180, Height: 54}) {
+		}
 	}
 }
