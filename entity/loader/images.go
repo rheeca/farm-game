@@ -11,6 +11,7 @@ import (
 type ImageCollection struct {
 	BedPink                  *ebiten.Image
 	BlackScreen              *ebiten.Image
+	ButtonDelete             *ebiten.Image
 	CharacterCustomizationUI *ebiten.Image
 	Characters               []*ebiten.Image
 	CraftingTable            *ebiten.Image
@@ -36,6 +37,7 @@ func NewImageCollection(EmbeddedAssets embed.FS) (images ImageCollection) {
 	return ImageCollection{
 		BedPink:                  loadImage(EmbeddedAssets, path.Join("assets", "items", "bed_pink.png")),
 		BlackScreen:              loadImage(EmbeddedAssets, path.Join("assets", "ui", "black_screen.png")),
+		ButtonDelete:             loadImage(EmbeddedAssets, path.Join("assets", "ui", "button_delete.png")),
 		CharacterCustomizationUI: loadImage(EmbeddedAssets, path.Join("assets", "ui", "character_customization_ui.png")),
 		Characters:               characters,
 		CraftingTable:            loadImage(EmbeddedAssets, path.Join("assets", "items", "crafting_table.png")),

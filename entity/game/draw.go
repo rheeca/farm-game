@@ -210,21 +210,24 @@ func drawCows(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions
 }
 
 func drawBackpack(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+	// draw backpack
 	drawOptions.GeoM.Reset()
 	drawOptions.GeoM.Translate(float64(utils.ToolsUIX), float64(utils.ToolsUIY))
 	screen.DrawImage(g.Images.ToolsUI, &drawOptions)
 
+	// draw selected box
 	drawOptions.GeoM.Reset()
-	drawOptions.GeoM.Translate(float64(utils.ToolsFirstBoxX+((g.Player.EquippedItem)*utils.ToolsUIBoxSize)),
+	drawOptions.GeoM.Translate(float64(utils.ToolsFirstBoxX+((g.Player.EquippedItem)*utils.BackpackUIBoxWidth)),
 		float64(utils.ToolsFirstBoxY))
 	screen.DrawImage(g.Images.SelectedTool, &drawOptions)
 
+	// draw items in backpack
 	for i, item := range g.Player.Backpack {
 		if item.ID == 0 {
 			continue
 		}
 		drawOptions.GeoM.Reset()
-		drawOptions.GeoM.Translate(float64(utils.ToolsFirstSlotX+(i*utils.ToolsUIBoxSize)), float64(utils.ToolsFirstSlotY))
+		drawOptions.GeoM.Translate(float64(utils.ToolsFirstSlotX+(i*utils.BackpackUIBoxWidth)), float64(utils.ToolsFirstSlotY))
 
 		screen.DrawImage(g.Images.FarmItems.SubImage(image.Rect((item.ID%utils.FarmItemsColumns)*utils.UnitSize,
 			(item.ID/utils.FarmItemsColumns)*utils.UnitSize,
@@ -234,9 +237,14 @@ func drawBackpack(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOpt
 		// draw item count
 		if item.Count > 1 {
 			DrawCenteredText(screen, basicfont.Face7x13, fmt.Sprintf("%d", item.Count),
-				utils.ToolsFirstSlotX+(i*utils.ToolsUIBoxSize)+utils.UnitSize, utils.ToolsFirstSlotY)
+				utils.ToolsFirstSlotX+(i*utils.BackpackUIBoxWidth)+utils.UnitSize, utils.ToolsFirstSlotY)
 		}
 	}
+
+	// draw delete button
+	drawOptions.GeoM.Reset()
+	drawOptions.GeoM.Translate(float64(utils.BackpackDeleteButtonX), float64(utils.BackpackDeleteButtonY))
+	screen.DrawImage(g.Images.ButtonDelete, &drawOptions)
 }
 
 func drawImageToShow(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {

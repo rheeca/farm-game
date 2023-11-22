@@ -13,4 +13,23 @@ const (
 	CharacterUIBoxCollisionY      = 192
 	CharacterUIBoxCollisionWidth  = 32
 	CharacterUIBoxCollisionHeight = 32
+
+	BackpackDeleteButtonX      = 651
+	BackpackDeleteButtonY      = 574
+	BackpackDeleteButtonWidth  = 44
+	BackpackDeleteButtonHeight = 48
+)
+
+const (
+	BackpackUIBoxWidth = 48
+	BackpackSize       = 9
+)
+
+var (
+	ToolsUIX        int
+	ToolsUIY        int
+	ToolsFirstSlotX int
+	ToolsFirstSlotY int
+	ToolsFirstBoxX  int
+	ToolsFirstBoxY  int
 )

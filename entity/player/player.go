@@ -76,6 +76,11 @@ func isTool(itemID int) bool {
 	return false
 }
 
+func (p *Player) RemoveFromBackpackByIndex(index int) {
+	p.Backpack[index].ID = 0
+	p.Backpack[index].Count = 0
+}
+
 func (p *Player) RemoveFromBackpack(items []model.BackpackItem) bool {
 	backpack := p.Backpack
 	for _, toRemove := range items {

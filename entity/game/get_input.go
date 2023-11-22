@@ -21,6 +21,31 @@ func getPlayerInput(g *Game) {
 
 func checkMouseOnPlayState(g *Game) {
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+		mouseX, mouseY := ebiten.CursorPosition()
+		// select item in backpack
+		for i := 0; i < utils.BackpackSize; i++ {
+			if isClicked(mouseX, mouseY, model.SpriteBody{
+				X:      utils.ToolsFirstBoxX + (i * utils.BackpackUIBoxWidth),
+				Y:      utils.ToolsFirstBoxY,
+				Width:  utils.BackpackUIBoxWidth,
+				Height: utils.BackpackUIBoxWidth,
+			}) {
+				g.Player.EquippedItem = i
+				return
+			}
+		}
+
+		// delete item in backpack
+		if isClicked(mouseX, mouseY, model.SpriteBody{
+			X:      utils.BackpackDeleteButtonX,
+			Y:      utils.BackpackDeleteButtonY,
+			Width:  utils.BackpackDeleteButtonWidth,
+			Height: utils.BackpackDeleteButtonHeight,
+		}) {
+			g.Player.RemoveFromBackpackByIndex(g.Player.EquippedItem)
+		}
+
+		// use tool
 		if g.Player.Backpack[g.Player.EquippedItem].ID == utils.ItemHoe {
 			g.Sounds.PlaySound(g.Sounds.SFXTillSoil)
 			g.Player.State = utils.HoeState

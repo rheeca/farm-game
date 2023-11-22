@@ -16,7 +16,6 @@ const (
 	CowImg           = "cow.png"
 	SoundSampleRate  = 16000
 	UnitSize         = 32
-	ToolsUIBoxSize   = 48
 )
 
 // game state
@@ -66,7 +65,6 @@ const (
 	FrameCountSix  = 6
 	AnimationDelay = 8
 	MovementSpeed  = 2
-	BackpackSize   = 9
 )
 
 const (
@@ -140,14 +138,6 @@ var (
 	TileHeight int
 	MapColumns int
 	MapRows    int
-
-	ToolsUIX         int
-	ToolsUIY         int
-	FarmItemsColumns int
-	ToolsFirstSlotX  int
-	ToolsFirstSlotY  int
-	ToolsFirstBoxX   int
-	ToolsFirstBoxY   int
 
 	Tilesets = []string{
 		"barn_structures.png",

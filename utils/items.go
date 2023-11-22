@@ -23,3 +23,7 @@ const (
 const (
 	MapWood = 78
 )
+
+var (
+	FarmItemsColumns int
+)
