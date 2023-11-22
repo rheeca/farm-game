@@ -8,7 +8,18 @@ import (
 	"guion-2d-project3/utils"
 )
 
-func checkMouse(g *Game) {
+func getPlayerInput(g *Game) {
+	if g.State == utils.GameStateCustomChar {
+		checkMouseOnCustomCharState(g)
+	} else if g.State == utils.GameStateCraft {
+		checkMouseOnCraftState(g)
+	} else if g.State == utils.GameStatePlay {
+		checkMouseOnPlayState(g)
+		checkKeyboardOnPlayState(g)
+	}
+}
+
+func checkMouseOnPlayState(g *Game) {
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		if g.Player.Backpack[g.Player.EquippedItem].ID == utils.ItemHoe {
 			g.Sounds.PlaySound(g.Sounds.SFXTillSoil)
@@ -152,18 +163,8 @@ func checkMouse(g *Game) {
 	}
 }
 
-func getPlayerInput(g *Game) {
-	g.Player.UpdateFrame(g.CurrentFrame)
-
-	if g.State == utils.GameStateCustomChar {
-		checkMouseOnCustomCharState(g)
-		return
-	} else if g.State == utils.GameStateCraft {
-		checkMouseOnCraftState(g)
-		return
-	}
-
-	checkMouse(g)
+func checkKeyboardOnPlayState(g *Game) {
+	// player movement
 	if ebiten.IsKeyPressed(ebiten.KeyA) && g.Player.Sprite.X > 0 {
 		g.Player.Direction = utils.Left
 		g.Player.State = utils.WalkState
@@ -206,7 +207,7 @@ func getPlayerInput(g *Game) {
 		g.Player.State = utils.IdleState
 	}
 
-	// Equip item
+	// equip item
 	if ebiten.IsKeyPressed(ebiten.Key1) {
 		g.Player.EquippedItem = 0
 	} else if ebiten.IsKeyPressed(ebiten.Key2) {

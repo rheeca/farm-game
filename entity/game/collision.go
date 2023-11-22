@@ -156,10 +156,3 @@ func playerHasCollisions(g *Game) bool {
 	}
 	return false
 }
-
-func updateAnimals(g *Game) {
-	for i := range g.Chickens {
-		g.Chickens[i].UpdateFrame(g.CurrentFrame)
-		g.Cows[i].UpdateFrame(g.CurrentFrame)
-	}
-}
