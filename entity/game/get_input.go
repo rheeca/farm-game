@@ -89,7 +89,9 @@ func checkMouse(g *Game) {
 								g.Environment.Objects[g.CurrentMap][i].IsCollision = true
 							})
 					}
-
+				} else if o.Type == utils.ItemBedPink {
+					g.ShowImage(g.Images.BlackScreen)
+					g.Environment.ResetDay()
 				}
 				return
 			}

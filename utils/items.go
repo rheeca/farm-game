@@ -9,6 +9,7 @@ const (
 	ItemRock1             = 42
 	ItemCraftingTable     = 121
 	ItemDoor              = 122
+	ItemBedPink           = 123
 )
 
 // flowers and stones

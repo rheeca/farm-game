@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="25" height="20" tilewidth="32" tileheight="32" infinite="0" nextlayerid="17" nextobjectid="10">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="25" height="20" tilewidth="32" tileheight="32" infinite="0" nextlayerid="18" nextobjectid="11">
  <tileset firstgid="1" name="grass_hill" tilewidth="32" tileheight="32" tilecount="77" columns="11">
   <image source="tilesets/grass_hill.png" width="352" height="224"/>
  </tileset>
@@ -30,8 +30,8 @@
  <tileset firstgid="461" name="furniture" tilewidth="32" tileheight="32" tilecount="54" columns="9">
   <image source="tilesets/furniture.png" width="288" height="192"/>
  </tileset>
- <tileset firstgid="515" name="door_sprites" tilewidth="32" tileheight="32" tilecount="36" columns="18">
-  <image source="items/door_sprites.png" width="576" height="64"/>
+ <tileset firstgid="515" name="door_sprites" tilewidth="32" tileheight="32" tilecount="54" columns="18">
+  <image source="items/door_sprites.png" width="576" height="96"/>
  </tileset>
  <layer id="1" name="Water" width="25" height="20">
   <data encoding="csv">
@@ -180,8 +180,8 @@
  <layer id="7" name="FixedObjects2" width="25" height="20">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,472,463,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,481,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,463,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,491,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -204,8 +204,8 @@
  <layer id="14" name="GuideOnly" width="25" height="20">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,467,468,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,472,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,481,0,0,0,0,467,468,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,476,477,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,520,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -258,6 +258,11 @@
   </objectgroup>
   <objectgroup id="16" name="DoorPoint">
    <object id="8" x="128" y="160">
+    <point/>
+   </object>
+  </objectgroup>
+  <objectgroup id="17" name="BedPoint">
+   <object id="10" x="96" y="32">
     <point/>
    </object>
   </objectgroup>

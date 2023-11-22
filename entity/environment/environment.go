@@ -136,6 +136,32 @@ func loadObjects(gameMaps []*tiled.Map) (objects [][]model.Object) {
 	}
 	farmObjects = append(farmObjects, door)
 
+	// bed
+	bedObj := gameMaps[utils.FarmMap].Groups[0].ObjectGroups[utils.FarmMapBedPoint].Objects[0]
+	bed := model.Object{
+		Type: utils.ItemBedPink,
+		XLoc: int(bedObj.X),
+		YLoc: int(bedObj.Y),
+		Sprite: model.SpriteBody{
+			X:      int(bedObj.X) + 2,
+			Y:      int(bedObj.Y) + 20,
+			Width:  28,
+			Height: 44,
+		},
+		Collision: model.CollisionBody{
+			X:      int(bedObj.X) + 2,
+			Y:      int(bedObj.Y) + 20,
+			Width:  28,
+			Height: 44,
+		},
+		IsCollision: true,
+	}
+	farmObjects = append(farmObjects, bed)
+
 	objects = append(objects, farmObjects, animalsObjects, forestObjects)
 	return objects
+}
+
+func (e *Environment) ResetDay() {
+	e.Trees = loadTrees(e.Maps[utils.ForestMap])
 }

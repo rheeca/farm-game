@@ -3,6 +3,8 @@ package game
 import (
 	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/text"
+	"golang.org/x/image/colornames"
 	"golang.org/x/image/font/basicfont"
 	"guion-2d-project3/entity/animal"
 	"guion-2d-project3/entity/environment"
@@ -127,6 +129,26 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	if g.State == utils.GameStateCraft {
 		drawCraftingUI(g, screen, drawOptions)
 	}
+
+	// draw image to show, if any
+	if g.UIState.ImageTTL > 0 {
+		drawOptions.GeoM.Reset()
+		drawOptions.GeoM.Translate(0, 0)
+		screen.DrawImage(g.Images.BlackScreen, &drawOptions)
+		g.UIState.ImageTTL -= 1
+		if g.UIState.ImageTTL == 0 {
+			g.UIState.ImageToShow = nil
+		}
+	}
+
+	// draw error message, if any
+	if g.UIState.ErrorMessageTTL > 0 {
+		text.Draw(screen, g.UIState.ErrorMessage, utils.LoadFont(12), 12, 20, colornames.Brown)
+		g.UIState.ErrorMessageTTL -= 1
+		if g.UIState.ErrorMessageTTL == 0 {
+			g.UIState.ErrorMessage = ""
+		}
+	}
 }
 
 func (g *Game) Layout(oWidth, oHeight int) (sWidth, sHeight int) {
@@ -136,4 +158,9 @@ func (g *Game) Layout(oWidth, oHeight int) (sWidth, sHeight int) {
 func (g *Game) SetErrorMessage(message string) {
 	g.UIState.ErrorMessage = message
 	g.UIState.ErrorMessageTTL = 60
+}
+
+func (g *Game) ShowImage(image *ebiten.Image) {
+	g.UIState.ImageToShow = image
+	g.UIState.ImageTTL = 60
 }

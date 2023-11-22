@@ -64,7 +64,7 @@ func drawObjects(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOpti
 			objImage = g.Images.CraftingTable
 			x0, y0 = 0, 0
 			x1 = objImage.Bounds().Dx()
-			y1 = objImage.Bounds().Dx()
+			y1 = objImage.Bounds().Dy()
 		} else if o.Type == utils.ItemDoor {
 			var animation int
 			if o.IsCollision {
@@ -77,6 +77,11 @@ func drawObjects(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOpti
 			y0 = animation * o.Sprite.Height
 			x1 = o.Frame*o.Sprite.Width + o.Sprite.Width
 			y1 = animation*o.Sprite.Height + o.Sprite.Height
+		} else if o.Type == utils.ItemBedPink {
+			objImage = g.Images.BedPink
+			x0, y0 = 0, 0
+			x1 = objImage.Bounds().Dx()
+			y1 = objImage.Bounds().Dy()
 		}
 
 		drawOptions.GeoM.Translate(float64(o.XLoc), float64(o.YLoc))
@@ -119,15 +124,6 @@ func drawCraftingUI(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageO
 			(item.ID%utils.FarmItemsColumns)*utils.UnitSize+utils.UnitSize,
 			(item.ID/utils.FarmItemsColumns)*utils.UnitSize+utils.UnitSize)).(*ebiten.Image), &drawOptions)
 		DrawCenteredText(screen, basicfont.Face7x13, fmt.Sprintf("%v", item.Count), utils.RecipeItemX+(i*64)+32, utils.RecipeItemY)
-	}
-
-	// draw error message, if any
-	if g.UIState.ErrorMessageTTL > 0 {
-		text.Draw(screen, g.UIState.ErrorMessage, utils.LoadFont(12), 12, 20, colornames.Brown)
-		g.UIState.ErrorMessageTTL -= 1
-		if g.UIState.ErrorMessageTTL == 0 {
-			g.UIState.ErrorMessage = ""
-		}
 	}
 }
 

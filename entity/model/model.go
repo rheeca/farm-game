@@ -1,6 +1,7 @@
 package model
 
 import (
+	"github.com/hajimehoshi/ebiten/v2"
 	"guion-2d-project3/utils"
 )
 
@@ -23,6 +24,8 @@ type UIState struct {
 	SelectedRecipe    int
 	ErrorMessage      string
 	ErrorMessageTTL   int
+	ImageToShow       *ebiten.Image
+	ImageTTL          int
 }
 
 type BackpackItem struct {
