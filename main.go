@@ -17,7 +17,6 @@ import (
 	"log"
 	"os"
 	"path"
-	"time"
 )
 
 //go:embed assets/*
@@ -116,9 +115,16 @@ func main() {
 	}
 
 	go func(player *audio.Player) {
-		player.Play()
-		time.Sleep(122 * time.Second)
-		player.Rewind()
+		player.SetVolume(0.8)
+		for {
+			if !player.IsPlaying() {
+				err := player.Rewind()
+				if err != nil {
+					fmt.Println("failed to rewind background music")
+				}
+				player.Play()
+			}
+		}
 	}(bgmPlayer)
 	err = ebiten.RunGame(&gameObj)
 	if err != nil {
