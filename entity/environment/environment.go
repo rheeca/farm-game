@@ -204,6 +204,12 @@ func loadObjects(gameMaps []*tiled.Map) (objects [][]model.Object) {
 		forestObjects = append(forestObjects, wood)
 	}
 
+	forestObjects = loadObject32(forestObjects, utils.ForestSunflowerPoints, utils.MapSunflower, gameMaps[utils.ForestMap])
+	forestObjects = loadObject32(forestObjects, utils.ForestBlueflowerPoints, utils.MapBlueflower, gameMaps[utils.ForestMap])
+	forestObjects = loadObject32(forestObjects, utils.ForestWeedPoints, utils.MapWeed, gameMaps[utils.ForestMap])
+	forestObjects = loadObject32(forestObjects, utils.ForestPinkDyeFlowerPoints, utils.MapPinkDyeFlower, gameMaps[utils.ForestMap])
+	forestObjects = loadObject32(forestObjects, utils.ForestBlueDyeFlowerPoints, utils.MapBlueDyeFlower, gameMaps[utils.ForestMap])
+
 	objects = append(objects, farmObjects, animalsObjects, forestObjects)
 	return objects
 }

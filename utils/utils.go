@@ -53,11 +53,16 @@ const (
 	AnimalMapEntryPoint = 0
 	AnimalMapExitPoint  = 1
 
-	ForestMapEntryPoint = 0
-	ForestMapExitPoint  = 1
-	ForestTreePoints    = 2
-	ForestRockPoints    = 3
-	ForestWoodPoints    = 4
+	ForestMapEntryPoint       = 0
+	ForestMapExitPoint        = 1
+	ForestTreePoints          = 2
+	ForestRockPoints          = 3
+	ForestWoodPoints          = 4
+	ForestSunflowerPoints     = 5
+	ForestBlueflowerPoints    = 6
+	ForestWeedPoints          = 7
+	ForestPinkDyeFlowerPoints = 8
+	ForestBlueDyeFlowerPoints = 9
 )
 
 const (

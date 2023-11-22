@@ -144,6 +144,36 @@ func checkMouseOnPlayState(g *Game) {
 					} else {
 						g.SetErrorMessage("Backpack is full!")
 					}
+				} else if o.Type == utils.MapSunflower {
+					if g.Player.AddToBackpack(utils.ItemSunflower, 1) {
+						g.Environment.Objects[g.CurrentMap][i].IsNil = true
+					} else {
+						g.SetErrorMessage("Backpack is full!")
+					}
+				} else if o.Type == utils.MapBlueflower {
+					if g.Player.AddToBackpack(utils.ItemBlueflower, 1) {
+						g.Environment.Objects[g.CurrentMap][i].IsNil = true
+					} else {
+						g.SetErrorMessage("Backpack is full!")
+					}
+				} else if o.Type == utils.MapWeed {
+					if g.Player.AddToBackpack(utils.ItemWeed, 1) {
+						g.Environment.Objects[g.CurrentMap][i].IsNil = true
+					} else {
+						g.SetErrorMessage("Backpack is full!")
+					}
+				} else if o.Type == utils.MapPinkDyeFlower {
+					if g.Player.AddToBackpack(utils.ItemPinkDyeFlower, 1) {
+						g.Environment.Objects[g.CurrentMap][i].IsNil = true
+					} else {
+						g.SetErrorMessage("Backpack is full!")
+					}
+				} else if o.Type == utils.MapBlueDyeFlower {
+					if g.Player.AddToBackpack(utils.ItemBlueDyeFlower, 1) {
+						g.Environment.Objects[g.CurrentMap][i].IsNil = true
+					} else {
+						g.SetErrorMessage("Backpack is full!")
+					}
 				}
 				return
 			}

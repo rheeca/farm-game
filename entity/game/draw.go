@@ -100,6 +100,36 @@ func drawObjects(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOpti
 			y0 = utils.UnitSize * (utils.MapWood / 12)
 			x1 = x0 + utils.UnitSize
 			y1 = y0 + utils.UnitSize
+		} else if o.Type == utils.MapSunflower {
+			objImage = g.Environment.Tilesets[utils.TilesetFlowersStones]
+			x0 = utils.UnitSize * (utils.MapSunflower % 12)
+			y0 = utils.UnitSize * (utils.MapSunflower / 12)
+			x1 = x0 + utils.UnitSize
+			y1 = y0 + utils.UnitSize
+		} else if o.Type == utils.MapBlueflower {
+			objImage = g.Environment.Tilesets[utils.TilesetFlowersStones]
+			x0 = utils.UnitSize * (utils.MapBlueflower % 12)
+			y0 = utils.UnitSize * (utils.MapBlueflower / 12)
+			x1 = x0 + utils.UnitSize
+			y1 = y0 + utils.UnitSize
+		} else if o.Type == utils.MapWeed {
+			objImage = g.Environment.Tilesets[utils.TilesetFlowersStones]
+			x0 = utils.UnitSize * (utils.MapWeed % 12)
+			y0 = utils.UnitSize * (utils.MapWeed / 12)
+			x1 = x0 + utils.UnitSize
+			y1 = y0 + utils.UnitSize
+		} else if o.Type == utils.MapPinkDyeFlower {
+			objImage = g.Environment.Tilesets[utils.TilesetFlowersStones]
+			x0 = utils.UnitSize * (utils.MapPinkDyeFlower % 12)
+			y0 = utils.UnitSize * (utils.MapPinkDyeFlower / 12)
+			x1 = x0 + utils.UnitSize
+			y1 = y0 + utils.UnitSize
+		} else if o.Type == utils.MapBlueDyeFlower {
+			objImage = g.Environment.Tilesets[utils.TilesetFlowersStones]
+			x0 = utils.UnitSize * (utils.MapBlueDyeFlower % 12)
+			y0 = utils.UnitSize * (utils.MapBlueDyeFlower / 12)
+			x1 = x0 + utils.UnitSize
+			y1 = y0 + utils.UnitSize
 		}
 
 		drawOptions.GeoM.Translate(float64(o.XLoc), float64(o.YLoc))
