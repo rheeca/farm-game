@@ -72,11 +72,24 @@ func checkMouse(g *Game) {
 		mouseX, mouseY := ebiten.CursorPosition()
 
 		// if target tile is an object
-		for _, o := range g.Environment.Objects[g.CurrentMap] {
+		for i, o := range g.Environment.Objects[g.CurrentMap] {
 			if isClicked(mouseX, mouseY, o.Sprite) {
 				if o.Type == utils.ItemCraftingTable {
 					g.UIState.SelectedRecipe = 0
 					g.State = utils.GameStateCraft
+				} else if o.Type == utils.ItemDoor {
+					if o.IsCollision { // door is currently closed
+						g.Environment.Objects[g.CurrentMap][i].StartAnimation(utils.OpenDoorAnimation, utils.FrameCountSix, 0,
+							true, func() {
+								g.Environment.Objects[g.CurrentMap][i].IsCollision = false
+							})
+					} else { // door is currently open
+						g.Environment.Objects[g.CurrentMap][i].StartAnimation(utils.CloseDoorAnimation, utils.FrameCountSix, 0,
+							true, func() {
+								g.Environment.Objects[g.CurrentMap][i].IsCollision = true
+							})
+					}
+
 				}
 				return
 			}

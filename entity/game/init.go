@@ -36,6 +36,11 @@ func (g *Game) Update() error {
 	for i := range g.Environment.Trees {
 		g.Environment.Trees[i].UpdateFrame(g.CurrentFrame)
 	}
+	for i, o := range g.Environment.Objects[g.CurrentMap] {
+		if o.Type == utils.ItemDoor {
+			g.Environment.Objects[g.CurrentMap][i].UpdateFrame(g.CurrentFrame)
+		}
+	}
 
 	return nil
 }

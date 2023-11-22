@@ -65,6 +65,18 @@ func drawObjects(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOpti
 			x0, y0 = 0, 0
 			x1 = objImage.Bounds().Dx()
 			y1 = objImage.Bounds().Dx()
+		} else if o.Type == utils.ItemDoor {
+			var animation int
+			if o.IsCollision {
+				animation = 0
+			} else {
+				animation = 1
+			}
+			objImage = g.Images.DoorSprites
+			x0 = o.Frame * o.Sprite.Width
+			y0 = animation * o.Sprite.Height
+			x1 = o.Frame*o.Sprite.Width + o.Sprite.Width
+			y1 = animation*o.Sprite.Height + o.Sprite.Height
 		}
 
 		drawOptions.GeoM.Translate(float64(o.XLoc), float64(o.YLoc))

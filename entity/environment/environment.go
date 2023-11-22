@@ -82,7 +82,8 @@ func loadTrees(tMap *tiled.Map) (trees []model.Object) {
 				Width:  20,
 				Height: 16,
 			},
-			Health: 3,
+			Health:      3,
+			IsCollision: true,
 		}
 		trees = append(trees, tree)
 	}
@@ -91,6 +92,7 @@ func loadTrees(tMap *tiled.Map) (trees []model.Object) {
 
 func loadObjects(gameMaps []*tiled.Map) (objects [][]model.Object) {
 	var farmObjects, animalsObjects, forestObjects []model.Object
+	// crafting table
 	ctObj := gameMaps[utils.FarmMap].Groups[0].ObjectGroups[utils.FarmMapCraftingTablePoint].Objects[0]
 	craftingTable := model.Object{
 		Type: utils.ItemCraftingTable,
@@ -108,8 +110,32 @@ func loadObjects(gameMaps []*tiled.Map) (objects [][]model.Object) {
 			Width:  60,
 			Height: 40,
 		},
+		IsCollision: true,
 	}
 	farmObjects = append(farmObjects, craftingTable)
+
+	// door
+	doorObj := gameMaps[utils.FarmMap].Groups[0].ObjectGroups[utils.FarmMapDoorPoint].Objects[0]
+	door := model.Object{
+		Type: utils.ItemDoor,
+		XLoc: int(doorObj.X),
+		YLoc: int(doorObj.Y),
+		Sprite: model.SpriteBody{
+			X:      int(doorObj.X),
+			Y:      int(doorObj.Y),
+			Width:  utils.UnitSize,
+			Height: utils.UnitSize,
+		},
+		Collision: model.CollisionBody{
+			X:      int(doorObj.X),
+			Y:      int(doorObj.Y),
+			Width:  utils.UnitSize,
+			Height: utils.UnitSize,
+		},
+		IsCollision: true,
+	}
+	farmObjects = append(farmObjects, door)
+
 	objects = append(objects, farmObjects, animalsObjects, forestObjects)
 	return objects
 }

@@ -49,6 +49,7 @@ const (
 	FarmMapEntryFromAnimalMapPoint = 3
 	FarmMapEntryFromForestMapPoint = 4
 	FarmMapCraftingTablePoint      = 5
+	FarmMapDoorPoint               = 6
 
 	AnimalMapEntryPoint = 0
 	AnimalMapExitPoint  = 1
@@ -67,7 +68,9 @@ const (
 )
 
 const (
-	TreeHitAnimation = 1
+	TreeHitAnimation   = 1
+	OpenDoorAnimation  = 0
+	CloseDoorAnimation = 1
 )
 
 // Directions

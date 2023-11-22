@@ -40,9 +40,10 @@ type Object struct {
 	XLoc int
 	YLoc int
 
-	Sprite    SpriteBody
-	Collision CollisionBody
-	Frame     int
+	Sprite      SpriteBody
+	Collision   CollisionBody
+	IsCollision bool
+	Frame       int
 
 	// When object reaches zero health, object will be removed
 	Health int
