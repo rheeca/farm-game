@@ -18,13 +18,8 @@ type Player struct {
 	Dx           int
 	Sprite       model.SpriteBody
 	Collision    model.CollisionBody
-	Backpack     [utils.BackpackSize]BackpackItem
+	Backpack     [utils.BackpackSize]model.BackpackItem
 	EquippedItem int
-}
-
-type BackpackItem struct {
-	ID    int
-	Count int
 }
 
 func NewPlayer(spritesheet *ebiten.Image, startingX, startingY int) *Player {
@@ -44,7 +39,7 @@ func NewPlayer(spritesheet *ebiten.Image, startingX, startingY int) *Player {
 			Width:  18,
 			Height: 16,
 		},
-		Backpack: [utils.BackpackSize]BackpackItem{
+		Backpack: [utils.BackpackSize]model.BackpackItem{
 			{ID: 2, Count: 1},
 			{ID: 3, Count: 1},
 			{ID: 10, Count: 1},
@@ -64,7 +59,7 @@ func (p *Player) AddToBackpack(itemID, count int) bool {
 	// if there is an empty slot, put new item there
 	for i, v := range p.Backpack {
 		if v.ID == 0 {
-			p.Backpack[i] = BackpackItem{
+			p.Backpack[i] = model.BackpackItem{
 				ID:    itemID,
 				Count: count,
 			}
@@ -79,6 +74,28 @@ func isTool(itemID int) bool {
 		return true
 	}
 	return false
+}
+
+func (p *Player) RemoveFromBackpack(items []model.BackpackItem) bool {
+	backpack := p.Backpack
+	for _, toRemove := range items {
+		var isInBackpack bool
+		for i, b := range backpack {
+			if toRemove.ID == b.ID && toRemove.Count <= b.Count {
+				backpack[i].Count -= toRemove.Count
+				if backpack[i].Count <= 0 {
+					backpack[i].ID = 0
+				}
+				isInBackpack = true
+				break
+			}
+		}
+		if !isInBackpack {
+			return false
+		}
+	}
+	p.Backpack = backpack
+	return true
 }
 
 func (p *Player) GetXLoc() int {

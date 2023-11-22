@@ -105,13 +105,13 @@ func checkMouse(g *Game) {
 			if g.Player.AddToBackpack(utils.ItemWood2, 1) {
 				g.Environment.Maps[g.CurrentMap].Layers[utils.ObjectsLayer].Tiles[tileY*utils.MapColumns+tileX] = &emptyTile
 			} else {
-				// TODO: alert player that backpack is full
+				g.SetErrorMessage("Backpack is full!")
 			}
 		} else if isMapObject(g, tileX, tileY, utils.MapStone3, utils.TilesetFlowersStones) {
 			if g.Player.AddToBackpack(utils.ItemRock1, 1) {
 				g.Environment.Maps[g.CurrentMap].Layers[utils.ObjectsLayer].Tiles[tileY*utils.MapColumns+tileX] = &emptyTile
 			} else {
-				// TODO: alert player that backpack is full
+				g.SetErrorMessage("Backpack is full!")
 			}
 		}
 	}
@@ -212,8 +212,17 @@ func checkMouseOnCraftState(g *Game) {
 			}
 		}
 
-		// create button
+		// craft button
 		if isClicked(mouseX, mouseY, model.SpriteBody{X: 486, Y: 452, Width: 180, Height: 54}) {
+			var items []model.BackpackItem
+			for _, item := range utils.RecipeDetails[utils.Recipes[g.UIState.SelectedRecipe]] {
+				items = append(items, model.BackpackItem{ID: item.ID, Count: item.Count})
+			}
+			if g.Player.RemoveFromBackpack(items) {
+				g.Player.AddToBackpack(utils.Recipes[g.UIState.SelectedRecipe], 1)
+			} else {
+				g.SetErrorMessage("Not enough materials!")
+			}
 		}
 	}
 }

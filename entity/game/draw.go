@@ -108,6 +108,15 @@ func drawCraftingUI(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageO
 			(item.ID/utils.FarmItemsColumns)*utils.UnitSize+utils.UnitSize)).(*ebiten.Image), &drawOptions)
 		DrawCenteredText(screen, basicfont.Face7x13, fmt.Sprintf("%v", item.Count), utils.RecipeItemX+(i*64)+32, utils.RecipeItemY)
 	}
+
+	// draw error message, if any
+	if g.UIState.ErrorMessageTTL > 0 {
+		text.Draw(screen, g.UIState.ErrorMessage, utils.LoadFont(12), 12, 20, colornames.Brown)
+		g.UIState.ErrorMessageTTL -= 1
+		if g.UIState.ErrorMessageTTL == 0 {
+			g.UIState.ErrorMessage = ""
+		}
+	}
 }
 
 // DrawCenteredText %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

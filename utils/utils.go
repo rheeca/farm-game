@@ -2,7 +2,11 @@ package utils
 
 import (
 	"embed"
+	"fmt"
+	"github.com/hajimehoshi/ebiten/v2/examples/resources/fonts"
 	"github.com/lafriks/go-tiled"
+	"golang.org/x/image/font"
+	"golang.org/x/image/font/opentype"
 )
 
 const (
@@ -184,4 +188,21 @@ func LoadMapFromEmbedded(EmbeddedAssets embed.FS, name string) (*tiled.Map, erro
 		return nil, err
 	}
 	return embeddedMap, nil
+}
+
+func LoadFont(size int) font.Face {
+	//originally inspired by https://www.fatoldyeti.com/posts/roguelike16/
+	trueTypeFont, err := opentype.Parse(fonts.PressStart2P_ttf)
+	if err != nil {
+		fmt.Println("error loading font:", err)
+	}
+	fontFace, err := opentype.NewFace(trueTypeFont, &opentype.FaceOptions{
+		Size:    float64(size),
+		DPI:     72,
+		Hinting: font.HintingFull,
+	})
+	if err != nil {
+		fmt.Println("error loading font of correct size:", err)
+	}
+	return fontFace
 }

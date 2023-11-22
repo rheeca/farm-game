@@ -123,3 +123,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 func (g *Game) Layout(oWidth, oHeight int) (sWidth, sHeight int) {
 	return oWidth, oHeight
 }
+
+func (g *Game) SetErrorMessage(message string) {
+	g.UIState.ErrorMessage = message
+	g.UIState.ErrorMessageTTL = 60
+}

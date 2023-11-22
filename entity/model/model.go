@@ -19,7 +19,14 @@ type SpriteBody struct {
 }
 
 type UIState struct {
-	SelectedRecipe int
+	SelectedRecipe  int
+	ErrorMessage    string
+	ErrorMessageTTL int
+}
+
+type BackpackItem struct {
+	ID    int
+	Count int
 }
 
 type delayfcn func()
