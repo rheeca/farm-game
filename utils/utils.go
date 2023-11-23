@@ -40,6 +40,7 @@ const (
 	FixedObjectsLayer  = 5
 	FixedObjects2Layer = 6
 	GuideOnlyLayer     = "GuideOnly"
+	CollisionLayer     = 8
 
 	FarmMapSpawnPoint              = 0
 	FarmMapExitToAnimalMapPoint    = 1
@@ -172,7 +173,7 @@ var (
 		{X: 7, Y: 13},
 	}
 	CollisionLayers = []int{
-		ObjectsLayer, FixedObjectsLayer, FixedObjects2Layer,
+		ObjectsLayer, FixedObjectsLayer, FixedObjects2Layer, CollisionLayer,
 	}
 )
 

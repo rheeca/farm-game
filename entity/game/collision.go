@@ -11,7 +11,7 @@ func hasMapCollisions(g *Game, dx, dy int, collisionBody model.CollisionBody) bo
 		for tileX := 0; tileX < utils.MapColumns; tileX += 1 {
 			for _, layer := range utils.CollisionLayers {
 				tile := g.Environment.Maps[g.CurrentMap].Layers[layer].Tiles[tileY*utils.MapColumns+tileX]
-				if tile.ID == 0 {
+				if tile.IsNil() {
 					continue
 				}
 				tileXpos := utils.TileWidth * tileX
