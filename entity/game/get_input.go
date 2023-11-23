@@ -319,12 +319,13 @@ func checkMouseOnCraftState(g *Game) {
 		// craft button
 		if isClicked(mouseX, mouseY, model.SpriteBody{X: 486, Y: 452, Width: 180, Height: 54}) {
 			var items []model.BackpackItem
-			for _, item := range utils.RecipeDetails[utils.Recipes[g.UIState.SelectedRecipe]] {
+			recipe := utils.RecipeDetails[utils.Recipes[g.UIState.SelectedRecipe]]
+			for _, item := range recipe.Materials {
 				items = append(items, model.BackpackItem{ID: item.ID, Count: item.Count})
 			}
 			if g.Player.RemoveFromBackpack(items) {
 				g.Sounds.PlaySound(g.Sounds.SFXCraft)
-				g.Player.AddToBackpack(utils.Recipes[g.UIState.SelectedRecipe], 1)
+				g.Player.AddToBackpack(utils.Recipes[g.UIState.SelectedRecipe], recipe.Count)
 			} else {
 				g.SetErrorMessage("Not enough materials!")
 			}

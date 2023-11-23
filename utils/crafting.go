@@ -18,6 +18,12 @@ const (
 	RecipeItemY = 384
 )
 
+type Recipe struct {
+	ID        int
+	Count     int
+	Materials []Material
+}
+
 type Material struct {
 	ID    int
 	Count int
@@ -28,43 +34,73 @@ var (
 		ItemAxe, ItemHoe, ItemWateringCan, ItemBasket, ItemSeedTomato,
 		ItemClock, ItemPottedSunflower, ItemPottedBlueflower, ItemPinkRug, ItemBlueRug,
 	}
-	RecipeDetails = map[int][]Material{
+	RecipeDetails = map[int]Recipe{
 		ItemAxe: {
-			{ID: ItemWood2, Count: 1},
-			{ID: ItemRock1, Count: 2},
+			ID:    ItemAxe,
+			Count: 1,
+			Materials: []Material{
+				{ID: ItemWood2, Count: 1},
+				{ID: ItemRock1, Count: 2}},
 		},
 		ItemHoe: {
-			{ID: ItemWood2, Count: 1},
-			{ID: ItemRock1, Count: 1},
+			ID:    ItemHoe,
+			Count: 1,
+			Materials: []Material{
+				{ID: ItemWood2, Count: 1},
+				{ID: ItemRock1, Count: 1}},
 		},
 		ItemWateringCan: {
-			{ID: ItemRock1, Count: 3},
+			ID:    ItemWateringCan,
+			Count: 1,
+			Materials: []Material{
+				{ID: ItemRock1, Count: 3}},
 		},
 		ItemBasket: {
-			{ID: ItemWeed, Count: 3},
+			ID:    ItemBasket,
+			Count: 1,
+			Materials: []Material{
+				{ID: ItemWeed, Count: 3}},
 		},
 		ItemSeedTomato: {
-			{ID: ItemTomato, Count: 1},
+			ID:    ItemSeedTomato,
+			Count: 5,
+			Materials: []Material{
+				{ID: ItemTomato, Count: 1}},
 		},
 		ItemClock: {
-			{ID: ItemWood2, Count: 2},
-			{ID: ItemRock1, Count: 2},
+			ID:    ItemClock,
+			Count: 1,
+			Materials: []Material{
+				{ID: ItemWood2, Count: 2},
+				{ID: ItemRock1, Count: 2}},
 		},
 		ItemPottedSunflower: {
-			{ID: ItemSunflower, Count: 1},
-			{ID: ItemRock1, Count: 1},
+			ID:    ItemPottedSunflower,
+			Count: 1,
+			Materials: []Material{
+				{ID: ItemSunflower, Count: 1},
+				{ID: ItemRock1, Count: 1}},
 		},
 		ItemPottedBlueflower: {
-			{ID: ItemBlueflower, Count: 1},
-			{ID: ItemRock1, Count: 1},
+			ID:    ItemPottedBlueflower,
+			Count: 1,
+			Materials: []Material{
+				{ID: ItemBlueflower, Count: 1},
+				{ID: ItemRock1, Count: 1}},
 		},
 		ItemPinkRug: {
-			{ID: ItemWeed, Count: 3},
-			{ID: ItemPinkDyeFlower, Count: 1},
+			ID:    ItemPinkRug,
+			Count: 1,
+			Materials: []Material{
+				{ID: ItemWeed, Count: 3},
+				{ID: ItemPinkDyeFlower, Count: 1}},
 		},
 		ItemBlueRug: {
-			{ID: ItemWeed, Count: 3},
-			{ID: ItemBlueDyeFlower, Count: 1},
+			ID:    ItemBlueRug,
+			Count: 1,
+			Materials: []Material{
+				{ID: ItemWeed, Count: 3},
+				{ID: ItemBlueDyeFlower, Count: 1}},
 		},
 	}
 )

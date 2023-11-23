@@ -163,7 +163,7 @@ func drawCraftingUI(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageO
 	}
 
 	// draw recipe ingredients
-	for i, item := range utils.RecipeDetails[utils.Recipes[g.UIState.SelectedRecipe]] {
+	for i, item := range utils.RecipeDetails[utils.Recipes[g.UIState.SelectedRecipe]].Materials {
 		drawOptions.GeoM.Reset()
 		drawOptions.GeoM.Translate(float64(utils.RecipeItemX+(i*64)),
 			float64(utils.RecipeItemY))
