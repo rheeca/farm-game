@@ -12,12 +12,13 @@ const (
 	ItemWeed                 = 101
 	ItemPinkDyeFlower        = 102
 	ItemBlueDyeFlower        = 103
-	ItemChairFlower          = 106
-	ItemClockFlower          = 107
+	ItemChair                = 106
+	ItemClock                = 107
 	ItemPottedSunflower      = 108
 	ItemPottedBlueflower     = 109
 	ItemPinkRug              = 110
-	ItemBlueRug              = 110
+	ItemBlueRug              = 111
+	ItemBasket               = 114
 	ItemCraftingTable        = 121
 	ItemDoor                 = 122
 	ItemBedPink              = 123

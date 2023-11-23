@@ -24,7 +24,10 @@ type Material struct {
 }
 
 var (
-	Recipes       = [10]int{ItemAxe, ItemHoe, ItemWateringCan}
+	Recipes = [10]int{
+		ItemAxe, ItemHoe, ItemWateringCan, ItemBasket, ItemChair,
+		ItemClock, ItemPottedSunflower, ItemPottedBlueflower, ItemPinkRug, ItemBlueRug,
+	}
 	RecipeDetails = map[int][]Material{
 		ItemAxe: {
 			{ID: ItemWood2, Count: 1},
@@ -36,6 +39,32 @@ var (
 		},
 		ItemWateringCan: {
 			{ID: ItemRock1, Count: 3},
+		},
+		ItemBasket: {
+			{ID: ItemWeed, Count: 3},
+		},
+		ItemChair: {
+			{ID: ItemWood2, Count: 5},
+		},
+		ItemClock: {
+			{ID: ItemWood2, Count: 2},
+			{ID: ItemRock1, Count: 2},
+		},
+		ItemPottedSunflower: {
+			{ID: ItemSunflower, Count: 1},
+			{ID: ItemRock1, Count: 1},
+		},
+		ItemPottedBlueflower: {
+			{ID: ItemBlueflower, Count: 1},
+			{ID: ItemRock1, Count: 1},
+		},
+		ItemPinkRug: {
+			{ID: ItemWeed, Count: 3},
+			{ID: ItemPinkDyeFlower, Count: 1},
+		},
+		ItemBlueRug: {
+			{ID: ItemWeed, Count: 3},
+			{ID: ItemBlueDyeFlower, Count: 1},
 		},
 	}
 )
