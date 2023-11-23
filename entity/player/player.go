@@ -40,9 +40,6 @@ func NewPlayer(spritesheet *ebiten.Image, startingX, startingY int) *Player {
 			Height: 16,
 		},
 		Backpack: [utils.BackpackSize]model.BackpackItem{
-			{ID: utils.ItemAxe, Count: 1},
-			{ID: utils.ItemHoe, Count: 1},
-			{ID: utils.ItemWateringCan, Count: 1},
 			{ID: utils.ItemSeedTomato, Count: 3},
 		},
 		EquippedItem: 0,
