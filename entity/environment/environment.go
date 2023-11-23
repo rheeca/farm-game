@@ -21,6 +21,7 @@ type Environment struct {
 	Tilesets map[string]*ebiten.Image
 	Trees    []model.Object
 	Objects  [][]model.Object
+	Plots    []model.Plot
 }
 
 func NewEnvironment(embeddedAssets embed.FS, gameMaps []*tiled.Map) *Environment {
@@ -223,4 +224,47 @@ func (e *Environment) ResetDay() {
 			e.Objects[utils.ForestMap][i].IsNil = false
 		}
 	}
+	for i, p := range e.Plots {
+		if p.IsWatered && p.HasPlant {
+			e.Plots[i].ReadyForHarvest = true
+		}
+		e.Plots[i].IsWatered = false
+	}
+}
+
+func (e *Environment) AddPlot(tileX, tileY int) {
+	e.Plots = append(e.Plots, model.Plot{
+		XTile: tileX,
+		YTile: tileY,
+	})
+}
+
+func (e *Environment) WaterPlot(tileX, tileY int) {
+	for i, plot := range e.Plots {
+		if plot.XTile == tileX && plot.YTile == tileY {
+			e.Plots[i].IsWatered = true
+		}
+	}
+}
+
+func (e *Environment) PlantSeedInPlot(tileX, tileY, plantType int) bool {
+	for i, plot := range e.Plots {
+		if plot.XTile == tileX && plot.YTile == tileY && !e.Plots[i].HasPlant {
+			e.Plots[i].HasPlant = true
+			e.Plots[i].PlantType = plantType
+			return true
+		}
+	}
+	return false
+}
+
+func (e *Environment) HarvestPlant(tileX, tileY int) (harvested bool, plantType int) {
+	for i, plot := range e.Plots {
+		if plot.XTile == tileX && plot.YTile == tileY && e.Plots[i].ReadyForHarvest {
+			e.Plots[i].HasPlant = false
+			e.Plots[i].ReadyForHarvest = false
+			return true, e.Plots[i].PlantType
+		}
+	}
+	return false, 0
 }

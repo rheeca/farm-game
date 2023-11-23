@@ -125,5 +125,4 @@ func setConstants(gameMap *tiled.Map, images loader.ImageCollection) {
 	utils.ToolsFirstSlotY = utils.ToolsUIY + 10
 	utils.ToolsFirstBoxX = utils.ToolsUIX + 14
 	utils.ToolsFirstBoxY = utils.ToolsUIY + 2
-	utils.FarmItemsColumns = images.FarmItems.Bounds().Dx() / utils.UnitSize
 }

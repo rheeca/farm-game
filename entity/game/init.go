@@ -45,6 +45,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	}
 
 	drawMap(g, screen, drawOptions)
+	drawFarmPlots(g, screen, drawOptions)
 	if g.CurrentMap == utils.ForestMap {
 		drawTrees(g, screen, drawOptions)
 	}

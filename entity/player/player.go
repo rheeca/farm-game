@@ -40,9 +40,10 @@ func NewPlayer(spritesheet *ebiten.Image, startingX, startingY int) *Player {
 			Height: 16,
 		},
 		Backpack: [utils.BackpackSize]model.BackpackItem{
-			{ID: 2, Count: 1},
-			{ID: 3, Count: 1},
-			{ID: 10, Count: 1},
+			{ID: utils.ItemAxe, Count: 1},
+			{ID: utils.ItemHoe, Count: 1},
+			{ID: utils.ItemWateringCan, Count: 1},
+			{ID: utils.ItemSeedTomato, Count: 3},
 		},
 		EquippedItem: 0,
 	}
@@ -79,6 +80,14 @@ func isTool(itemID int) bool {
 func (p *Player) RemoveFromBackpackByIndex(index int) {
 	p.Backpack[index].ID = 0
 	p.Backpack[index].Count = 0
+}
+
+func (p *Player) RemoveFromBackpackByIndexAndCount(index, count int) bool {
+	if count <= p.Backpack[index].Count {
+		p.Backpack[index].Count -= count
+		return true
+	}
+	return false
 }
 
 func (p *Player) RemoveFromBackpack(items []model.BackpackItem) bool {

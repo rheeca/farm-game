@@ -13,7 +13,7 @@ import (
 
 func drawMap(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
 	for i, layer := range g.Environment.Maps[g.CurrentMap].Layers {
-		if layer.Name == utils.GuideOnlyLayer || i == utils.CollisionLayer {
+		if layer.Name == utils.GuideOnlyLayer || i == utils.CollisionLayer || i == utils.FarmingLandLayer {
 			continue
 		}
 		for tileY := 0; tileY < utils.MapRows; tileY += 1 {
@@ -236,6 +236,50 @@ func drawCows(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions
 			(c.State*utils.AnimalNumOfDirections+c.Direction)*utils.CowSpriteHeight,
 			c.Frame*utils.CowSpriteWidth+utils.CowSpriteWidth,
 			(c.State*utils.AnimalNumOfDirections+c.Direction)*utils.CowSpriteHeight+utils.CowSpriteHeight)).(*ebiten.Image), &drawOptions)
+	}
+}
+
+func drawFarmPlots(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+	if g.CurrentMap != utils.FarmMap {
+		return
+	}
+	for _, p := range g.Environment.Plots {
+		// draw soil
+		drawOptions.GeoM.Reset()
+		drawOptions.GeoM.Translate(float64(p.XTile*utils.TileWidth), float64(p.YTile*utils.TileHeight))
+
+		var tileID int
+		var tileset string
+		if p.IsWatered {
+			tileID = 12
+			tileset = utils.TilesetDarkerSoilGround
+		} else {
+			tileID = 12
+			tileset = utils.TilesetSoilGround
+		}
+		tileToDrawX := tileID % 11
+		tileToDrawY := tileID / 11
+		screen.DrawImage(g.Environment.Tilesets[tileset].SubImage(image.Rect(tileToDrawX*utils.TileWidth,
+			tileToDrawY*utils.TileHeight,
+			tileToDrawX*utils.TileWidth+utils.TileWidth,
+			tileToDrawY*utils.TileHeight+utils.TileHeight)).(*ebiten.Image), &drawOptions)
+
+		// draw plant
+		if p.HasPlant && !p.ReadyForHarvest {
+			drawOptions.GeoM.Reset()
+			drawOptions.GeoM.Translate(float64(p.XTile*utils.TileWidth), float64(p.YTile*utils.TileHeight))
+			screen.DrawImage(g.Images.FarmingPlants.SubImage(image.Rect(0,
+				utils.UnitSize*utils.PlantTomato,
+				utils.UnitSize,
+				(utils.UnitSize*utils.PlantTomato)+utils.UnitSize)).(*ebiten.Image), &drawOptions)
+		} else if p.ReadyForHarvest {
+			drawOptions.GeoM.Reset()
+			drawOptions.GeoM.Translate(float64(p.XTile*utils.TileWidth), float64(p.YTile*utils.TileHeight))
+			screen.DrawImage(g.Images.FarmingPlants.SubImage(image.Rect(96,
+				utils.UnitSize*utils.PlantTomato,
+				96+utils.UnitSize,
+				(utils.UnitSize*utils.PlantTomato)+utils.UnitSize)).(*ebiten.Image), &drawOptions)
+		}
 	}
 }
 

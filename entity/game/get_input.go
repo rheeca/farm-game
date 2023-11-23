@@ -53,11 +53,8 @@ func checkMouseOnPlayState(g *Game) {
 			g.Player.StateTTL = utils.PlayerFrameCount
 
 			tileX, tileY := calculateTargetTile(g)
-			if isTile(g, tileX, tileY, 12, utils.TilesetGrassHill) {
-				// if target tile is a grass tile, make tile into tilled ground
-				g.Environment.Maps[g.CurrentMap].Layers[utils.GroundLayer].Tiles[tileY*utils.MapColumns+tileX].ID = 12
-				g.Environment.Maps[g.CurrentMap].Layers[utils.GroundLayer].Tiles[tileY*utils.MapColumns+tileX].Tileset =
-					g.Environment.Maps[g.CurrentMap].Tilesets[1]
+			if isFarmLand(g, tileX, tileY) {
+				g.Environment.AddPlot(tileX, tileY)
 			}
 		} else if g.Player.Backpack[g.Player.EquippedItem].ID == utils.ItemAxe {
 			g.Player.State = utils.AxeState
@@ -98,11 +95,15 @@ func checkMouseOnPlayState(g *Game) {
 			g.Player.StateTTL = utils.PlayerFrameCount
 
 			tileX, tileY := calculateTargetTile(g)
-			if isTile(g, tileX, tileY, 12, utils.TilesetSoilGround) {
-				// if target tile is tilled ground, make tile into watered ground
-				g.Environment.Maps[g.CurrentMap].Layers[utils.GroundLayer].Tiles[tileY*utils.MapColumns+tileX].ID = 12
-				g.Environment.Maps[g.CurrentMap].Layers[utils.GroundLayer].Tiles[tileY*utils.MapColumns+tileX].Tileset =
-					g.Environment.Maps[g.CurrentMap].Tilesets[4]
+			if isFarmLand(g, tileX, tileY) {
+				g.Environment.WaterPlot(tileX, tileY)
+			}
+		} else if utils.IsSeed(g.Player.Backpack[g.Player.EquippedItem].ID) {
+			tileX, tileY := calculateTargetTile(g)
+			if isFarmLand(g, tileX, tileY) {
+				if g.Environment.PlantSeedInPlot(tileX, tileY, utils.PlantTomato) {
+					g.Player.RemoveFromBackpackByIndexAndCount(g.Player.EquippedItem, 1)
+				}
 			}
 		}
 	} else if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonRight) {
@@ -213,6 +214,15 @@ func checkMouseOnPlayState(g *Game) {
 				g.Environment.Maps[g.CurrentMap].Layers[utils.ObjectsLayer].Tiles[tileY*utils.MapColumns+tileX] = &emptyTile
 			} else {
 				g.SetErrorMessage("Backpack is full!")
+			}
+		}
+
+		// harvest plant
+		tileX, tileY = calculateTargetTile(g)
+		if isFarmLand(g, tileX, tileY) {
+			hasHarvest, plantType := g.Environment.HarvestPlant(tileX, tileY)
+			if hasHarvest {
+				g.Player.AddToBackpack(utils.PlantItemMapping[plantType], 1)
 			}
 		}
 	}

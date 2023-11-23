@@ -6,6 +6,8 @@ const (
 	ItemHoe                  = 3
 	ItemWateringCan          = 10
 	ItemWood2                = 19
+	ItemSeedTomato           = 32
+	ItemTomato               = 33
 	ItemRock1                = 42
 	ItemSunflower            = 99
 	ItemBlueflower           = 100
@@ -26,6 +28,11 @@ const (
 	ItemMapWood              = 125
 )
 
+// plants
+const (
+	PlantTomato = 2
+)
+
 // flowers and stones
 const (
 	MapStone3        = 14
@@ -41,6 +48,24 @@ const (
 	MapWood = 78
 )
 
-var (
-	FarmItemsColumns int
+const (
+	FarmItemsColumns = 8
 )
+
+var (
+	PlantItemMapping = map[int]int{
+		PlantTomato: ItemTomato,
+	}
+)
+
+func IsSeed(item int) bool {
+	seedItems := []int{
+		ItemSeedTomato,
+	}
+	for _, s := range seedItems {
+		if s == item {
+			return true
+		}
+	}
+	return false
+}

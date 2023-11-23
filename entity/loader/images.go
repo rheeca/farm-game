@@ -17,6 +17,7 @@ type ImageCollection struct {
 	CraftingTable            *ebiten.Image
 	CraftingUI               *ebiten.Image
 	DoorSprites              *ebiten.Image
+	FarmingPlants            *ebiten.Image
 	FarmItems                *ebiten.Image
 	SelectedCharacter        *ebiten.Image
 	SelectedItem             *ebiten.Image
@@ -43,6 +44,7 @@ func NewImageCollection(EmbeddedAssets embed.FS) (images ImageCollection) {
 		CraftingTable:            loadImage(EmbeddedAssets, path.Join("assets", "items", "crafting_table.png")),
 		CraftingUI:               loadImage(EmbeddedAssets, path.Join("assets", "ui", "crafting_ui.png")),
 		DoorSprites:              loadImage(EmbeddedAssets, path.Join("assets", "items", "door_sprites.png")),
+		FarmingPlants:            loadImage(EmbeddedAssets, path.Join("assets", "items", "farming_plants.png")),
 		FarmItems:                loadImage(EmbeddedAssets, path.Join("assets", "items", "farm_items.png")),
 		SelectedCharacter:        loadImage(EmbeddedAssets, path.Join("assets", "ui", "selected_character.png")),
 		SelectedItem:             loadImage(EmbeddedAssets, path.Join("assets", "ui", "selected_item.png")),

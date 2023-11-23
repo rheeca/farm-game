@@ -41,6 +41,7 @@ const (
 	FixedObjects2Layer = 6
 	GuideOnlyLayer     = "GuideOnly"
 	CollisionLayer     = 8
+	FarmingLandLayer   = 9
 
 	FarmMapSpawnPoint              = 0
 	FarmMapExitToAnimalMapPoint    = 1

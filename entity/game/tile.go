@@ -1,6 +1,7 @@
 package game
 
 import (
+	"guion-2d-project3/entity/model"
 	"guion-2d-project3/utils"
 )
 
@@ -33,6 +34,19 @@ func isMapObject(g *Game, tileX, tileY, tileID int, tileset string) bool {
 	if (int(g.Environment.Maps[g.CurrentMap].Layers[utils.ObjectsLayer].Tiles[tileY*utils.MapColumns+tileX].ID) == tileID) &&
 		(g.Environment.Maps[g.CurrentMap].Layers[utils.ObjectsLayer].Tiles[tileY*utils.MapColumns+tileX].Tileset.Name ==
 			tileset) {
+		return true
+	} else {
+		return false
+	}
+}
+
+func isFarmLand(g *Game, tileX, tileY int) bool {
+	if g.CurrentMap != utils.FarmMap {
+		return false
+	}
+	if !g.Environment.Maps[utils.FarmMap].Layers[utils.FarmingLandLayer].Tiles[tileY*utils.MapColumns+tileX].IsNil() &&
+		!hasMapCollisions(g, 0, 0, model.CollisionBody{X: tileX * utils.TileWidth, Y: tileY * utils.TileHeight,
+			Width: utils.UnitSize, Height: utils.UnitSize}) {
 		return true
 	} else {
 		return false
