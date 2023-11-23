@@ -64,7 +64,7 @@ func main() {
 	}
 	var chickens []*animal.Chicken
 	for _, v := range utils.ChickenLocations {
-		chicken := animal.NewChicken(chickenImage, v.X, v.Y)
+		chicken := animal.NewChicken(chickenImage, v)
 		chickens = append(chickens, chicken)
 	}
 

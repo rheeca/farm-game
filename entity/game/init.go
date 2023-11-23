@@ -28,7 +28,9 @@ func (g *Game) Update() error {
 	getPlayerInput(g)
 	if g.State == utils.GameStatePlay {
 		g.CurrentFrame += 1
-		updateAnimals(g)
+		if g.CurrentMap == utils.AnimalsMap {
+			updateAnimals(g)
+		}
 		updateTrees(g)
 		updateObjects(g)
 	}

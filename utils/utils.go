@@ -113,6 +113,8 @@ const (
 	AnimalMovementSpeed   = 1
 
 	ChickenIdleState  = 0
+	ChickenIdleState2 = 1
+	ChickenWalkState  = 2
 	ChickenHeartState = 8
 
 	CowIdleState    = 0
@@ -165,7 +167,7 @@ var (
 		"wooden_house.png",
 	}
 	ChickenLocations = []Location{
-		{X: 5, Y: 5},
+		{X: 8, Y: 4},
 		{X: 6, Y: 7},
 	}
 	CowLocations = []Location{

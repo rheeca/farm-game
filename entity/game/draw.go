@@ -12,8 +12,8 @@ import (
 )
 
 func drawMap(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
-	for _, layer := range g.Environment.Maps[g.CurrentMap].Layers {
-		if layer.Name == utils.GuideOnlyLayer {
+	for i, layer := range g.Environment.Maps[g.CurrentMap].Layers {
+		if layer.Name == utils.GuideOnlyLayer || i == utils.CollisionLayer {
 			continue
 		}
 		for tileY := 0; tileY < utils.MapRows; tileY += 1 {

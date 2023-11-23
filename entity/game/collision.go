@@ -156,3 +156,16 @@ func playerHasCollisions(g *Game) bool {
 	}
 	return false
 }
+
+func chickenHasCollisions(g *Game, chicken int) bool {
+	if hasMapCollisions(g, g.Chickens[chicken].Dx, g.Chickens[chicken].Dy, g.Chickens[chicken].Collision) {
+		return true
+	}
+	for _, cow := range g.Cows {
+		if hasCollision(g.Chickens[chicken].Dx, g.Chickens[chicken].Dy, g.Chickens[chicken].Collision,
+			cow.Collision) {
+			return true
+		}
+	}
+	return false
+}

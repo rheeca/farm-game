@@ -186,7 +186,7 @@ func checkMouseOnPlayState(g *Game) {
 					g.Sounds.PlaySound(g.Sounds.SFXChicken)
 					c.State = utils.ChickenHeartState
 					c.Frame = 0
-					c.AnimationTTL = utils.AnimalFrameCount
+					c.StateTTL = utils.AnimalFrameCount
 				}
 			}
 
