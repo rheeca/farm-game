@@ -3,7 +3,7 @@ By Rheeca Guion
 
 ![alt-text](assets/icons/character.png)
 
-This project is a farming and crafting game.
+This project is a farming and crafting game. All requirements for Project 3 have been completed.
 
 
 ## Controls
@@ -14,7 +14,7 @@ This project is a farming and crafting game.
 #### Right-click mouse
 * Interact with objects, plants and animals on the map
 #### Number keys (1-9)
-* Can be used to equip items from the backpack; clicking on the backpack slot with the mouse also equips the item
+* Can be used to equip items from the backpack; clicking on the backpack slot with the mouse also equips the item. The delete button on the right deletes the currently equipped item.
 
 ## How to play
 * Start by choosing a character.
