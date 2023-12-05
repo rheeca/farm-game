@@ -20,11 +20,12 @@ import (
 
 type Game struct {
 	State        int
-	Player       *player.Player
+	Players      map[string]*player.Player
 	Data         *GameData
 	Maps         []*tiled.Map
 	CurrentMap   int
 	CurrentFrame int
+	PlayerID     string
 	Images       loader.ImageCollection
 	Sounds       loader.SoundCollection
 	UIState      model.UIState
@@ -54,6 +55,7 @@ func NewGame(embeddedAssets embed.FS) Game {
 	sounds := loader.NewSoundCollection(embeddedAssets)
 
 	// load player
+	players := map[string]*player.Player{}
 	embeddedFile, err := embeddedAssets.Open(path.Join("client", "assets", "player", utils.DefaultPlayerImg))
 	if err != nil {
 		log.Fatal("failed to load embedded image:", embeddedFile, err)
@@ -64,6 +66,7 @@ func NewGame(embeddedAssets embed.FS) Game {
 	}
 	spawnPoint := gameMaps[currentMap].Groups[0].ObjectGroups[utils.FarmMapSpawnPoint].Objects[0]
 	playerChar := player.NewPlayer(playerImage, int(spawnPoint.X), int(spawnPoint.Y))
+	players[playerChar.PlayerID] = playerChar
 
 	// load chickens
 	embeddedFile, err = embeddedAssets.Open(path.Join("client", "assets", "animals", utils.ChickenImg))
@@ -95,8 +98,8 @@ func NewGame(embeddedAssets embed.FS) Game {
 		cows = append(cows, cow)
 	}
 	return Game{
-		State:  utils.GameStateCustomChar,
-		Player: playerChar,
+		State:   utils.GameStateCustomChar,
+		Players: players,
 		Data: &GameData{
 			Environment: env,
 			Chickens:    chickens,
@@ -104,13 +107,14 @@ func NewGame(embeddedAssets embed.FS) Game {
 		},
 		Maps:       gameMaps,
 		CurrentMap: currentMap,
+		PlayerID:   playerChar.PlayerID,
 		Images:     images,
 		Sounds:     sounds,
 	}
 }
 
 func (g *Game) Update() error {
-	g.Player.UpdateFrame(g.CurrentFrame)
+	g.Players[g.PlayerID].UpdateFrame(g.CurrentFrame)
 	getPlayerInput(g)
 	if g.State == utils.GameStatePlay {
 		g.CurrentFrame += 1

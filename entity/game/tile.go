@@ -6,15 +6,15 @@ import (
 )
 
 func calculateTargetTile(g *Game) (tileX, tileY int) {
-	tileX = g.Player.Collision.X / utils.TileWidth
-	tileY = (g.Player.Collision.Y + g.Player.Collision.Height) / utils.TileHeight
-	if g.Player.Direction == utils.Front {
+	tileX = g.Players[g.PlayerID].Collision.X / utils.TileWidth
+	tileY = (g.Players[g.PlayerID].Collision.Y + g.Players[g.PlayerID].Collision.Height) / utils.TileHeight
+	if g.Players[g.PlayerID].Direction == utils.Front {
 		tileY += 1
-	} else if g.Player.Direction == utils.Back {
+	} else if g.Players[g.PlayerID].Direction == utils.Back {
 		tileY -= 1
-	} else if g.Player.Direction == utils.Left {
+	} else if g.Players[g.PlayerID].Direction == utils.Left {
 		tileX -= 1
-	} else if g.Player.Direction == utils.Right {
+	} else if g.Players[g.PlayerID].Direction == utils.Right {
 		tileX += 1
 	}
 	return tileX, tileY

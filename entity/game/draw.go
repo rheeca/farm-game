@@ -203,11 +203,11 @@ func drawCharacterCustomizationUI(g *Game, screen *ebiten.Image, drawOptions ebi
 
 func drawPlayer(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
 	drawOptions.GeoM.Reset()
-	drawOptions.GeoM.Translate(float64(g.Player.XLoc), float64(g.Player.YLoc))
-	screen.DrawImage(g.Player.Spritesheet.SubImage(image.Rect(g.Player.Frame*utils.PlayerSpriteWidth,
-		(g.Player.State*utils.NumOfDirections+g.Player.Direction)*utils.PlayerSpriteHeight,
-		g.Player.Frame*utils.PlayerSpriteWidth+utils.PlayerSpriteWidth,
-		(g.Player.State*utils.NumOfDirections+g.Player.Direction)*utils.PlayerSpriteHeight+utils.PlayerSpriteHeight)).(*ebiten.Image), &drawOptions)
+	drawOptions.GeoM.Translate(float64(g.Players[g.PlayerID].XLoc), float64(g.Players[g.PlayerID].YLoc))
+	screen.DrawImage(g.Players[g.PlayerID].Spritesheet.SubImage(image.Rect(g.Players[g.PlayerID].Frame*utils.PlayerSpriteWidth,
+		(g.Players[g.PlayerID].State*utils.NumOfDirections+g.Players[g.PlayerID].Direction)*utils.PlayerSpriteHeight,
+		g.Players[g.PlayerID].Frame*utils.PlayerSpriteWidth+utils.PlayerSpriteWidth,
+		(g.Players[g.PlayerID].State*utils.NumOfDirections+g.Players[g.PlayerID].Direction)*utils.PlayerSpriteHeight+utils.PlayerSpriteHeight)).(*ebiten.Image), &drawOptions)
 }
 
 func drawChickens(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
@@ -293,12 +293,12 @@ func drawBackpack(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOpt
 
 	// draw selected box
 	drawOptions.GeoM.Reset()
-	drawOptions.GeoM.Translate(float64(utils.ToolsFirstBoxX+((g.Player.EquippedItem)*utils.BackpackUIBoxWidth)),
+	drawOptions.GeoM.Translate(float64(utils.ToolsFirstBoxX+((g.Players[g.PlayerID].EquippedItem)*utils.BackpackUIBoxWidth)),
 		float64(utils.ToolsFirstBoxY))
 	screen.DrawImage(g.Images.SelectedTool, &drawOptions)
 
 	// draw items in backpack
-	for i, item := range g.Player.Backpack {
+	for i, item := range g.Players[g.PlayerID].Backpack {
 		if item.ID == 0 {
 			continue
 		}

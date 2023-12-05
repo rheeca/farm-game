@@ -1,12 +1,15 @@
 package player
 
 import (
-	"github.com/hajimehoshi/ebiten/v2"
 	"guion-2d-project3/entity/model"
 	"guion-2d-project3/utils"
+
+	"github.com/google/uuid"
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 type Player struct {
+	PlayerID     string
 	Spritesheet  *ebiten.Image
 	Frame        int
 	State        int
@@ -24,6 +27,7 @@ type Player struct {
 
 func NewPlayer(spritesheet *ebiten.Image, startingX, startingY int) *Player {
 	return &Player{
+		PlayerID:    uuid.New().String(),
 		Spritesheet: spritesheet,
 		XLoc:        startingX - 39,
 		YLoc:        startingY - 35,
