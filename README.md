@@ -1,7 +1,7 @@
 # 2D Game Design - Project 3
 By Rheeca Guion
 
-![alt-text](assets/icons/character.png)
+![alt-text](client/assets/icons/character.png)
 
 This project is a farming and crafting game. All requirements for Project 3 have been completed.
 

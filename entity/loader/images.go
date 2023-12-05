@@ -2,7 +2,11 @@ package loader
 
 import (
 	"embed"
+	"fmt"
+	"guion-2d-project3/utils"
+	"log"
 	"path"
+	"strings"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -22,6 +26,7 @@ type ImageCollection struct {
 	SelectedCharacter        *ebiten.Image
 	SelectedItem             *ebiten.Image
 	SelectedTool             *ebiten.Image
+	Tilesets                 map[string]*ebiten.Image
 	ToolsUI                  *ebiten.Image
 	TreeSprites              *ebiten.Image
 }
@@ -49,6 +54,7 @@ func NewImageCollection(EmbeddedAssets embed.FS) (images ImageCollection) {
 		SelectedCharacter:        loadImage(EmbeddedAssets, path.Join("client", "assets", "ui", "selected_character.png")),
 		SelectedItem:             loadImage(EmbeddedAssets, path.Join("client", "assets", "ui", "selected_item.png")),
 		SelectedTool:             loadImage(EmbeddedAssets, path.Join("client", "assets", "ui", "selected_tool.png")),
+		Tilesets:                 loadTilesets(EmbeddedAssets),
 		ToolsUI:                  loadImage(EmbeddedAssets, path.Join("client", "assets", "ui", "tools_ui.png")),
 		TreeSprites:              loadImage(EmbeddedAssets, path.Join("client", "assets", "items", "tree_sprites.png")),
 	}
@@ -64,4 +70,20 @@ func loadImage(EmbeddedAssets embed.FS, filepath string) *ebiten.Image {
 		return nil
 	}
 	return image
+}
+
+func loadTilesets(embeddedAssets embed.FS) map[string]*ebiten.Image {
+	tilesets := map[string]*ebiten.Image{}
+	for _, tsPath := range utils.Tilesets {
+		embeddedFile, err := embeddedAssets.Open(path.Join("client", "assets", "tilesets", tsPath))
+		if err != nil {
+			log.Fatal("failed to load embedded image:", embeddedFile, err)
+		}
+		tsImage, _, err := ebitenutil.NewImageFromReader(embeddedFile)
+		if err != nil {
+			fmt.Println("error loading tileset image")
+		}
+		tilesets[strings.Split(tsPath, ".")[0]] = tsImage
+	}
+	return tilesets
 }

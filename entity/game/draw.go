@@ -2,17 +2,18 @@ package game
 
 import (
 	"fmt"
+	"guion-2d-project3/utils"
+	"image"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
 	"golang.org/x/image/colornames"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/basicfont"
-	"guion-2d-project3/utils"
-	"image"
 )
 
 func drawMap(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
-	for i, layer := range g.Environment.Maps[g.CurrentMap].Layers {
+	for i, layer := range g.Maps[g.CurrentMap].Layers {
 		if layer.Name == utils.GuideOnlyLayer || i == utils.CollisionLayer || i == utils.FarmingLandLayer {
 			continue
 		}
@@ -27,7 +28,7 @@ func drawMap(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions)
 				tileToDrawX := int(tileToDraw.ID) % tileToDraw.Tileset.Columns
 				tileToDrawY := int(tileToDraw.ID) / tileToDraw.Tileset.Columns
 
-				ebitenTileToDraw := g.Environment.Tilesets[tileToDraw.Tileset.Name].SubImage(image.Rect(tileToDrawX*utils.TileWidth,
+				ebitenTileToDraw := g.Images.Tilesets[tileToDraw.Tileset.Name].SubImage(image.Rect(tileToDrawX*utils.TileWidth,
 					tileToDrawY*utils.TileHeight,
 					tileToDrawX*utils.TileWidth+utils.TileWidth,
 					tileToDrawY*utils.TileHeight+utils.TileHeight)).(*ebiten.Image)
@@ -58,6 +59,7 @@ func drawTrees(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOption
 }
 
 func drawObjects(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+	tilesets := g.Images.Tilesets
 	for _, o := range g.Environment.Objects[g.CurrentMap] {
 		if o.IsNil {
 			continue
@@ -89,43 +91,43 @@ func drawObjects(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOpti
 			x1 = objImage.Bounds().Dx()
 			y1 = objImage.Bounds().Dy()
 		} else if o.Type == utils.ItemMapStone3 {
-			objImage = g.Environment.Tilesets[utils.TilesetFlowersStones]
+			objImage = tilesets[utils.TilesetFlowersStones]
 			x0 = utils.UnitSize * (utils.MapStone3 % 12)
 			y0 = utils.UnitSize * (utils.MapStone3 / 12)
 			x1 = x0 + utils.UnitSize
 			y1 = y0 + utils.UnitSize
 		} else if o.Type == utils.ItemMapWood {
-			objImage = g.Environment.Tilesets[utils.TilesetTrees]
+			objImage = tilesets[utils.TilesetTrees]
 			x0 = utils.UnitSize * (utils.MapWood % 12)
 			y0 = utils.UnitSize * (utils.MapWood / 12)
 			x1 = x0 + utils.UnitSize
 			y1 = y0 + utils.UnitSize
 		} else if o.Type == utils.MapSunflower {
-			objImage = g.Environment.Tilesets[utils.TilesetFlowersStones]
+			objImage = tilesets[utils.TilesetFlowersStones]
 			x0 = utils.UnitSize * (utils.MapSunflower % 12)
 			y0 = utils.UnitSize * (utils.MapSunflower / 12)
 			x1 = x0 + utils.UnitSize
 			y1 = y0 + utils.UnitSize
 		} else if o.Type == utils.MapBlueflower {
-			objImage = g.Environment.Tilesets[utils.TilesetFlowersStones]
+			objImage = tilesets[utils.TilesetFlowersStones]
 			x0 = utils.UnitSize * (utils.MapBlueflower % 12)
 			y0 = utils.UnitSize * (utils.MapBlueflower / 12)
 			x1 = x0 + utils.UnitSize
 			y1 = y0 + utils.UnitSize
 		} else if o.Type == utils.MapWeed {
-			objImage = g.Environment.Tilesets[utils.TilesetFlowersStones]
+			objImage = tilesets[utils.TilesetFlowersStones]
 			x0 = utils.UnitSize * (utils.MapWeed % 12)
 			y0 = utils.UnitSize * (utils.MapWeed / 12)
 			x1 = x0 + utils.UnitSize
 			y1 = y0 + utils.UnitSize
 		} else if o.Type == utils.MapPinkDyeFlower {
-			objImage = g.Environment.Tilesets[utils.TilesetFlowersStones]
+			objImage = tilesets[utils.TilesetFlowersStones]
 			x0 = utils.UnitSize * (utils.MapPinkDyeFlower % 12)
 			y0 = utils.UnitSize * (utils.MapPinkDyeFlower / 12)
 			x1 = x0 + utils.UnitSize
 			y1 = y0 + utils.UnitSize
 		} else if o.Type == utils.MapBlueDyeFlower {
-			objImage = g.Environment.Tilesets[utils.TilesetFlowersStones]
+			objImage = tilesets[utils.TilesetFlowersStones]
 			x0 = utils.UnitSize * (utils.MapBlueDyeFlower % 12)
 			y0 = utils.UnitSize * (utils.MapBlueDyeFlower / 12)
 			x1 = x0 + utils.UnitSize
@@ -259,7 +261,7 @@ func drawFarmPlots(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOp
 		}
 		tileToDrawX := tileID % 11
 		tileToDrawY := tileID / 11
-		screen.DrawImage(g.Environment.Tilesets[tileset].SubImage(image.Rect(tileToDrawX*utils.TileWidth,
+		screen.DrawImage(g.Images.Tilesets[tileset].SubImage(image.Rect(tileToDrawX*utils.TileWidth,
 			tileToDrawY*utils.TileHeight,
 			tileToDrawX*utils.TileWidth+utils.TileWidth,
 			tileToDrawY*utils.TileHeight+utils.TileHeight)).(*ebiten.Image), &drawOptions)

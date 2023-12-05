@@ -1,11 +1,12 @@
 package game
 
 import (
+	"guion-2d-project3/entity/model"
+	"guion-2d-project3/utils"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/lafriks/go-tiled"
-	"guion-2d-project3/entity/model"
-	"guion-2d-project3/utils"
 )
 
 func getPlayerInput(g *Game) {
@@ -205,13 +206,13 @@ func checkMouseOnPlayState(g *Game) {
 		emptyTile := tiled.LayerTile{Nil: true}
 		if isMapObject(g, tileX, tileY, utils.MapWood, utils.TilesetTrees) {
 			if g.Player.AddToBackpack(utils.ItemWood2, 1) {
-				g.Environment.Maps[g.CurrentMap].Layers[utils.ObjectsLayer].Tiles[tileY*utils.MapColumns+tileX] = &emptyTile
+				g.Maps[g.CurrentMap].Layers[utils.ObjectsLayer].Tiles[tileY*utils.MapColumns+tileX] = &emptyTile
 			} else {
 				g.SetErrorMessage("Backpack is full!")
 			}
 		} else if isMapObject(g, tileX, tileY, utils.MapStone3, utils.TilesetFlowersStones) {
 			if g.Player.AddToBackpack(utils.ItemRock1, 1) {
-				g.Environment.Maps[g.CurrentMap].Layers[utils.ObjectsLayer].Tiles[tileY*utils.MapColumns+tileX] = &emptyTile
+				g.Maps[g.CurrentMap].Layers[utils.ObjectsLayer].Tiles[tileY*utils.MapColumns+tileX] = &emptyTile
 			} else {
 				g.SetErrorMessage("Backpack is full!")
 			}

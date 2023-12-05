@@ -1,16 +1,17 @@
 package game
 
 import (
-	"github.com/co0p/tankism/lib/collision"
 	"guion-2d-project3/entity/model"
 	"guion-2d-project3/utils"
+
+	"github.com/co0p/tankism/lib/collision"
 )
 
 func hasMapCollisions(g *Game, dx, dy int, collisionBody model.CollisionBody) bool {
 	for tileY := 0; tileY < utils.MapRows; tileY += 1 {
 		for tileX := 0; tileX < utils.MapColumns; tileX += 1 {
 			for _, layer := range utils.CollisionLayers {
-				tile := g.Environment.Maps[g.CurrentMap].Layers[layer].Tiles[tileY*utils.MapColumns+tileX]
+				tile := g.Maps[g.CurrentMap].Layers[layer].Tiles[tileY*utils.MapColumns+tileX]
 				if tile.IsNil() {
 					continue
 				}
@@ -73,7 +74,7 @@ func isClicked(x, y int, body model.SpriteBody) bool {
 }
 
 func isAtExit(g *Game, exitPoint int) bool {
-	exitToAnimalMap := g.Environment.Maps[g.CurrentMap].Groups[0].ObjectGroups[exitPoint].Objects[0]
+	exitToAnimalMap := g.Maps[g.CurrentMap].Groups[0].ObjectGroups[exitPoint].Objects[0]
 	pointCollision := model.CollisionBody{
 		X:      int(exitToAnimalMap.X),
 		Y:      int(exitToAnimalMap.Y),
@@ -88,7 +89,7 @@ func isAtExit(g *Game, exitPoint int) bool {
 
 func changeMap(g *Game, newMap, entryPoint int) {
 	g.CurrentMap = newMap
-	point := g.Environment.Maps[newMap].Groups[0].ObjectGroups[entryPoint].Objects[0]
+	point := g.Maps[newMap].Groups[0].ObjectGroups[entryPoint].Objects[0]
 	g.Player.ChangeLocation(int(point.X), int(point.Y))
 
 }

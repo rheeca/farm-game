@@ -2,66 +2,24 @@ package environment
 
 import (
 	"embed"
-	"fmt"
 	"guion-2d-project3/entity/model"
-	"log"
-	"os"
-	"path"
-	"strings"
 
 	"guion-2d-project3/utils"
 
-	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/lafriks/go-tiled"
 )
 
 type Environment struct {
-	Maps     []*tiled.Map
-	Tilesets map[string]*ebiten.Image
-	Trees    []model.Object
-	Objects  [][]model.Object
-	Plots    []model.Plot
+	Trees   []model.Object
+	Objects [][]model.Object
+	Plots   []model.Plot
 }
 
 func NewEnvironment(embeddedAssets embed.FS, gameMaps []*tiled.Map) *Environment {
-	animalsMap, err := utils.LoadMapFromEmbedded(embeddedAssets,
-		path.Join("client", "assets", utils.AnimalsMapFile))
-	if err != nil {
-		fmt.Printf("error parsing map: %s", err.Error())
-		os.Exit(2)
-	}
-	gameMaps = append(gameMaps, animalsMap)
-	forestMap, err := utils.LoadMapFromEmbedded(embeddedAssets,
-		path.Join("client", "assets", utils.ForestMapFile))
-	if err != nil {
-		fmt.Printf("error parsing map: %s", err.Error())
-		os.Exit(2)
-	}
-	gameMaps = append(gameMaps, forestMap)
-
 	return &Environment{
-		Maps:     gameMaps,
-		Tilesets: loadTilesets(embeddedAssets),
-		Trees:    loadTrees(forestMap),
-		Objects:  loadObjects(gameMaps),
+		Trees:   loadTrees(gameMaps[utils.ForestMap]),
+		Objects: loadObjects(gameMaps),
 	}
-}
-
-func loadTilesets(embeddedAssets embed.FS) map[string]*ebiten.Image {
-	tilesets := map[string]*ebiten.Image{}
-	for _, tsPath := range utils.Tilesets {
-		embeddedFile, err := embeddedAssets.Open(path.Join("client", "assets", "tilesets", tsPath))
-		if err != nil {
-			log.Fatal("failed to load embedded image:", embeddedFile, err)
-		}
-		tsImage, _, err := ebitenutil.NewImageFromReader(embeddedFile)
-		if err != nil {
-			fmt.Println("error loading tileset image")
-		}
-		tilesets[strings.Split(tsPath, ".")[0]] = tsImage
-	}
-	return tilesets
 }
 
 func loadTrees(tMap *tiled.Map) (trees []model.Object) {

@@ -24,6 +24,7 @@ type Game struct {
 	Player       *player.Player
 	Chickens     []*animal.Chicken
 	Cows         []*animal.Cow
+	Maps         []*tiled.Map
 	CurrentMap   int
 	CurrentFrame int
 	Images       loader.ImageCollection
@@ -32,21 +33,18 @@ type Game struct {
 }
 
 func NewGame(embeddedAssets embed.FS) Game {
-	gameMap, err := utils.LoadMapFromEmbedded(embeddedAssets, path.Join("client", "assets", utils.FarmMapFile))
-	if err != nil {
-		fmt.Printf("error parsing map: %s", err.Error())
-		os.Exit(2)
-	}
-	windowWidth := gameMap.Width * gameMap.TileWidth
-	windowHeight := gameMap.Height * gameMap.TileHeight
+	gameMaps := loadMaps(embeddedAssets)
+	currentMap := utils.FarmMap
+	windowWidth := gameMaps[currentMap].Width * gameMaps[currentMap].TileWidth
+	windowHeight := gameMaps[currentMap].Height * gameMaps[currentMap].TileHeight
 	ebiten.SetWindowSize(windowWidth, windowHeight)
 	ebiten.SetWindowTitle(utils.ProjectTitle)
 
 	images := loader.NewImageCollection(embeddedAssets)
-	setConstants(gameMap, images)
+	setConstants(gameMaps[currentMap], images)
 
 	// load environment
-	env := environment.NewEnvironment(embeddedAssets, []*tiled.Map{gameMap})
+	env := environment.NewEnvironment(embeddedAssets, gameMaps)
 
 	// load audio
 	sounds := loader.NewSoundCollection(embeddedAssets)
@@ -60,7 +58,7 @@ func NewGame(embeddedAssets embed.FS) Game {
 	if err != nil {
 		fmt.Println("error loading player image")
 	}
-	spawnPoint := gameMap.Groups[0].ObjectGroups[utils.FarmMapSpawnPoint].Objects[0]
+	spawnPoint := gameMaps[currentMap].Groups[0].ObjectGroups[utils.FarmMapSpawnPoint].Objects[0]
 	playerChar := player.NewPlayer(playerImage, int(spawnPoint.X), int(spawnPoint.Y))
 
 	// load chickens
@@ -95,10 +93,11 @@ func NewGame(embeddedAssets embed.FS) Game {
 	return Game{
 		State:       utils.GameStateCustomChar,
 		Environment: env,
-		CurrentMap:  utils.FarmMap,
 		Player:      playerChar,
 		Chickens:    chickens,
 		Cows:        cows,
+		Maps:        gameMaps,
+		CurrentMap:  currentMap,
 		Images:      images,
 		Sounds:      sounds,
 	}
@@ -175,4 +174,28 @@ func setConstants(gameMap *tiled.Map, images loader.ImageCollection) {
 	utils.ToolsFirstSlotY = utils.ToolsUIY + 10
 	utils.ToolsFirstBoxX = utils.ToolsUIX + 14
 	utils.ToolsFirstBoxY = utils.ToolsUIY + 2
+}
+
+func loadMaps(embeddedAssets embed.FS) (gameMaps []*tiled.Map) {
+	farmMap, err := utils.LoadMapFromEmbedded(embeddedAssets,
+		path.Join("client", "assets", utils.FarmMapFile))
+	if err != nil {
+		fmt.Printf("error parsing map: %s", err.Error())
+		os.Exit(2)
+	}
+	animalsMap, err := utils.LoadMapFromEmbedded(embeddedAssets,
+		path.Join("client", "assets", utils.AnimalsMapFile))
+	if err != nil {
+		fmt.Printf("error parsing map: %s", err.Error())
+		os.Exit(2)
+	}
+	forestMap, err := utils.LoadMapFromEmbedded(embeddedAssets,
+		path.Join("client", "assets", utils.ForestMapFile))
+	if err != nil {
+		fmt.Printf("error parsing map: %s", err.Error())
+		os.Exit(2)
+	}
+
+	gameMaps = append(gameMaps, farmMap, animalsMap, forestMap)
+	return gameMaps
 }
