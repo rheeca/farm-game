@@ -74,6 +74,7 @@ func isClicked(x, y int, body model.SpriteBody) bool {
 }
 
 func isAtExit(g *Game, exitPoint int) bool {
+	player := g.Data.Players[g.PlayerID]
 	exitToAnimalMap := g.Maps[g.CurrentMap].Groups[0].ObjectGroups[exitPoint].Objects[0]
 	pointCollision := model.CollisionBody{
 		X:      int(exitToAnimalMap.X),
@@ -81,7 +82,7 @@ func isAtExit(g *Game, exitPoint int) bool {
 		Width:  1,
 		Height: 1,
 	}
-	if hasCollision(g.Players[g.PlayerID].Dx, g.Players[g.PlayerID].Dy, g.Players[g.PlayerID].Collision, pointCollision) {
+	if hasCollision(player.Dx, player.Dy, player.Collision, pointCollision) {
 		return true
 	}
 	return false
@@ -90,12 +91,13 @@ func isAtExit(g *Game, exitPoint int) bool {
 func changeMap(g *Game, newMap, entryPoint int) {
 	g.CurrentMap = newMap
 	point := g.Maps[newMap].Groups[0].ObjectGroups[entryPoint].Objects[0]
-	g.Players[g.PlayerID].ChangeLocation(int(point.X), int(point.Y))
+	g.Data.Players[g.PlayerID].ChangeLocation(int(point.X), int(point.Y))
 
 }
 
 func playerHasCollisions(g *Game) bool {
-	if hasMapCollisions(g, g.Players[g.PlayerID].Dx, g.Players[g.PlayerID].Dy, g.Players[g.PlayerID].Collision) {
+	player := g.Data.Players[g.PlayerID]
+	if hasMapCollisions(g, player.Dx, player.Dy, player.Collision) {
 		return true
 	}
 
@@ -123,12 +125,12 @@ func playerHasCollisions(g *Game) bool {
 	// check for animated entities collisions
 	if g.CurrentMap == utils.AnimalsMap {
 		for _, c := range g.Data.Chickens {
-			if hasCollision(g.Players[g.PlayerID].Dx, g.Players[g.PlayerID].Dy, g.Players[g.PlayerID].Collision, c.Collision) {
+			if hasCollision(player.Dx, player.Dy, player.Collision, c.Collision) {
 				return true
 			}
 		}
 		for _, c := range g.Data.Cows {
-			if hasCollision(g.Players[g.PlayerID].Dx, g.Players[g.PlayerID].Dy, g.Players[g.PlayerID].Collision, c.Collision) {
+			if hasCollision(player.Dx, player.Dy, player.Collision, c.Collision) {
 				return true
 			}
 		}
@@ -140,7 +142,7 @@ func playerHasCollisions(g *Game) bool {
 			if t.IsNil {
 				continue
 			}
-			if hasCollision(g.Players[g.PlayerID].Dx, g.Players[g.PlayerID].Dy, g.Players[g.PlayerID].Collision, t.Collision) {
+			if hasCollision(player.Dx, player.Dy, player.Collision, t.Collision) {
 				return true
 			}
 		}
@@ -151,7 +153,7 @@ func playerHasCollisions(g *Game) bool {
 		if o.IsNil {
 			continue
 		}
-		if hasCollision(g.Players[g.PlayerID].Dx, g.Players[g.PlayerID].Dy, g.Players[g.PlayerID].Collision, o.Collision) && o.IsCollision {
+		if hasCollision(player.Dx, player.Dy, player.Collision, o.Collision) && o.IsCollision {
 			return true
 		}
 	}

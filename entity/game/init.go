@@ -20,7 +20,6 @@ import (
 
 type Game struct {
 	State        int
-	Players      map[string]*player.Player
 	Data         *GameData
 	Maps         []*tiled.Map
 	CurrentMap   int
@@ -33,6 +32,7 @@ type Game struct {
 
 type GameData struct {
 	Environment *environment.Environment
+	Players     map[string]*player.Player
 	Chickens    []*animal.Chicken
 	Cows        []*animal.Cow
 }
@@ -98,10 +98,10 @@ func NewGame(embeddedAssets embed.FS) Game {
 		cows = append(cows, cow)
 	}
 	return Game{
-		State:   utils.GameStateCustomChar,
-		Players: players,
+		State: utils.GameStateCustomChar,
 		Data: &GameData{
 			Environment: env,
+			Players:     players,
 			Chickens:    chickens,
 			Cows:        cows,
 		},
@@ -114,7 +114,7 @@ func NewGame(embeddedAssets embed.FS) Game {
 }
 
 func (g *Game) Update() error {
-	g.Players[g.PlayerID].UpdateFrame(g.CurrentFrame)
+	g.Data.Players[g.PlayerID].UpdateFrame(g.CurrentFrame)
 	getPlayerInput(g)
 	if g.State == utils.GameStatePlay {
 		g.CurrentFrame += 1

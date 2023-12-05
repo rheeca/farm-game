@@ -202,12 +202,13 @@ func drawCharacterCustomizationUI(g *Game, screen *ebiten.Image, drawOptions ebi
 }
 
 func drawPlayer(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+	player := g.Data.Players[g.PlayerID]
 	drawOptions.GeoM.Reset()
-	drawOptions.GeoM.Translate(float64(g.Players[g.PlayerID].XLoc), float64(g.Players[g.PlayerID].YLoc))
-	screen.DrawImage(g.Players[g.PlayerID].Spritesheet.SubImage(image.Rect(g.Players[g.PlayerID].Frame*utils.PlayerSpriteWidth,
-		(g.Players[g.PlayerID].State*utils.NumOfDirections+g.Players[g.PlayerID].Direction)*utils.PlayerSpriteHeight,
-		g.Players[g.PlayerID].Frame*utils.PlayerSpriteWidth+utils.PlayerSpriteWidth,
-		(g.Players[g.PlayerID].State*utils.NumOfDirections+g.Players[g.PlayerID].Direction)*utils.PlayerSpriteHeight+utils.PlayerSpriteHeight)).(*ebiten.Image), &drawOptions)
+	drawOptions.GeoM.Translate(float64(player.XLoc), float64(player.YLoc))
+	screen.DrawImage(player.Spritesheet.SubImage(image.Rect(player.Frame*utils.PlayerSpriteWidth,
+		(player.State*utils.NumOfDirections+player.Direction)*utils.PlayerSpriteHeight,
+		player.Frame*utils.PlayerSpriteWidth+utils.PlayerSpriteWidth,
+		(player.State*utils.NumOfDirections+player.Direction)*utils.PlayerSpriteHeight+utils.PlayerSpriteHeight)).(*ebiten.Image), &drawOptions)
 }
 
 func drawChickens(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
@@ -286,6 +287,7 @@ func drawFarmPlots(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOp
 }
 
 func drawBackpack(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+	player := g.Data.Players[g.PlayerID]
 	// draw backpack
 	drawOptions.GeoM.Reset()
 	drawOptions.GeoM.Translate(float64(utils.ToolsUIX), float64(utils.ToolsUIY))
@@ -293,12 +295,12 @@ func drawBackpack(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOpt
 
 	// draw selected box
 	drawOptions.GeoM.Reset()
-	drawOptions.GeoM.Translate(float64(utils.ToolsFirstBoxX+((g.Players[g.PlayerID].EquippedItem)*utils.BackpackUIBoxWidth)),
+	drawOptions.GeoM.Translate(float64(utils.ToolsFirstBoxX+((player.EquippedItem)*utils.BackpackUIBoxWidth)),
 		float64(utils.ToolsFirstBoxY))
 	screen.DrawImage(g.Images.SelectedTool, &drawOptions)
 
 	// draw items in backpack
-	for i, item := range g.Players[g.PlayerID].Backpack {
+	for i, item := range player.Backpack {
 		if item.ID == 0 {
 			continue
 		}
