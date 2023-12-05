@@ -1,10 +1,11 @@
 package animal
 
 import (
-	"github.com/hajimehoshi/ebiten/v2"
 	"guion-2d-project3/entity/model"
 	"guion-2d-project3/utils"
 	"math/rand"
+
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 type Chicken struct {

@@ -122,12 +122,12 @@ func playerHasCollisions(g *Game) bool {
 
 	// check for animated entities collisions
 	if g.CurrentMap == utils.AnimalsMap {
-		for _, c := range g.Chickens {
+		for _, c := range g.Data.Chickens {
 			if hasCollision(g.Player.Dx, g.Player.Dy, g.Player.Collision, c.Collision) {
 				return true
 			}
 		}
-		for _, c := range g.Cows {
+		for _, c := range g.Data.Cows {
 			if hasCollision(g.Player.Dx, g.Player.Dy, g.Player.Collision, c.Collision) {
 				return true
 			}
@@ -136,7 +136,7 @@ func playerHasCollisions(g *Game) bool {
 
 	// check for trees
 	if g.CurrentMap == utils.ForestMap {
-		for _, t := range g.Environment.Trees {
+		for _, t := range g.Data.Environment.Trees {
 			if t.IsNil {
 				continue
 			}
@@ -147,7 +147,7 @@ func playerHasCollisions(g *Game) bool {
 	}
 
 	// check for objects
-	for _, o := range g.Environment.Objects[g.CurrentMap] {
+	for _, o := range g.Data.Environment.Objects[g.CurrentMap] {
 		if o.IsNil {
 			continue
 		}
@@ -159,11 +159,11 @@ func playerHasCollisions(g *Game) bool {
 }
 
 func chickenHasCollisions(g *Game, chicken int) bool {
-	if hasMapCollisions(g, g.Chickens[chicken].Dx, g.Chickens[chicken].Dy, g.Chickens[chicken].Collision) {
+	if hasMapCollisions(g, g.Data.Chickens[chicken].Dx, g.Data.Chickens[chicken].Dy, g.Data.Chickens[chicken].Collision) {
 		return true
 	}
-	for _, cow := range g.Cows {
-		if hasCollision(g.Chickens[chicken].Dx, g.Chickens[chicken].Dy, g.Chickens[chicken].Collision,
+	for _, cow := range g.Data.Cows {
+		if hasCollision(g.Data.Chickens[chicken].Dx, g.Data.Chickens[chicken].Dy, g.Data.Chickens[chicken].Collision,
 			cow.Collision) {
 			return true
 		}

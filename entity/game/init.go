@@ -20,16 +20,20 @@ import (
 
 type Game struct {
 	State        int
-	Environment  *environment.Environment
 	Player       *player.Player
-	Chickens     []*animal.Chicken
-	Cows         []*animal.Cow
+	Data         *GameData
 	Maps         []*tiled.Map
 	CurrentMap   int
 	CurrentFrame int
 	Images       loader.ImageCollection
 	Sounds       loader.SoundCollection
 	UIState      model.UIState
+}
+
+type GameData struct {
+	Environment *environment.Environment
+	Chickens    []*animal.Chicken
+	Cows        []*animal.Cow
 }
 
 func NewGame(embeddedAssets embed.FS) Game {
@@ -91,15 +95,17 @@ func NewGame(embeddedAssets embed.FS) Game {
 		cows = append(cows, cow)
 	}
 	return Game{
-		State:       utils.GameStateCustomChar,
-		Environment: env,
-		Player:      playerChar,
-		Chickens:    chickens,
-		Cows:        cows,
-		Maps:        gameMaps,
-		CurrentMap:  currentMap,
-		Images:      images,
-		Sounds:      sounds,
+		State:  utils.GameStateCustomChar,
+		Player: playerChar,
+		Data: &GameData{
+			Environment: env,
+			Chickens:    chickens,
+			Cows:        cows,
+		},
+		Maps:       gameMaps,
+		CurrentMap: currentMap,
+		Images:     images,
+		Sounds:     sounds,
 	}
 }
 

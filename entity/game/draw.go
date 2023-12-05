@@ -45,7 +45,7 @@ func drawMap(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions)
 }
 
 func drawTrees(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
-	for _, t := range g.Environment.Trees {
+	for _, t := range g.Data.Environment.Trees {
 		if t.IsNil {
 			continue
 		}
@@ -60,7 +60,7 @@ func drawTrees(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOption
 
 func drawObjects(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
 	tilesets := g.Images.Tilesets
-	for _, o := range g.Environment.Objects[g.CurrentMap] {
+	for _, o := range g.Data.Environment.Objects[g.CurrentMap] {
 		if o.IsNil {
 			continue
 		}
@@ -211,7 +211,7 @@ func drawPlayer(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptio
 }
 
 func drawChickens(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
-	for _, c := range g.Chickens {
+	for _, c := range g.Data.Chickens {
 		drawOptions.GeoM.Reset()
 
 		var spriteHeight, yLoc int
@@ -231,7 +231,7 @@ func drawChickens(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOpt
 }
 
 func drawCows(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
-	for _, c := range g.Cows {
+	for _, c := range g.Data.Cows {
 		drawOptions.GeoM.Reset()
 		drawOptions.GeoM.Translate(float64(c.XLoc), float64(c.YLoc))
 		screen.DrawImage(c.Spritesheet.SubImage(image.Rect(c.Frame*utils.CowSpriteWidth,
@@ -245,7 +245,7 @@ func drawFarmPlots(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOp
 	if g.CurrentMap != utils.FarmMap {
 		return
 	}
-	for _, p := range g.Environment.Plots {
+	for _, p := range g.Data.Environment.Plots {
 		// draw soil
 		drawOptions.GeoM.Reset()
 		drawOptions.GeoM.Translate(float64(p.XTile*utils.TileWidth), float64(p.YTile*utils.TileHeight))
