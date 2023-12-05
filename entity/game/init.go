@@ -1,13 +1,21 @@
 package game
 
 import (
-	"github.com/hajimehoshi/ebiten/v2"
+	"embed"
+	"fmt"
 	"guion-2d-project3/entity/animal"
 	"guion-2d-project3/entity/environment"
 	"guion-2d-project3/entity/loader"
 	"guion-2d-project3/entity/model"
 	"guion-2d-project3/entity/player"
 	"guion-2d-project3/utils"
+	"log"
+	"os"
+	"path"
+
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/lafriks/go-tiled"
 )
 
 type Game struct {
@@ -21,6 +29,79 @@ type Game struct {
 	Images       loader.ImageCollection
 	Sounds       loader.SoundCollection
 	UIState      model.UIState
+}
+
+func NewGame(embeddedAssets embed.FS) Game {
+	gameMap, err := utils.LoadMapFromEmbedded(embeddedAssets, path.Join("assets", utils.FarmMapFile))
+	if err != nil {
+		fmt.Printf("error parsing map: %s", err.Error())
+		os.Exit(2)
+	}
+	windowWidth := gameMap.Width * gameMap.TileWidth
+	windowHeight := gameMap.Height * gameMap.TileHeight
+	ebiten.SetWindowSize(windowWidth, windowHeight)
+	ebiten.SetWindowTitle(utils.ProjectTitle)
+
+	images := loader.NewImageCollection(embeddedAssets)
+	setConstants(gameMap, images)
+
+	// load environment
+	env := environment.NewEnvironment(embeddedAssets, []*tiled.Map{gameMap})
+
+	// load audio
+	sounds := loader.NewSoundCollection(embeddedAssets)
+
+	// load player
+	embeddedFile, err := embeddedAssets.Open(path.Join("assets", "player", utils.DefaultPlayerImg))
+	if err != nil {
+		log.Fatal("failed to load embedded image:", embeddedFile, err)
+	}
+	playerImage, _, err := ebitenutil.NewImageFromReader(embeddedFile)
+	if err != nil {
+		fmt.Println("error loading player image")
+	}
+	spawnPoint := gameMap.Groups[0].ObjectGroups[utils.FarmMapSpawnPoint].Objects[0]
+	playerChar := player.NewPlayer(playerImage, int(spawnPoint.X), int(spawnPoint.Y))
+
+	// load chickens
+	embeddedFile, err = embeddedAssets.Open(path.Join("assets", "animals", utils.ChickenImg))
+	if err != nil {
+		log.Fatal("failed to load embedded image:", embeddedFile, err)
+	}
+	chickenImage, _, err := ebitenutil.NewImageFromReader(embeddedFile)
+	if err != nil {
+		fmt.Println("error loading chicken image")
+	}
+	var chickens []*animal.Chicken
+	for _, v := range utils.ChickenLocations {
+		chicken := animal.NewChicken(chickenImage, v)
+		chickens = append(chickens, chicken)
+	}
+
+	// load cows
+	embeddedFile, err = embeddedAssets.Open(path.Join("assets", "animals", utils.CowImg))
+	if err != nil {
+		log.Fatal("failed to load embedded image:", embeddedFile, err)
+	}
+	cowImage, _, err := ebitenutil.NewImageFromReader(embeddedFile)
+	if err != nil {
+		fmt.Println("error loading cow image")
+	}
+	var cows []*animal.Cow
+	for _, v := range utils.CowLocations {
+		cow := animal.NewCow(cowImage, v.X, v.Y)
+		cows = append(cows, cow)
+	}
+	return Game{
+		State:       utils.GameStateCustomChar,
+		Environment: env,
+		CurrentMap:  utils.FarmMap,
+		Player:      playerChar,
+		Chickens:    chickens,
+		Cows:        cows,
+		Images:      images,
+		Sounds:      sounds,
+	}
 }
 
 func (g *Game) Update() error {
@@ -79,4 +160,19 @@ func (g *Game) SetErrorMessage(message string) {
 func (g *Game) ShowImage(image *ebiten.Image) {
 	g.UIState.ImageToShow = image
 	g.UIState.ImageTTL = 60
+}
+
+func setConstants(gameMap *tiled.Map, images loader.ImageCollection) {
+	utils.MapWidth = gameMap.Width * gameMap.TileWidth
+	utils.MapHeight = gameMap.Height * gameMap.TileHeight
+	utils.TileWidth = gameMap.TileWidth
+	utils.TileHeight = gameMap.TileHeight
+	utils.MapColumns = gameMap.Width
+	utils.MapRows = gameMap.Height
+	utils.ToolsUIX = (utils.MapWidth / 2) - images.ToolsUI.Bounds().Dx()/2
+	utils.ToolsUIY = utils.MapHeight - 60
+	utils.ToolsFirstSlotX = utils.ToolsUIX + 22
+	utils.ToolsFirstSlotY = utils.ToolsUIY + 10
+	utils.ToolsFirstBoxX = utils.ToolsUIX + 14
+	utils.ToolsFirstBoxY = utils.ToolsUIY + 2
 }
