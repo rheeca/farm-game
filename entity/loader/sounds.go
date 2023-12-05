@@ -3,10 +3,11 @@ package loader
 import (
 	"embed"
 	"fmt"
-	"github.com/hajimehoshi/ebiten/v2/audio"
-	"github.com/hajimehoshi/ebiten/v2/audio/wav"
 	"guion-2d-project3/utils"
 	"path"
+
+	"github.com/hajimehoshi/ebiten/v2/audio"
+	"github.com/hajimehoshi/ebiten/v2/audio/wav"
 )
 
 type SoundCollection struct {
@@ -47,7 +48,7 @@ func (s *SoundCollection) PlaySound(sound *audio.Player) {
 }
 
 func loadWavFromEmbedded(EmbeddedAssets embed.FS, name string, context *audio.Context) (soundPlayer *audio.Player) {
-	soundFile, err := EmbeddedAssets.Open(path.Join("assets", "sounds", name))
+	soundFile, err := EmbeddedAssets.Open(path.Join("client", "assets", "sounds", name))
 	if err != nil {
 		fmt.Println(err.Error())
 		return nil

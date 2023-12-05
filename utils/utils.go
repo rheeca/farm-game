@@ -3,6 +3,7 @@ package utils
 import (
 	"embed"
 	"fmt"
+
 	"github.com/hajimehoshi/ebiten/v2/examples/resources/fonts"
 	"github.com/lafriks/go-tiled"
 	"golang.org/x/image/font"
@@ -16,6 +17,7 @@ const (
 	CowImg           = "cow.png"
 	SoundSampleRate  = 16000
 	UnitSize         = 32
+	ServerPort       = 8095
 )
 
 // game state

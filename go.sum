@@ -1,5 +1,7 @@
 github.com/co0p/tankism v0.0.0-20230903205805-1ebc2e88a661 h1:yAJSEirW/bR6G09RVVKP3ekt3oD0T2SWjiawzPMdiVA=
 github.com/co0p/tankism v0.0.0-20230903205805-1ebc2e88a661/go.mod h1:cTwGby23Nl1SaivObhrpVITua/yAyiSRzc7h14/aSCU=
+github.com/codecat/go-enet v0.0.0-20230124183417-a8586e7e37c4 h1:IfESNBZYAzRQzxcOIUzqpCcYQEaPM9awhFhMV/mi3TQ=
+github.com/codecat/go-enet v0.0.0-20230124183417-a8586e7e37c4/go.mod h1:sGvUVmO/h1mV+TB3h3AA7GBjDX6ZH8DkiF2dcyxPo38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/ebitengine/oto/v3 v3.1.0 h1:9tChG6rizyeR2w3vsygTTTVVJ9QMMyu00m2yBOCch6U=

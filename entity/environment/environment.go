@@ -26,14 +26,14 @@ type Environment struct {
 
 func NewEnvironment(embeddedAssets embed.FS, gameMaps []*tiled.Map) *Environment {
 	animalsMap, err := utils.LoadMapFromEmbedded(embeddedAssets,
-		path.Join("assets", utils.AnimalsMapFile))
+		path.Join("client", "assets", utils.AnimalsMapFile))
 	if err != nil {
 		fmt.Printf("error parsing map: %s", err.Error())
 		os.Exit(2)
 	}
 	gameMaps = append(gameMaps, animalsMap)
 	forestMap, err := utils.LoadMapFromEmbedded(embeddedAssets,
-		path.Join("assets", utils.ForestMapFile))
+		path.Join("client", "assets", utils.ForestMapFile))
 	if err != nil {
 		fmt.Printf("error parsing map: %s", err.Error())
 		os.Exit(2)
@@ -51,7 +51,7 @@ func NewEnvironment(embeddedAssets embed.FS, gameMaps []*tiled.Map) *Environment
 func loadTilesets(embeddedAssets embed.FS) map[string]*ebiten.Image {
 	tilesets := map[string]*ebiten.Image{}
 	for _, tsPath := range utils.Tilesets {
-		embeddedFile, err := embeddedAssets.Open(path.Join("assets", "tilesets", tsPath))
+		embeddedFile, err := embeddedAssets.Open(path.Join("client", "assets", "tilesets", tsPath))
 		if err != nil {
 			log.Fatal("failed to load embedded image:", embeddedFile, err)
 		}

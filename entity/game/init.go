@@ -32,7 +32,7 @@ type Game struct {
 }
 
 func NewGame(embeddedAssets embed.FS) Game {
-	gameMap, err := utils.LoadMapFromEmbedded(embeddedAssets, path.Join("assets", utils.FarmMapFile))
+	gameMap, err := utils.LoadMapFromEmbedded(embeddedAssets, path.Join("client", "assets", utils.FarmMapFile))
 	if err != nil {
 		fmt.Printf("error parsing map: %s", err.Error())
 		os.Exit(2)
@@ -52,7 +52,7 @@ func NewGame(embeddedAssets embed.FS) Game {
 	sounds := loader.NewSoundCollection(embeddedAssets)
 
 	// load player
-	embeddedFile, err := embeddedAssets.Open(path.Join("assets", "player", utils.DefaultPlayerImg))
+	embeddedFile, err := embeddedAssets.Open(path.Join("client", "assets", "player", utils.DefaultPlayerImg))
 	if err != nil {
 		log.Fatal("failed to load embedded image:", embeddedFile, err)
 	}
@@ -64,7 +64,7 @@ func NewGame(embeddedAssets embed.FS) Game {
 	playerChar := player.NewPlayer(playerImage, int(spawnPoint.X), int(spawnPoint.Y))
 
 	// load chickens
-	embeddedFile, err = embeddedAssets.Open(path.Join("assets", "animals", utils.ChickenImg))
+	embeddedFile, err = embeddedAssets.Open(path.Join("client", "assets", "animals", utils.ChickenImg))
 	if err != nil {
 		log.Fatal("failed to load embedded image:", embeddedFile, err)
 	}
@@ -79,7 +79,7 @@ func NewGame(embeddedAssets embed.FS) Game {
 	}
 
 	// load cows
-	embeddedFile, err = embeddedAssets.Open(path.Join("assets", "animals", utils.CowImg))
+	embeddedFile, err = embeddedAssets.Open(path.Join("client", "assets", "animals", utils.CowImg))
 	if err != nil {
 		log.Fatal("failed to load embedded image:", embeddedFile, err)
 	}
