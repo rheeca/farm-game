@@ -38,21 +38,21 @@ type GameData struct {
 }
 
 func NewGame(embeddedAssets embed.FS) Game {
-	gameMaps := loadMaps(embeddedAssets)
+	gameMaps := LoadMaps(embeddedAssets, path.Join("client", "assets"))
 	currentMap := utils.FarmMap
 	windowWidth := gameMaps[currentMap].Width * gameMaps[currentMap].TileWidth
 	windowHeight := gameMaps[currentMap].Height * gameMaps[currentMap].TileHeight
 	ebiten.SetWindowSize(windowWidth, windowHeight)
 	ebiten.SetWindowTitle(utils.ProjectTitle)
 
-	images := loader.NewImageCollection(embeddedAssets)
+	images := loader.NewImageCollection(embeddedAssets, path.Join("client", "assets"))
 	setConstants(gameMaps[currentMap], images)
 
 	// load environment
 	env := environment.NewEnvironment(embeddedAssets, gameMaps)
 
 	// load audio
-	sounds := loader.NewSoundCollection(embeddedAssets)
+	sounds := loader.NewSoundCollection(embeddedAssets, path.Join("client", "assets"))
 
 	// load player
 	players := map[string]*player.Player{}
@@ -186,21 +186,21 @@ func setConstants(gameMap *tiled.Map, images loader.ImageCollection) {
 	utils.ToolsFirstBoxY = utils.ToolsUIY + 2
 }
 
-func loadMaps(embeddedAssets embed.FS) (gameMaps []*tiled.Map) {
+func LoadMaps(embeddedAssets embed.FS, assetPath string) (gameMaps []*tiled.Map) {
 	farmMap, err := utils.LoadMapFromEmbedded(embeddedAssets,
-		path.Join("client", "assets", utils.FarmMapFile))
+		path.Join(assetPath, utils.FarmMapFile))
 	if err != nil {
 		fmt.Printf("error parsing map: %s", err.Error())
 		os.Exit(2)
 	}
 	animalsMap, err := utils.LoadMapFromEmbedded(embeddedAssets,
-		path.Join("client", "assets", utils.AnimalsMapFile))
+		path.Join(assetPath, utils.AnimalsMapFile))
 	if err != nil {
 		fmt.Printf("error parsing map: %s", err.Error())
 		os.Exit(2)
 	}
 	forestMap, err := utils.LoadMapFromEmbedded(embeddedAssets,
-		path.Join("client", "assets", utils.ForestMapFile))
+		path.Join(assetPath, utils.ForestMapFile))
 	if err != nil {
 		fmt.Printf("error parsing map: %s", err.Error())
 		os.Exit(2)

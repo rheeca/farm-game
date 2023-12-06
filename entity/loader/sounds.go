@@ -23,19 +23,19 @@ type SoundCollection struct {
 	SFXWateringCan *audio.Player
 }
 
-func NewSoundCollection(EmbeddedAssets embed.FS) SoundCollection {
+func NewSoundCollection(EmbeddedAssets embed.FS, assetPath string) SoundCollection {
 	audioContext := audio.NewContext(utils.SoundSampleRate)
 	return SoundCollection{
-		BGMFirstTown:   loadWavFromEmbedded(EmbeddedAssets, "first_town.wav", audioContext),
-		SFXChangeMap:   loadWavFromEmbedded(EmbeddedAssets, "sfx_change_map.wav", audioContext),
-		SFXChicken:     loadWavFromEmbedded(EmbeddedAssets, "sfx_chicken.wav", audioContext),
-		SFXChopTree:    loadWavFromEmbedded(EmbeddedAssets, "sfx_chop_tree.wav", audioContext),
-		SFXCloseDoor:   loadWavFromEmbedded(EmbeddedAssets, "sfx_close_door.wav", audioContext),
-		SFXCow:         loadWavFromEmbedded(EmbeddedAssets, "sfx_cow.wav", audioContext),
-		SFXCraft:       loadWavFromEmbedded(EmbeddedAssets, "sfx_craft.wav", audioContext),
-		SFXOpenDoor:    loadWavFromEmbedded(EmbeddedAssets, "sfx_open_door.wav", audioContext),
-		SFXTillSoil:    loadWavFromEmbedded(EmbeddedAssets, "sfx_till_soil.wav", audioContext),
-		SFXWateringCan: loadWavFromEmbedded(EmbeddedAssets, "sfx_watering_can.wav", audioContext),
+		BGMFirstTown:   loadWavFromEmbedded(EmbeddedAssets, assetPath, "first_town.wav", audioContext),
+		SFXChangeMap:   loadWavFromEmbedded(EmbeddedAssets, assetPath, "sfx_change_map.wav", audioContext),
+		SFXChicken:     loadWavFromEmbedded(EmbeddedAssets, assetPath, "sfx_chicken.wav", audioContext),
+		SFXChopTree:    loadWavFromEmbedded(EmbeddedAssets, assetPath, "sfx_chop_tree.wav", audioContext),
+		SFXCloseDoor:   loadWavFromEmbedded(EmbeddedAssets, assetPath, "sfx_close_door.wav", audioContext),
+		SFXCow:         loadWavFromEmbedded(EmbeddedAssets, assetPath, "sfx_cow.wav", audioContext),
+		SFXCraft:       loadWavFromEmbedded(EmbeddedAssets, assetPath, "sfx_craft.wav", audioContext),
+		SFXOpenDoor:    loadWavFromEmbedded(EmbeddedAssets, assetPath, "sfx_open_door.wav", audioContext),
+		SFXTillSoil:    loadWavFromEmbedded(EmbeddedAssets, assetPath, "sfx_till_soil.wav", audioContext),
+		SFXWateringCan: loadWavFromEmbedded(EmbeddedAssets, assetPath, "sfx_watering_can.wav", audioContext),
 	}
 }
 
@@ -47,8 +47,8 @@ func (s *SoundCollection) PlaySound(sound *audio.Player) {
 	sound.Play()
 }
 
-func loadWavFromEmbedded(EmbeddedAssets embed.FS, name string, context *audio.Context) (soundPlayer *audio.Player) {
-	soundFile, err := EmbeddedAssets.Open(path.Join("client", "assets", "sounds", name))
+func loadWavFromEmbedded(EmbeddedAssets embed.FS, assetPath, name string, context *audio.Context) (soundPlayer *audio.Player) {
+	soundFile, err := EmbeddedAssets.Open(path.Join(assetPath, "sounds", name))
 	if err != nil {
 		fmt.Println(err.Error())
 		return nil

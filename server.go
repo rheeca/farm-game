@@ -2,12 +2,15 @@ package main
 
 import (
 	"embed"
+	"encoding/json"
 	"fmt"
 	"guion-2d-project3/entity/game"
+	"guion-2d-project3/entity/model"
 	"guion-2d-project3/utils"
 	"log"
 
 	"github.com/codecat/go-enet"
+	"github.com/gofrs/uuid"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -44,14 +47,22 @@ func runServer(host enet.Host, g game.Game) {
 
 		switch ev.GetType() {
 		case enet.EventConnect:
-			log.Println("new peer connected: ", ev.GetPeer().GetAddress())
+			playerID := uuid.Must(uuid.NewV4()).String()
+			log.Println(fmt.Sprintf("new peer connected: %s playerID: %s", ev.GetPeer().GetAddress(), playerID))
+
+			// send player id of client
+			jsonObj := model.DataPacket{
+				Type: utils.PacketPlayerID,
+				Body: model.PlayerIDPacket{
+					PlayerID: playerID,
+				},
+			}
+			jsonStr, _ := json.Marshal(jsonObj)
+			ev.GetPeer().SendString(string(jsonStr), ev.GetChannelID(), enet.PacketFlagReliable)
 		case enet.EventDisconnect:
 			log.Println("peer disconnected: ", ev.GetPeer().GetAddress())
 		case enet.EventReceive:
 			processClientAction(&g, ev)
-
-			// test send data
-			ev.GetPeer().SendString("hello from server!", ev.GetChannelID(), enet.PacketFlagReliable)
 		}
 	}
 }

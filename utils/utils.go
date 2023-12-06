@@ -188,6 +188,11 @@ const (
 	ErrorLoadEbitenImage   = "failed to load ebiten image: %v"
 )
 
+// net
+const (
+	PacketPlayerID = "PlayerID"
+)
+
 func LoadMapFromEmbedded(EmbeddedAssets embed.FS, name string) (*tiled.Map, error) {
 	embeddedMap, err := tiled.LoadFile(name,
 		tiled.WithFileSystem(EmbeddedAssets))

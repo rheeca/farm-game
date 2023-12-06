@@ -4,7 +4,7 @@ import (
 	"guion-2d-project3/entity/model"
 	"guion-2d-project3/utils"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -27,7 +27,7 @@ type Player struct {
 
 func NewPlayer(spritesheet *ebiten.Image, startingX, startingY int) *Player {
 	return &Player{
-		PlayerID:    uuid.New().String(),
+		PlayerID:    uuid.Must(uuid.NewV4()).String(),
 		Spritesheet: spritesheet,
 		XLoc:        startingX - 39,
 		YLoc:        startingY - 35,
