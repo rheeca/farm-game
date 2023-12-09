@@ -38,6 +38,7 @@ func NewClientGame(embeddedAssets embed.FS, peer enet.Peer, host enet.Host) Clie
 
 	images := loader.NewImageCollection(embeddedAssets, "assets")
 	sounds := loader.NewSoundCollection(embeddedAssets, "assets")
+	game.SetConstants(gameMaps[currentMap], images)
 
 	return ClientGame{
 		peer:       peer,
@@ -51,6 +52,20 @@ func NewClientGame(embeddedAssets embed.FS, peer enet.Peer, host enet.Host) Clie
 }
 
 func (g *ClientGame) Update() error {
+	listenForEvents(g)
+	return nil
+}
+
+func (g *ClientGame) Draw(screen *ebiten.Image) {
+	drawOptions := ebiten.DrawImageOptions{}
+	game.DrawMap(g.Maps[g.CurrentMap], g.Images.Tilesets, screen, drawOptions)
+}
+
+func (g *ClientGame) Layout(oWidth, oHeight int) (sWidth, sHeight int) {
+	return oWidth, oHeight
+}
+
+func listenForEvents(g *ClientGame) {
 	ev := g.host.Service(1000)
 	switch ev.GetType() {
 	case enet.EventConnect:
@@ -64,21 +79,13 @@ func (g *ClientGame) Update() error {
 
 		var data model.DataPacket
 		json.Unmarshal(packet.GetData(), &data)
-		if data.Type == utils.PacketPlayerID {
-			var pidPacket model.PlayerIDPacket
+		if data.Type == utils.PacketGameData {
+			var gamePacket game.GameData
 			body, _ := json.Marshal(data.Body)
-			json.Unmarshal(body, &pidPacket)
-			g.PlayerID = pidPacket.PlayerID
+			json.Unmarshal(body, &gamePacket)
+			g.Data = &gamePacket
 		}
 
 		packet.Destroy()
 	}
-	return nil
-}
-
-func (g *ClientGame) Draw(screen *ebiten.Image) {
-}
-
-func (g *ClientGame) Layout(oWidth, oHeight int) (sWidth, sHeight int) {
-	return oWidth, oHeight
 }

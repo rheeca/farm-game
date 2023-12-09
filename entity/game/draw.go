@@ -7,13 +7,14 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
+	"github.com/lafriks/go-tiled"
 	"golang.org/x/image/colornames"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/basicfont"
 )
 
-func drawMap(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
-	for i, layer := range g.Maps[g.CurrentMap].Layers {
+func DrawMap(gMap *tiled.Map, tilesets map[string]*ebiten.Image, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+	for i, layer := range gMap.Layers {
 		if layer.Name == utils.GuideOnlyLayer || i == utils.CollisionLayer || i == utils.FarmingLandLayer {
 			continue
 		}
@@ -28,7 +29,7 @@ func drawMap(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions)
 				tileToDrawX := int(tileToDraw.ID) % tileToDraw.Tileset.Columns
 				tileToDrawY := int(tileToDraw.ID) / tileToDraw.Tileset.Columns
 
-				ebitenTileToDraw := g.Images.Tilesets[tileToDraw.Tileset.Name].SubImage(image.Rect(tileToDrawX*utils.TileWidth,
+				ebitenTileToDraw := tilesets[tileToDraw.Tileset.Name].SubImage(image.Rect(tileToDrawX*utils.TileWidth,
 					tileToDrawY*utils.TileHeight,
 					tileToDrawX*utils.TileWidth+utils.TileWidth,
 					tileToDrawY*utils.TileHeight+utils.TileHeight)).(*ebiten.Image)
@@ -201,14 +202,15 @@ func drawCharacterCustomizationUI(g *Game, screen *ebiten.Image, drawOptions ebi
 	}
 }
 
-func drawPlayer(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
-	player := g.Data.Players[g.PlayerID]
-	drawOptions.GeoM.Reset()
-	drawOptions.GeoM.Translate(float64(player.XLoc), float64(player.YLoc))
-	screen.DrawImage(player.Spritesheet.SubImage(image.Rect(player.Frame*utils.PlayerSpriteWidth,
-		(player.State*utils.NumOfDirections+player.Direction)*utils.PlayerSpriteHeight,
-		player.Frame*utils.PlayerSpriteWidth+utils.PlayerSpriteWidth,
-		(player.State*utils.NumOfDirections+player.Direction)*utils.PlayerSpriteHeight+utils.PlayerSpriteHeight)).(*ebiten.Image), &drawOptions)
+func drawPlayers(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+	for _, player := range g.Data.Players {
+		drawOptions.GeoM.Reset()
+		drawOptions.GeoM.Translate(float64(player.XLoc), float64(player.YLoc))
+		screen.DrawImage(player.Spritesheet.SubImage(image.Rect(player.Frame*utils.PlayerSpriteWidth,
+			(player.State*utils.NumOfDirections+player.Direction)*utils.PlayerSpriteHeight,
+			player.Frame*utils.PlayerSpriteWidth+utils.PlayerSpriteWidth,
+			(player.State*utils.NumOfDirections+player.Direction)*utils.PlayerSpriteHeight+utils.PlayerSpriteHeight)).(*ebiten.Image), &drawOptions)
+	}
 }
 
 func drawChickens(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {

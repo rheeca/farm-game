@@ -13,6 +13,7 @@ import (
 	"os"
 	"path"
 
+	"github.com/gofrs/uuid"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/lafriks/go-tiled"
@@ -46,7 +47,7 @@ func NewGame(embeddedAssets embed.FS) Game {
 	ebiten.SetWindowTitle(utils.ProjectTitle)
 
 	images := loader.NewImageCollection(embeddedAssets, path.Join("client", "assets"))
-	setConstants(gameMaps[currentMap], images)
+	SetConstants(gameMaps[currentMap], images)
 
 	// load environment
 	env := environment.NewEnvironment(embeddedAssets, gameMaps)
@@ -56,20 +57,13 @@ func NewGame(embeddedAssets embed.FS) Game {
 
 	// load player
 	players := map[string]*player.Player{}
-	embeddedFile, err := embeddedAssets.Open(path.Join("client", "assets", "player", utils.DefaultPlayerImg))
-	if err != nil {
-		log.Fatal("failed to load embedded image:", embeddedFile, err)
-	}
-	playerImage, _, err := ebitenutil.NewImageFromReader(embeddedFile)
-	if err != nil {
-		fmt.Println("error loading player image")
-	}
+	playerID := uuid.Must(uuid.NewV4()).String()
 	spawnPoint := gameMaps[currentMap].Groups[0].ObjectGroups[utils.FarmMapSpawnPoint].Objects[0]
-	playerChar := player.NewPlayer(playerImage, int(spawnPoint.X), int(spawnPoint.Y))
+	playerChar := player.NewPlayer(playerID, int(spawnPoint.X), int(spawnPoint.Y), images)
 	players[playerChar.PlayerID] = playerChar
 
 	// load chickens
-	embeddedFile, err = embeddedAssets.Open(path.Join("client", "assets", "animals", utils.ChickenImg))
+	embeddedFile, err := embeddedAssets.Open(path.Join("client", "assets", "animals", utils.ChickenImg))
 	if err != nil {
 		log.Fatal("failed to load embedded image:", embeddedFile, err)
 	}
@@ -116,6 +110,7 @@ func NewGame(embeddedAssets embed.FS) Game {
 func (g *Game) Update() error {
 	g.Data.Players[g.PlayerID].UpdateFrame(g.CurrentFrame)
 	getPlayerInput(g)
+
 	if g.State == utils.GameStatePlay {
 		g.CurrentFrame += 1
 		if g.CurrentMap == utils.AnimalsMap {
@@ -134,7 +129,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		return
 	}
 
-	drawMap(g, screen, drawOptions)
+	DrawMap(g.Maps[g.CurrentMap], g.Images.Tilesets, screen, drawOptions)
 	drawFarmPlots(g, screen, drawOptions)
 	if g.CurrentMap == utils.ForestMap {
 		drawTrees(g, screen, drawOptions)
@@ -146,7 +141,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		drawCows(g, screen, drawOptions)
 	}
 
-	drawPlayer(g, screen, drawOptions)
+	drawPlayers(g, screen, drawOptions)
 	drawBackpack(g, screen, drawOptions)
 
 	if g.State == utils.GameStateCraft {
@@ -171,7 +166,7 @@ func (g *Game) ShowImage(image *ebiten.Image) {
 	g.UIState.ImageTTL = 60
 }
 
-func setConstants(gameMap *tiled.Map, images loader.ImageCollection) {
+func SetConstants(gameMap *tiled.Map, images loader.ImageCollection) {
 	utils.MapWidth = gameMap.Width * gameMap.TileWidth
 	utils.MapHeight = gameMap.Height * gameMap.TileHeight
 	utils.TileWidth = gameMap.TileWidth

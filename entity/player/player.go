@@ -1,10 +1,10 @@
 package player
 
 import (
+	"guion-2d-project3/entity/loader"
 	"guion-2d-project3/entity/model"
 	"guion-2d-project3/utils"
 
-	"github.com/gofrs/uuid"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -25,10 +25,10 @@ type Player struct {
 	EquippedItem int
 }
 
-func NewPlayer(spritesheet *ebiten.Image, startingX, startingY int) *Player {
+func NewPlayer(playerID string, startingX, startingY int, images loader.ImageCollection) *Player {
 	return &Player{
-		PlayerID:    uuid.Must(uuid.NewV4()).String(),
-		Spritesheet: spritesheet,
+		PlayerID:    playerID,
+		Spritesheet: images.Characters[utils.DefaultPlayerImg],
 		XLoc:        startingX - 39,
 		YLoc:        startingY - 35,
 		Sprite: model.SpriteBody{

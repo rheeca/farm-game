@@ -12,7 +12,7 @@ import (
 
 const (
 	ProjectTitle     = "Project 3"
-	DefaultPlayerImg = "player_white.png"
+	DefaultPlayerImg = 0
 	ChickenImg       = "chicken.png"
 	CowImg           = "cow.png"
 	SoundSampleRate  = 16000
@@ -190,6 +190,7 @@ const (
 // net
 const (
 	PacketPlayerID = "PlayerID"
+	PacketGameData = "GameData"
 	ServerAddress  = "127.0.0.1"
 	ServerPort     = 8095
 )

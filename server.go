@@ -2,10 +2,9 @@ package main
 
 import (
 	"embed"
-	"encoding/json"
 	"fmt"
 	"guion-2d-project3/entity/game"
-	"guion-2d-project3/entity/model"
+	"guion-2d-project3/entity/player"
 	"guion-2d-project3/utils"
 	"log"
 
@@ -49,15 +48,8 @@ func runServer(host enet.Host, g game.Game) {
 			playerID := ev.GetPeer().GetAddress().String()
 			log.Println(fmt.Sprintf("new peer connected: %s playerID: %s", ev.GetPeer().GetAddress(), playerID))
 
-			// send player id of client
-			jsonObj := model.DataPacket{
-				Type: utils.PacketPlayerID,
-				Body: model.PlayerIDPacket{
-					PlayerID: playerID,
-				},
-			}
-			jsonStr, _ := json.Marshal(jsonObj)
-			ev.GetPeer().SendString(string(jsonStr), ev.GetChannelID(), enet.PacketFlagReliable)
+			spawnPoint := g.Maps[utils.FarmMap].Groups[0].ObjectGroups[utils.FarmMapSpawnPoint].Objects[0]
+			g.Data.Players[playerID] = player.NewPlayer(playerID, int(spawnPoint.X), int(spawnPoint.Y), g.Images)
 		case enet.EventDisconnect:
 			log.Println("peer disconnected: ", ev.GetPeer().GetAddress())
 		case enet.EventReceive:
