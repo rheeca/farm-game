@@ -17,7 +17,6 @@ const (
 	CowImg           = "cow.png"
 	SoundSampleRate  = 16000
 	UnitSize         = 32
-	ServerPort       = 8095
 )
 
 // game state
@@ -191,6 +190,8 @@ const (
 // net
 const (
 	PacketPlayerID = "PlayerID"
+	ServerAddress  = "127.0.0.1"
+	ServerPort     = 8095
 )
 
 func LoadMapFromEmbedded(EmbeddedAssets embed.FS, name string) (*tiled.Map, error) {

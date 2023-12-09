@@ -10,7 +10,6 @@ import (
 	"log"
 
 	"github.com/codecat/go-enet"
-	"github.com/gofrs/uuid"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -47,7 +46,7 @@ func runServer(host enet.Host, g game.Game) {
 
 		switch ev.GetType() {
 		case enet.EventConnect:
-			playerID := uuid.Must(uuid.NewV4()).String()
+			playerID := ev.GetPeer().GetAddress().String()
 			log.Println(fmt.Sprintf("new peer connected: %s playerID: %s", ev.GetPeer().GetAddress(), playerID))
 
 			// send player id of client

@@ -21,7 +21,7 @@ func main() {
 		return
 	}
 
-	peer, err := host.Connect(enet.NewAddress("127.0.0.1", utils.ServerPort), 1, 0)
+	peer, err := host.Connect(enet.NewAddress(utils.ServerAddress, utils.ServerPort), 1, 0)
 	if err != nil {
 		log.Fatal("failed to connect to server: ", err)
 		return
