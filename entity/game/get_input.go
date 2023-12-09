@@ -356,7 +356,7 @@ func checkMouseOnCustomCharState(g *Game) {
 
 		// play button
 		if isClicked(mouseX, mouseY, model.SpriteBody{X: 294, Y: 387, Width: 212, Height: 55}) {
-			player.Spritesheet = g.Images.Characters[g.UIState.SelectedCharacter]
+			player.Spritesheet = g.UIState.SelectedCharacter
 			g.State = utils.GameStatePlay
 		}
 	}

@@ -4,13 +4,11 @@ import (
 	"guion-2d-project3/entity/loader"
 	"guion-2d-project3/entity/model"
 	"guion-2d-project3/utils"
-
-	"github.com/hajimehoshi/ebiten/v2"
 )
 
 type Player struct {
 	PlayerID     string
-	Spritesheet  *ebiten.Image
+	Spritesheet  int
 	Frame        int
 	State        int
 	StateTTL     int
@@ -23,12 +21,13 @@ type Player struct {
 	Collision    model.CollisionBody
 	Backpack     [utils.BackpackSize]model.BackpackItem
 	EquippedItem int
+	CurrentMap   int
 }
 
 func NewPlayer(playerID string, startingX, startingY int, images loader.ImageCollection) *Player {
 	return &Player{
 		PlayerID:    playerID,
-		Spritesheet: images.Characters[utils.DefaultPlayerImg],
+		Spritesheet: utils.DefaultPlayerImg,
 		XLoc:        startingX - 39,
 		YLoc:        startingY - 35,
 		Sprite: model.SpriteBody{
@@ -47,6 +46,7 @@ func NewPlayer(playerID string, startingX, startingY int, images loader.ImageCol
 			{ID: utils.ItemSeedTomato, Count: 3},
 		},
 		EquippedItem: 0,
+		CurrentMap:   utils.FarmMap,
 	}
 }
 
@@ -148,7 +148,8 @@ func (p *Player) UpdateLocation() {
 	p.Dy = 0
 }
 
-func (p *Player) ChangeLocation(x, y int) {
+func (p *Player) ChangeLocation(newMap, x, y int) {
+	p.CurrentMap = newMap
 	p.XLoc = x - 39
 	p.YLoc = y - 35
 	p.Sprite.X = x

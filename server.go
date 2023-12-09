@@ -60,7 +60,7 @@ func runServer(host enet.Host, g game.Game) {
 			// send game data to client
 			data := model.DataPacket{
 				Type: utils.PacketGameData,
-				Body: g,
+				Body: g.Data,
 			}
 			result, err := json.Marshal(&data)
 			if err != nil {
@@ -77,5 +77,5 @@ func processClientAction(g *game.Game, ev enet.Event) {
 	defer packet.Destroy()
 
 	// test receive data
-	log.Println("received from client:", string(packet.GetData()))
+	// log.Println("received from client:", string(packet.GetData()))
 }

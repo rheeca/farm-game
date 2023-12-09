@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"guion-2d-project3/entity/loader"
 	"guion-2d-project3/entity/model"
+	"guion-2d-project3/entity/player"
 	"guion-2d-project3/utils"
 	"image"
 
@@ -204,11 +205,14 @@ func DrawCharacterCustomizationUI(g *Game, screen *ebiten.Image, drawOptions ebi
 	}
 }
 
-func DrawPlayers(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
-	for _, player := range g.Data.Players {
+func DrawPlayers(currentMap int, players map[string]*player.Player, images loader.ImageCollection, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+	for _, player := range players {
+		if currentMap != player.CurrentMap {
+			continue
+		}
 		drawOptions.GeoM.Reset()
 		drawOptions.GeoM.Translate(float64(player.XLoc), float64(player.YLoc))
-		screen.DrawImage(player.Spritesheet.SubImage(image.Rect(player.Frame*utils.PlayerSpriteWidth,
+		screen.DrawImage(images.Characters[player.Spritesheet].SubImage(image.Rect(player.Frame*utils.PlayerSpriteWidth,
 			(player.State*utils.NumOfDirections+player.Direction)*utils.PlayerSpriteHeight,
 			player.Frame*utils.PlayerSpriteWidth+utils.PlayerSpriteWidth,
 			(player.State*utils.NumOfDirections+player.Direction)*utils.PlayerSpriteHeight+utils.PlayerSpriteHeight)).(*ebiten.Image), &drawOptions)

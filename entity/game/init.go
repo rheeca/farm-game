@@ -141,7 +141,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		DrawCows(g, screen, drawOptions)
 	}
 
-	DrawPlayers(g, screen, drawOptions)
+	DrawPlayers(g.CurrentMap, g.Data.Players, g.Images, screen, drawOptions)
 	DrawBackpack(g, screen, drawOptions)
 
 	if g.State == utils.GameStateCraft {

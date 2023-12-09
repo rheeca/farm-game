@@ -91,7 +91,7 @@ func isAtExit(g *Game, exitPoint int) bool {
 func changeMap(g *Game, newMap, entryPoint int) {
 	g.CurrentMap = newMap
 	point := g.Maps[newMap].Groups[0].ObjectGroups[entryPoint].Objects[0]
-	g.Data.Players[g.PlayerID].ChangeLocation(int(point.X), int(point.Y))
+	g.Data.Players[g.PlayerID].ChangeLocation(newMap, int(point.X), int(point.Y))
 
 }
 

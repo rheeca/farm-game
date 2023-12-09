@@ -63,10 +63,15 @@ func (g *ClientGame) Draw(screen *ebiten.Image) {
 	drawOptions := ebiten.DrawImageOptions{}
 	game.DrawMap(g.Maps[g.CurrentMap], g.Images.Tilesets, screen, drawOptions)
 
-	if g.State != utils.GameStateWaitingForServer && g.Data != nil {
+	if g.State == utils.GameStateWaitingForServer {
+		return
+	}
+
+	if g.Data != nil {
 		if g.Data.Environment != nil {
 			game.DrawObjects(g.Data.Environment.Objects[g.CurrentMap], g.Images, screen, drawOptions)
 		}
+		game.DrawPlayers(g.CurrentMap, g.Data.Players, g.Images, screen, drawOptions)
 	}
 }
 
@@ -94,7 +99,6 @@ func listenForEvents(g *ClientGame) {
 			body, _ := json.Marshal(data.Body)
 			json.Unmarshal(body, &gamePacket)
 			g.Data = &gamePacket
-			// log.Println("Received game data packet:", string(body))
 		}
 
 		packet.Destroy()
