@@ -53,6 +53,8 @@ const (
 	FarmMapCraftingTablePoint      = 5
 	FarmMapDoorPoint               = 6
 	FarmMapBedPoint                = 7
+	FarmMapRockPoints              = 8
+	FarmMapWoodPoints              = 9
 
 	AnimalMapEntryPoint = 0
 	AnimalMapExitPoint  = 1

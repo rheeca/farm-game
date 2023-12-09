@@ -51,6 +51,10 @@ func loadTrees(tMap *tiled.Map) (trees []model.Object) {
 
 func loadObjects(gameMaps []*tiled.Map) (objects [][]model.Object) {
 	var farmObjects, animalsObjects, forestObjects []model.Object
+	// farm map
+	farmObjects = loadObject32(farmObjects, utils.FarmMapRockPoints, utils.ItemMapStone3, gameMaps[utils.FarmMap])
+	farmObjects = loadObject32(farmObjects, utils.FarmMapWoodPoints, utils.ItemMapWood, gameMaps[utils.FarmMap])
+
 	// crafting table
 	ctObj := gameMaps[utils.FarmMap].Groups[0].ObjectGroups[utils.FarmMapCraftingTablePoint].Objects[0]
 	craftingTable := model.Object{
@@ -118,51 +122,8 @@ func loadObjects(gameMaps []*tiled.Map) (objects [][]model.Object) {
 	farmObjects = append(farmObjects, bed)
 
 	// forest map
-	// rocks
-	for _, stoneObj := range gameMaps[utils.ForestMap].Groups[0].ObjectGroups[utils.ForestRockPoints].Objects {
-		stone := model.Object{
-			Type: utils.ItemMapStone3,
-			XLoc: int(stoneObj.X),
-			YLoc: int(stoneObj.Y),
-			Sprite: model.SpriteBody{
-				X:      int(stoneObj.X),
-				Y:      int(stoneObj.Y),
-				Width:  utils.UnitSize,
-				Height: utils.UnitSize,
-			},
-			Collision: model.CollisionBody{
-				X:      int(stoneObj.X),
-				Y:      int(stoneObj.Y),
-				Width:  utils.UnitSize,
-				Height: utils.UnitSize,
-			},
-			IsCollision: true,
-		}
-		forestObjects = append(forestObjects, stone)
-	}
-	// wood
-	for _, woodObj := range gameMaps[utils.ForestMap].Groups[0].ObjectGroups[utils.ForestWoodPoints].Objects {
-		wood := model.Object{
-			Type: utils.ItemMapWood,
-			XLoc: int(woodObj.X),
-			YLoc: int(woodObj.Y),
-			Sprite: model.SpriteBody{
-				X:      int(woodObj.X),
-				Y:      int(woodObj.Y),
-				Width:  utils.UnitSize,
-				Height: utils.UnitSize,
-			},
-			Collision: model.CollisionBody{
-				X:      int(woodObj.X),
-				Y:      int(woodObj.Y),
-				Width:  utils.UnitSize,
-				Height: utils.UnitSize,
-			},
-			IsCollision: true,
-		}
-		forestObjects = append(forestObjects, wood)
-	}
-
+	forestObjects = loadObject32(forestObjects, utils.ForestRockPoints, utils.ItemMapStone3, gameMaps[utils.ForestMap])
+	forestObjects = loadObject32(forestObjects, utils.ForestWoodPoints, utils.ItemMapWood, gameMaps[utils.ForestMap])
 	forestObjects = loadObject32(forestObjects, utils.ForestSunflowerPoints, utils.MapSunflower, gameMaps[utils.ForestMap])
 	forestObjects = loadObject32(forestObjects, utils.ForestBlueflowerPoints, utils.MapBlueflower, gameMaps[utils.ForestMap])
 	forestObjects = loadObject32(forestObjects, utils.ForestWeedPoints, utils.MapWeed, gameMaps[utils.ForestMap])

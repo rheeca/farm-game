@@ -1,14 +1,15 @@
 package environment
 
 import (
-	"github.com/lafriks/go-tiled"
 	"guion-2d-project3/entity/model"
 	"guion-2d-project3/utils"
+
+	"github.com/lafriks/go-tiled"
 )
 
 func loadObject32(objects []model.Object, mapObjectType, itemType int, gMap *tiled.Map) []model.Object {
 	for _, mapObj := range gMap.Groups[0].ObjectGroups[mapObjectType].Objects {
-		wood := model.Object{
+		obj := model.Object{
 			Type: itemType,
 			XLoc: int(mapObj.X),
 			YLoc: int(mapObj.Y),
@@ -26,7 +27,7 @@ func loadObject32(objects []model.Object, mapObjectType, itemType int, gMap *til
 			},
 			IsCollision: true,
 		}
-		objects = append(objects, wood)
+		objects = append(objects, obj)
 	}
 	return objects
 }

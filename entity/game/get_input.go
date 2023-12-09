@@ -6,7 +6,6 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
-	"github.com/lafriks/go-tiled"
 )
 
 func getPlayerInput(g *Game) {
@@ -200,22 +199,6 @@ func checkMouseOnPlayState(g *Game) {
 					c.Frame = 0
 					c.AnimationTTL = utils.AnimalFrameCount
 				}
-			}
-		}
-
-		// pick up objects from the map
-		emptyTile := tiled.LayerTile{Nil: true}
-		if isMapObject(g, tileX, tileY, utils.MapWood, utils.TilesetTrees) {
-			if player.AddToBackpack(utils.ItemWood2, 1) {
-				g.Maps[g.CurrentMap].Layers[utils.ObjectsLayer].Tiles[tileY*utils.MapColumns+tileX] = &emptyTile
-			} else {
-				g.SetErrorMessage("Backpack is full!")
-			}
-		} else if isMapObject(g, tileX, tileY, utils.MapStone3, utils.TilesetFlowersStones) {
-			if player.AddToBackpack(utils.ItemRock1, 1) {
-				g.Maps[g.CurrentMap].Layers[utils.ObjectsLayer].Tiles[tileY*utils.MapColumns+tileX] = &emptyTile
-			} else {
-				g.SetErrorMessage("Backpack is full!")
 			}
 		}
 
