@@ -43,7 +43,7 @@ func NewClientGame(embeddedAssets embed.FS, peer enet.Peer, host enet.Host) Clie
 	return ClientGame{
 		peer:       peer,
 		host:       host,
-		State:      utils.GameStateCustomChar,
+		State:      utils.GameStateWaitingForServer,
 		Maps:       gameMaps,
 		CurrentMap: currentMap,
 		Images:     images,
@@ -52,6 +52,9 @@ func NewClientGame(embeddedAssets embed.FS, peer enet.Peer, host enet.Host) Clie
 }
 
 func (g *ClientGame) Update() error {
+	if g.State != utils.GameStateWaitingForServer {
+		sendUpdatesToServer(g)
+	}
 	listenForEvents(g)
 	return nil
 }
@@ -59,6 +62,12 @@ func (g *ClientGame) Update() error {
 func (g *ClientGame) Draw(screen *ebiten.Image) {
 	drawOptions := ebiten.DrawImageOptions{}
 	game.DrawMap(g.Maps[g.CurrentMap], g.Images.Tilesets, screen, drawOptions)
+
+	if g.State != utils.GameStateWaitingForServer && g.Data != nil {
+		if g.Data.Environment != nil {
+			game.DrawObjects(g.Data.Environment.Objects[g.CurrentMap], g.Images, screen, drawOptions)
+		}
+	}
 }
 
 func (g *ClientGame) Layout(oWidth, oHeight int) (sWidth, sHeight int) {
@@ -70,6 +79,7 @@ func listenForEvents(g *ClientGame) {
 	switch ev.GetType() {
 	case enet.EventConnect:
 		log.Println("connected to the server!")
+		g.State = utils.GameStatePlay
 
 	case enet.EventDisconnect:
 		log.Println("lost connection to the server!")
@@ -84,8 +94,15 @@ func listenForEvents(g *ClientGame) {
 			body, _ := json.Marshal(data.Body)
 			json.Unmarshal(body, &gamePacket)
 			g.Data = &gamePacket
+			// log.Println("Received game data packet:", string(body))
 		}
 
 		packet.Destroy()
 	}
+}
+
+func sendUpdatesToServer(g *ClientGame) {
+	clientInput := model.ClientInputPacket{}
+	data, _ := json.Marshal(clientInput)
+	g.peer.SendString(string(data), 0, enet.PacketFlagReliable)
 }

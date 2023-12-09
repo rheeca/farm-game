@@ -1,8 +1,9 @@
 package model
 
 import (
-	"github.com/hajimehoshi/ebiten/v2"
 	"guion-2d-project3/utils"
+
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 type CollisionBody struct {
@@ -67,7 +68,7 @@ type Object struct {
 	// If DoDelayFcn is true, DelayFcn will be executed after
 	// the end of the animation
 	DoDelayFcn bool
-	DelayFcn   delayfcn
+	DelayFcn   delayfcn `json:"-"`
 }
 
 func (o *Object) StartAnimation(animation, animationTTL, animationDelay int, doDelayFcn bool, fcn delayfcn) {

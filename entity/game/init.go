@@ -125,31 +125,31 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	drawOptions := ebiten.DrawImageOptions{}
 	if g.State == utils.GameStateCustomChar {
-		drawCharacterCustomizationUI(g, screen, drawOptions)
+		DrawCharacterCustomizationUI(g, screen, drawOptions)
 		return
 	}
 
 	DrawMap(g.Maps[g.CurrentMap], g.Images.Tilesets, screen, drawOptions)
-	drawFarmPlots(g, screen, drawOptions)
+	DrawFarmPlots(g, screen, drawOptions)
 	if g.CurrentMap == utils.ForestMap {
-		drawTrees(g, screen, drawOptions)
+		DrawTrees(g, screen, drawOptions)
 	}
-	drawObjects(g, screen, drawOptions)
+	DrawObjects(g.Data.Environment.Objects[g.CurrentMap], g.Images, screen, drawOptions)
 
 	if g.CurrentMap == utils.AnimalsMap {
-		drawChickens(g, screen, drawOptions)
-		drawCows(g, screen, drawOptions)
+		DrawChickens(g, screen, drawOptions)
+		DrawCows(g, screen, drawOptions)
 	}
 
-	drawPlayers(g, screen, drawOptions)
-	drawBackpack(g, screen, drawOptions)
+	DrawPlayers(g, screen, drawOptions)
+	DrawBackpack(g, screen, drawOptions)
 
 	if g.State == utils.GameStateCraft {
-		drawCraftingUI(g, screen, drawOptions)
+		DrawCraftingUI(g, screen, drawOptions)
 	}
 
-	drawImageToShow(g, screen, drawOptions)
-	drawErrorMessage(g, screen, drawOptions)
+	DrawImageToShow(g, screen, drawOptions)
+	DrawErrorMessage(g, screen, drawOptions)
 }
 
 func (g *Game) Layout(oWidth, oHeight int) (sWidth, sHeight int) {

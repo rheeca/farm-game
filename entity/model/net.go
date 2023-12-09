@@ -8,3 +8,6 @@ type DataPacket struct {
 type PlayerIDPacket struct {
 	PlayerID string `json:"playerID"`
 }
+
+type ClientInputPacket struct {
+}

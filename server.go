@@ -2,8 +2,10 @@ package main
 
 import (
 	"embed"
+	"encoding/json"
 	"fmt"
 	"guion-2d-project3/entity/game"
+	"guion-2d-project3/entity/model"
 	"guion-2d-project3/entity/player"
 	"guion-2d-project3/utils"
 	"log"
@@ -54,6 +56,18 @@ func runServer(host enet.Host, g game.Game) {
 			log.Println("peer disconnected: ", ev.GetPeer().GetAddress())
 		case enet.EventReceive:
 			processClientAction(&g, ev)
+
+			// send game data to client
+			data := model.DataPacket{
+				Type: utils.PacketGameData,
+				Body: g,
+			}
+			result, err := json.Marshal(&data)
+			if err != nil {
+				log.Fatal("error turning game into json: ", err)
+			}
+			ev.GetPeer().SendString(string(result), ev.GetChannelID(), enet.PacketFlagReliable)
+
 		}
 	}
 }

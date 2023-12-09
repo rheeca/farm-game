@@ -24,6 +24,7 @@ const (
 	GameStatePlay = iota
 	GameStateCustomChar
 	GameStateCraft
+	GameStateWaitingForServer
 )
 
 // map

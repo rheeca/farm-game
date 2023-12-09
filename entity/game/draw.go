@@ -2,6 +2,8 @@ package game
 
 import (
 	"fmt"
+	"guion-2d-project3/entity/loader"
+	"guion-2d-project3/entity/model"
 	"guion-2d-project3/utils"
 	"image"
 
@@ -45,7 +47,7 @@ func DrawMap(gMap *tiled.Map, tilesets map[string]*ebiten.Image, screen *ebiten.
 	}
 }
 
-func drawTrees(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+func DrawTrees(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
 	for _, t := range g.Data.Environment.Trees {
 		if t.IsNil {
 			continue
@@ -59,9 +61,9 @@ func drawTrees(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOption
 	}
 }
 
-func drawObjects(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
-	tilesets := g.Images.Tilesets
-	for _, o := range g.Data.Environment.Objects[g.CurrentMap] {
+func DrawObjects(objects []model.Object, images loader.ImageCollection, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+	tilesets := images.Tilesets
+	for _, o := range objects {
 		if o.IsNil {
 			continue
 		}
@@ -70,7 +72,7 @@ func drawObjects(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOpti
 
 		drawOptions.GeoM.Reset()
 		if o.Type == utils.ItemCraftingTable {
-			objImage = g.Images.CraftingTable
+			objImage = images.CraftingTable
 			x0, y0 = 0, 0
 			x1 = objImage.Bounds().Dx()
 			y1 = objImage.Bounds().Dy()
@@ -81,13 +83,13 @@ func drawObjects(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOpti
 			} else {
 				animation = 1
 			}
-			objImage = g.Images.DoorSprites
+			objImage = images.DoorSprites
 			x0 = o.Frame * o.Sprite.Width
 			y0 = animation * o.Sprite.Height
 			x1 = o.Frame*o.Sprite.Width + o.Sprite.Width
 			y1 = animation*o.Sprite.Height + o.Sprite.Height
 		} else if o.Type == utils.ItemBedPink {
-			objImage = g.Images.BedPink
+			objImage = images.BedPink
 			x0, y0 = 0, 0
 			x1 = objImage.Bounds().Dx()
 			y1 = objImage.Bounds().Dy()
@@ -140,7 +142,7 @@ func drawObjects(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOpti
 	}
 }
 
-func drawCraftingUI(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+func DrawCraftingUI(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
 	// draw box
 	drawOptions.GeoM.Reset()
 	drawOptions.GeoM.Translate(0, 0)
@@ -178,7 +180,7 @@ func drawCraftingUI(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageO
 	}
 }
 
-func drawCharacterCustomizationUI(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+func DrawCharacterCustomizationUI(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
 	// draw box
 	drawOptions.GeoM.Reset()
 	drawOptions.GeoM.Translate(0, 0)
@@ -202,7 +204,7 @@ func drawCharacterCustomizationUI(g *Game, screen *ebiten.Image, drawOptions ebi
 	}
 }
 
-func drawPlayers(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+func DrawPlayers(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
 	for _, player := range g.Data.Players {
 		drawOptions.GeoM.Reset()
 		drawOptions.GeoM.Translate(float64(player.XLoc), float64(player.YLoc))
@@ -213,7 +215,7 @@ func drawPlayers(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOpti
 	}
 }
 
-func drawChickens(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+func DrawChickens(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
 	for _, c := range g.Data.Chickens {
 		drawOptions.GeoM.Reset()
 
@@ -233,7 +235,7 @@ func drawChickens(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOpt
 	}
 }
 
-func drawCows(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+func DrawCows(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
 	for _, c := range g.Data.Cows {
 		drawOptions.GeoM.Reset()
 		drawOptions.GeoM.Translate(float64(c.XLoc), float64(c.YLoc))
@@ -244,7 +246,7 @@ func drawCows(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions
 	}
 }
 
-func drawFarmPlots(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+func DrawFarmPlots(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
 	if g.CurrentMap != utils.FarmMap {
 		return
 	}
@@ -288,7 +290,7 @@ func drawFarmPlots(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOp
 	}
 }
 
-func drawBackpack(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+func DrawBackpack(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
 	player := g.Data.Players[g.PlayerID]
 	// draw backpack
 	drawOptions.GeoM.Reset()
@@ -327,7 +329,7 @@ func drawBackpack(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOpt
 	screen.DrawImage(g.Images.ButtonDelete, &drawOptions)
 }
 
-func drawImageToShow(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+func DrawImageToShow(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
 	if g.UIState.ImageTTL > 0 {
 		drawOptions.GeoM.Reset()
 		drawOptions.GeoM.Translate(0, 0)
@@ -339,7 +341,7 @@ func drawImageToShow(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImage
 	}
 }
 
-func drawErrorMessage(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+func DrawErrorMessage(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
 	if g.UIState.ErrorMessageTTL > 0 {
 		text.Draw(screen, g.UIState.ErrorMessage, utils.LoadFont(12), 12, 20, colornames.Brown)
 		g.UIState.ErrorMessageTTL -= 1
