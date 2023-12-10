@@ -2,6 +2,7 @@ package game
 
 import (
 	"guion-2d-project3/entity/model"
+	"guion-2d-project3/entity/player"
 	"guion-2d-project3/utils"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -20,7 +21,7 @@ func getPlayerInput(g *Game) {
 	} else if g.State == utils.GameStateCraft {
 		checkMouseOnCraftState(g)
 	} else if g.State == utils.GameStatePlay {
-		checkMouseOnPlayState(g)
+		checkMouseOnPlayState(g, g.Data.Players[g.PlayerID])
 		checkKeyboardOnPlayState(g)
 	}
 }
@@ -73,200 +74,22 @@ func getClientInputs(g *Game) {
 		} else if g.clientInputs[p.PlayerID].Input == utils.InputKey9 {
 			p.EquippedItem = 8
 		}
+
+		if g.clientInputs[p.PlayerID].Input == utils.InputMouseLeft {
+			onLeftClickOnPlayState(g, p, g.clientInputs[p.PlayerID].MouseX, g.clientInputs[p.PlayerID].MouseY)
+		} else if g.clientInputs[p.PlayerID].Input == utils.InputMouseRight {
+			onRightClickOnPlayState(g, p, g.clientInputs[p.PlayerID].MouseX, g.clientInputs[p.PlayerID].MouseY)
+		}
 	}
 }
 
-func checkMouseOnPlayState(g *Game) {
-	player := g.Data.Players[g.PlayerID]
+func checkMouseOnPlayState(g *Game, player *player.Player) {
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		mouseX, mouseY := ebiten.CursorPosition()
-		// select item in backpack
-		for i := 0; i < utils.BackpackSize; i++ {
-			if isClicked(mouseX, mouseY, model.SpriteBody{
-				X:      utils.ToolsFirstBoxX + (i * utils.BackpackUIBoxWidth),
-				Y:      utils.ToolsFirstBoxY,
-				Width:  utils.BackpackUIBoxWidth,
-				Height: utils.BackpackUIBoxWidth,
-			}) {
-				player.EquippedItem = i
-				return
-			}
-		}
-
-		// delete item in backpack
-		if isClicked(mouseX, mouseY, model.SpriteBody{
-			X:      utils.BackpackDeleteButtonX,
-			Y:      utils.BackpackDeleteButtonY,
-			Width:  utils.BackpackDeleteButtonWidth,
-			Height: utils.BackpackDeleteButtonHeight,
-		}) {
-			player.RemoveFromBackpackByIndex(player.EquippedItem)
-		}
-
-		// use tool
-		if player.Backpack[player.EquippedItem].ID == utils.ItemHoe {
-			g.Sounds.PlaySound(g.Sounds.SFXTillSoil)
-			player.State = utils.HoeState
-			player.Frame = 0
-			player.StateTTL = utils.PlayerFrameCount
-
-			tileX, tileY := calculateTargetTile(g)
-			if isFarmLand(g, tileX, tileY) {
-				g.Data.Environment.AddPlot(tileX, tileY)
-			}
-		} else if player.Backpack[player.EquippedItem].ID == utils.ItemAxe {
-			player.State = utils.AxeState
-			player.Frame = 0
-			player.StateTTL = utils.PlayerFrameCount
-
-			if g.CurrentMap == utils.ForestMap {
-
-				for i, t := range g.Data.Environment.Trees {
-					if t.IsNil {
-						continue
-					}
-					// if tree is in target, chop tree
-					if hasCollision(0, 0, player.CalcTargetBox(), t.Collision) {
-						// if tree health reaches zero, set the delay function to be executed after the animation
-						g.Data.Environment.Trees[i].Health -= 1
-						var doDelayFcn bool
-						if g.Data.Environment.Trees[i].Health <= 0 {
-							doDelayFcn = true
-						} else {
-							doDelayFcn = false
-						}
-						treeHit := i
-						g.Sounds.PlaySound(g.Sounds.SFXChopTree)
-						g.Data.Environment.Trees[i].StartAnimation(utils.TreeHitAnimation, utils.FrameCountSix, utils.AnimationDelay,
-							doDelayFcn,
-							func() {
-								player.AddToBackpack(utils.ItemWood2, 5)
-								g.Data.Environment.Trees[treeHit].IsNil = true
-							})
-					}
-				}
-			}
-		} else if player.Backpack[player.EquippedItem].ID == utils.ItemWateringCan {
-			g.Sounds.PlaySound(g.Sounds.SFXWateringCan)
-			player.State = utils.WateringState
-			player.Frame = 0
-			player.StateTTL = utils.PlayerFrameCount
-
-			tileX, tileY := calculateTargetTile(g)
-			if isFarmLand(g, tileX, tileY) {
-				g.Data.Environment.WaterPlot(tileX, tileY)
-			}
-		} else if utils.IsSeed(player.Backpack[player.EquippedItem].ID) {
-			tileX, tileY := calculateTargetTile(g)
-			if isFarmLand(g, tileX, tileY) {
-				if g.Data.Environment.PlantSeedInPlot(tileX, tileY, utils.PlantTomato) {
-					player.RemoveFromBackpackByIndexAndCount(player.EquippedItem, 1)
-				}
-			}
-		}
+		onLeftClickOnPlayState(g, player, mouseX, mouseY)
 	} else if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonRight) {
-		tileX, tileY := calculateTargetTile(g)
 		mouseX, mouseY := ebiten.CursorPosition()
-
-		// if target tile is an object
-		for i, o := range g.Data.Environment.Objects[g.CurrentMap] {
-			if isClicked(mouseX, mouseY, o.Sprite) {
-				if o.Type == utils.ItemCraftingTable {
-					g.UIState.SelectedRecipe = 0
-					g.State = utils.GameStateCraft
-				} else if o.Type == utils.ItemDoor {
-					if o.IsCollision { // door is currently closed
-						g.Sounds.PlaySound(g.Sounds.SFXOpenDoor)
-						g.Data.Environment.Objects[g.CurrentMap][i].StartAnimation(utils.OpenDoorAnimation, utils.FrameCountSix, 0,
-							true, func() {
-								g.Data.Environment.Objects[g.CurrentMap][i].IsCollision = false
-							})
-					} else { // door is currently open
-						g.Sounds.PlaySound(g.Sounds.SFXCloseDoor)
-						g.Data.Environment.Objects[g.CurrentMap][i].StartAnimation(utils.CloseDoorAnimation, utils.FrameCountSix, 0,
-							true, func() {
-								g.Data.Environment.Objects[g.CurrentMap][i].IsCollision = true
-							})
-					}
-				} else if o.Type == utils.ItemBedPink {
-					g.ShowImage(g.Images.BlackScreen)
-					g.Data.Environment.ResetDay()
-				} else if o.Type == utils.ItemMapStone3 {
-					if g.Data.Players[g.PlayerID].AddToBackpack(utils.ItemRock1, 1) {
-						g.Data.Environment.Objects[g.CurrentMap][i].IsNil = true
-					} else {
-						g.SetErrorMessage("Backpack is full!")
-					}
-				} else if o.Type == utils.ItemMapWood {
-					if player.AddToBackpack(utils.ItemWood2, 1) {
-						g.Data.Environment.Objects[g.CurrentMap][i].IsNil = true
-					} else {
-						g.SetErrorMessage("Backpack is full!")
-					}
-				} else if o.Type == utils.MapSunflower {
-					if player.AddToBackpack(utils.ItemSunflower, 1) {
-						g.Data.Environment.Objects[g.CurrentMap][i].IsNil = true
-					} else {
-						g.SetErrorMessage("Backpack is full!")
-					}
-				} else if o.Type == utils.MapBlueflower {
-					if player.AddToBackpack(utils.ItemBlueflower, 1) {
-						g.Data.Environment.Objects[g.CurrentMap][i].IsNil = true
-					} else {
-						g.SetErrorMessage("Backpack is full!")
-					}
-				} else if o.Type == utils.MapWeed {
-					if player.AddToBackpack(utils.ItemWeed, 1) {
-						g.Data.Environment.Objects[g.CurrentMap][i].IsNil = true
-					} else {
-						g.SetErrorMessage("Backpack is full!")
-					}
-				} else if o.Type == utils.MapPinkDyeFlower {
-					if player.AddToBackpack(utils.ItemPinkDyeFlower, 1) {
-						g.Data.Environment.Objects[g.CurrentMap][i].IsNil = true
-					} else {
-						g.SetErrorMessage("Backpack is full!")
-					}
-				} else if o.Type == utils.MapBlueDyeFlower {
-					if player.AddToBackpack(utils.ItemBlueDyeFlower, 1) {
-						g.Data.Environment.Objects[g.CurrentMap][i].IsNil = true
-					} else {
-						g.SetErrorMessage("Backpack is full!")
-					}
-				}
-				return
-			}
-		}
-
-		// if target tile has an animated character
-		if g.CurrentMap == utils.AnimalsMap {
-			for _, c := range g.Data.Chickens {
-				if isClicked(mouseX, mouseY, c.Sprite) {
-					g.Sounds.PlaySound(g.Sounds.SFXChicken)
-					c.State = utils.ChickenHeartState
-					c.Frame = 0
-					c.StateTTL = utils.AnimalFrameCount
-				}
-			}
-
-			for _, c := range g.Data.Cows {
-				if isClicked(mouseX, mouseY, c.Sprite) {
-					g.Sounds.PlaySound(g.Sounds.SFXCow)
-					c.State = utils.CowHeartState
-					c.Frame = 0
-					c.AnimationTTL = utils.AnimalFrameCount
-				}
-			}
-		}
-
-		// harvest plant
-		tileX, tileY = calculateTargetTile(g)
-		if isFarmLand(g, tileX, tileY) {
-			hasHarvest, plantType := g.Data.Environment.HarvestPlant(tileX, tileY)
-			if hasHarvest {
-				player.AddToBackpack(utils.PlantItemMapping[plantType], 1)
-			}
-		}
+		onRightClickOnPlayState(g, player, mouseX, mouseY)
 	}
 }
 
@@ -398,6 +221,195 @@ func checkMouseOnCustomCharState(g *Game) {
 		if isClicked(mouseX, mouseY, model.SpriteBody{X: 294, Y: 387, Width: 212, Height: 55}) {
 			player.Spritesheet = g.UIState.SelectedCharacter
 			g.State = utils.GameStatePlay
+		}
+	}
+}
+
+func onLeftClickOnPlayState(g *Game, player *player.Player, mouseX, mouseY int) {
+	// select item in backpack
+	for i := 0; i < utils.BackpackSize; i++ {
+		if isClicked(mouseX, mouseY, model.SpriteBody{
+			X:      utils.ToolsFirstBoxX + (i * utils.BackpackUIBoxWidth),
+			Y:      utils.ToolsFirstBoxY,
+			Width:  utils.BackpackUIBoxWidth,
+			Height: utils.BackpackUIBoxWidth,
+		}) {
+			player.EquippedItem = i
+			return
+		}
+	}
+
+	// delete item in backpack
+	if isClicked(mouseX, mouseY, model.SpriteBody{
+		X:      utils.BackpackDeleteButtonX,
+		Y:      utils.BackpackDeleteButtonY,
+		Width:  utils.BackpackDeleteButtonWidth,
+		Height: utils.BackpackDeleteButtonHeight,
+	}) {
+		player.RemoveFromBackpackByIndex(player.EquippedItem)
+	}
+
+	// use tool
+	if player.Backpack[player.EquippedItem].ID == utils.ItemHoe {
+		g.Sounds.PlaySound(g.Sounds.SFXTillSoil)
+		player.State = utils.HoeState
+		player.Frame = 0
+		player.StateTTL = utils.PlayerFrameCount
+
+		tileX, tileY := calculateTargetTile(g)
+		if isFarmLand(g, tileX, tileY) {
+			g.Data.Environment.AddPlot(tileX, tileY)
+		}
+	} else if player.Backpack[player.EquippedItem].ID == utils.ItemAxe {
+		player.State = utils.AxeState
+		player.Frame = 0
+		player.StateTTL = utils.PlayerFrameCount
+
+		if player.CurrentMap == utils.ForestMap {
+			for i, t := range g.Data.Environment.Trees {
+				if t.IsNil {
+					continue
+				}
+				// if tree is in target, chop tree
+				if hasCollision(0, 0, player.CalcTargetBox(), t.Collision) {
+					// if tree health reaches zero, set the delay function to be executed after the animation
+					g.Data.Environment.Trees[i].Health -= 1
+					var doDelayFcn bool
+					if g.Data.Environment.Trees[i].Health <= 0 {
+						doDelayFcn = true
+					} else {
+						doDelayFcn = false
+					}
+					treeHit := i
+					g.Sounds.PlaySound(g.Sounds.SFXChopTree)
+					g.Data.Environment.Trees[i].StartAnimation(utils.TreeHitAnimation, utils.FrameCountSix, utils.AnimationDelay,
+						doDelayFcn,
+						func() {
+							player.AddToBackpack(utils.ItemWood2, 5)
+							g.Data.Environment.Trees[treeHit].IsNil = true
+						})
+				}
+			}
+		}
+	} else if player.Backpack[player.EquippedItem].ID == utils.ItemWateringCan {
+		g.Sounds.PlaySound(g.Sounds.SFXWateringCan)
+		player.State = utils.WateringState
+		player.Frame = 0
+		player.StateTTL = utils.PlayerFrameCount
+
+		tileX, tileY := calculateTargetTile(g)
+		if isFarmLand(g, tileX, tileY) {
+			g.Data.Environment.WaterPlot(tileX, tileY)
+		}
+	} else if utils.IsSeed(player.Backpack[player.EquippedItem].ID) {
+		tileX, tileY := calculateTargetTile(g)
+		if isFarmLand(g, tileX, tileY) {
+			if g.Data.Environment.PlantSeedInPlot(tileX, tileY, utils.PlantTomato) {
+				player.RemoveFromBackpackByIndexAndCount(player.EquippedItem, 1)
+			}
+		}
+	}
+}
+
+func onRightClickOnPlayState(g *Game, player *player.Player, mouseX, mouseY int) {
+	tileX, tileY := calculateTargetTile(g)
+	// if target tile is an object
+	for i, o := range g.Data.Environment.Objects[player.CurrentMap] {
+		if isClicked(mouseX, mouseY, o.Sprite) {
+			if o.Type == utils.ItemCraftingTable {
+				g.UIState.SelectedRecipe = 0
+				g.State = utils.GameStateCraft
+			} else if o.Type == utils.ItemDoor {
+				if o.IsCollision { // door is currently closed
+					g.Sounds.PlaySound(g.Sounds.SFXOpenDoor)
+					g.Data.Environment.Objects[player.CurrentMap][i].StartAnimation(utils.OpenDoorAnimation, utils.FrameCountSix, 0,
+						true, func() {
+							g.Data.Environment.Objects[player.CurrentMap][i].IsCollision = false
+						})
+				} else { // door is currently open
+					g.Sounds.PlaySound(g.Sounds.SFXCloseDoor)
+					g.Data.Environment.Objects[player.CurrentMap][i].StartAnimation(utils.CloseDoorAnimation, utils.FrameCountSix, 0,
+						true, func() {
+							g.Data.Environment.Objects[player.CurrentMap][i].IsCollision = true
+						})
+				}
+			} else if o.Type == utils.ItemBedPink {
+				g.ShowImage(g.Images.BlackScreen)
+				g.Data.Environment.ResetDay()
+			} else if o.Type == utils.ItemMapStone3 {
+				if player.AddToBackpack(utils.ItemRock1, 1) {
+					g.Data.Environment.Objects[player.CurrentMap][i].IsNil = true
+				} else {
+					g.SetErrorMessage("Backpack is full!")
+				}
+			} else if o.Type == utils.ItemMapWood {
+				if player.AddToBackpack(utils.ItemWood2, 1) {
+					g.Data.Environment.Objects[player.CurrentMap][i].IsNil = true
+				} else {
+					g.SetErrorMessage("Backpack is full!")
+				}
+			} else if o.Type == utils.MapSunflower {
+				if player.AddToBackpack(utils.ItemSunflower, 1) {
+					g.Data.Environment.Objects[player.CurrentMap][i].IsNil = true
+				} else {
+					g.SetErrorMessage("Backpack is full!")
+				}
+			} else if o.Type == utils.MapBlueflower {
+				if player.AddToBackpack(utils.ItemBlueflower, 1) {
+					g.Data.Environment.Objects[player.CurrentMap][i].IsNil = true
+				} else {
+					g.SetErrorMessage("Backpack is full!")
+				}
+			} else if o.Type == utils.MapWeed {
+				if player.AddToBackpack(utils.ItemWeed, 1) {
+					g.Data.Environment.Objects[player.CurrentMap][i].IsNil = true
+				} else {
+					g.SetErrorMessage("Backpack is full!")
+				}
+			} else if o.Type == utils.MapPinkDyeFlower {
+				if player.AddToBackpack(utils.ItemPinkDyeFlower, 1) {
+					g.Data.Environment.Objects[player.CurrentMap][i].IsNil = true
+				} else {
+					g.SetErrorMessage("Backpack is full!")
+				}
+			} else if o.Type == utils.MapBlueDyeFlower {
+				if player.AddToBackpack(utils.ItemBlueDyeFlower, 1) {
+					g.Data.Environment.Objects[player.CurrentMap][i].IsNil = true
+				} else {
+					g.SetErrorMessage("Backpack is full!")
+				}
+			}
+			return
+		}
+	}
+
+	// if target tile has an animated character
+	if player.CurrentMap == utils.AnimalsMap {
+		for _, c := range g.Data.Chickens {
+			if isClicked(mouseX, mouseY, c.Sprite) {
+				g.Sounds.PlaySound(g.Sounds.SFXChicken)
+				c.State = utils.ChickenHeartState
+				c.Frame = 0
+				c.StateTTL = utils.AnimalFrameCount
+			}
+		}
+
+		for _, c := range g.Data.Cows {
+			if isClicked(mouseX, mouseY, c.Sprite) {
+				g.Sounds.PlaySound(g.Sounds.SFXCow)
+				c.State = utils.CowHeartState
+				c.Frame = 0
+				c.AnimationTTL = utils.AnimalFrameCount
+			}
+		}
+	}
+
+	// harvest plant
+	tileX, tileY = calculateTargetTile(g)
+	if isFarmLand(g, tileX, tileY) {
+		hasHarvest, plantType := g.Data.Environment.HarvestPlant(tileX, tileY)
+		if hasHarvest {
+			player.AddToBackpack(utils.PlantItemMapping[plantType], 1)
 		}
 	}
 }
