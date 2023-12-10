@@ -294,18 +294,17 @@ func DrawFarmPlots(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOp
 	}
 }
 
-func DrawBackpack(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
-	player := g.Data.Players[g.PlayerID]
+func DrawBackpack(player *player.Player, images loader.ImageCollection, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
 	// draw backpack
 	drawOptions.GeoM.Reset()
 	drawOptions.GeoM.Translate(float64(utils.ToolsUIX), float64(utils.ToolsUIY))
-	screen.DrawImage(g.Images.ToolsUI, &drawOptions)
+	screen.DrawImage(images.ToolsUI, &drawOptions)
 
 	// draw selected box
 	drawOptions.GeoM.Reset()
 	drawOptions.GeoM.Translate(float64(utils.ToolsFirstBoxX+((player.EquippedItem)*utils.BackpackUIBoxWidth)),
 		float64(utils.ToolsFirstBoxY))
-	screen.DrawImage(g.Images.SelectedTool, &drawOptions)
+	screen.DrawImage(images.SelectedTool, &drawOptions)
 
 	// draw items in backpack
 	for i, item := range player.Backpack {
@@ -315,7 +314,7 @@ func DrawBackpack(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOpt
 		drawOptions.GeoM.Reset()
 		drawOptions.GeoM.Translate(float64(utils.ToolsFirstSlotX+(i*utils.BackpackUIBoxWidth)), float64(utils.ToolsFirstSlotY))
 
-		screen.DrawImage(g.Images.FarmItems.SubImage(image.Rect((item.ID%utils.FarmItemsColumns)*utils.UnitSize,
+		screen.DrawImage(images.FarmItems.SubImage(image.Rect((item.ID%utils.FarmItemsColumns)*utils.UnitSize,
 			(item.ID/utils.FarmItemsColumns)*utils.UnitSize,
 			(item.ID%utils.FarmItemsColumns)*utils.UnitSize+utils.UnitSize,
 			(item.ID/utils.FarmItemsColumns)*utils.UnitSize+utils.UnitSize)).(*ebiten.Image), &drawOptions)
@@ -330,7 +329,7 @@ func DrawBackpack(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOpt
 	// draw delete button
 	drawOptions.GeoM.Reset()
 	drawOptions.GeoM.Translate(float64(utils.BackpackDeleteButtonX), float64(utils.BackpackDeleteButtonY))
-	screen.DrawImage(g.Images.ButtonDelete, &drawOptions)
+	screen.DrawImage(images.ButtonDelete, &drawOptions)
 }
 
 func DrawImageToShow(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {

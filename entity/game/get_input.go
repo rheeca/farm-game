@@ -52,6 +52,27 @@ func getClientInputs(g *Game) {
 		} else if p.StateTTL == 0 {
 			p.State = utils.IdleState
 		}
+
+		// equip item
+		if g.clientInputs[p.PlayerID].Input == utils.InputKey1 {
+			p.EquippedItem = 0
+		} else if g.clientInputs[p.PlayerID].Input == utils.InputKey2 {
+			p.EquippedItem = 1
+		} else if g.clientInputs[p.PlayerID].Input == utils.InputKey3 {
+			p.EquippedItem = 2
+		} else if g.clientInputs[p.PlayerID].Input == utils.InputKey4 {
+			p.EquippedItem = 3
+		} else if g.clientInputs[p.PlayerID].Input == utils.InputKey5 {
+			p.EquippedItem = 4
+		} else if g.clientInputs[p.PlayerID].Input == utils.InputKey6 {
+			p.EquippedItem = 5
+		} else if g.clientInputs[p.PlayerID].Input == utils.InputKey7 {
+			p.EquippedItem = 6
+		} else if g.clientInputs[p.PlayerID].Input == utils.InputKey8 {
+			p.EquippedItem = 7
+		} else if g.clientInputs[p.PlayerID].Input == utils.InputKey9 {
+			p.EquippedItem = 8
+		}
 	}
 }
 

@@ -74,6 +74,7 @@ func (g *ClientGame) Draw(screen *ebiten.Image) {
 			game.DrawObjects(g.Data.Environment.Objects[g.CurrentMap], g.Images, screen, drawOptions)
 		}
 		game.DrawPlayers(g.CurrentMap, g.Data.Players, g.Images, screen, drawOptions)
+		game.DrawBackpack(g.Data.Players[g.PlayerID], g.Images, screen, drawOptions)
 	}
 }
 
@@ -127,6 +128,24 @@ func getInput(g *ClientGame) (input model.ClientInputPacket) {
 		input.Input = utils.InputKeyS
 	} else if ebiten.IsKeyPressed(ebiten.KeyD) {
 		input.Input = utils.InputKeyD
+	} else if ebiten.IsKeyPressed(ebiten.Key1) {
+		input.Input = utils.InputKey1
+	} else if ebiten.IsKeyPressed(ebiten.Key2) {
+		input.Input = utils.InputKey2
+	} else if ebiten.IsKeyPressed(ebiten.Key3) {
+		input.Input = utils.InputKey3
+	} else if ebiten.IsKeyPressed(ebiten.Key4) {
+		input.Input = utils.InputKey4
+	} else if ebiten.IsKeyPressed(ebiten.Key5) {
+		input.Input = utils.InputKey5
+	} else if ebiten.IsKeyPressed(ebiten.Key6) {
+		input.Input = utils.InputKey6
+	} else if ebiten.IsKeyPressed(ebiten.Key7) {
+		input.Input = utils.InputKey7
+	} else if ebiten.IsKeyPressed(ebiten.Key8) {
+		input.Input = utils.InputKey8
+	} else if ebiten.IsKeyPressed(ebiten.Key9) {
+		input.Input = utils.InputKey9
 	} else if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		mouseX, mouseY := ebiten.CursorPosition()
 		input.Input = utils.InputMouseLeft

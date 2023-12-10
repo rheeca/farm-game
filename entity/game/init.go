@@ -151,7 +151,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	}
 
 	DrawPlayers(g.CurrentMap, g.Data.Players, g.Images, screen, drawOptions)
-	DrawBackpack(g, screen, drawOptions)
+	DrawBackpack(g.Data.Players[g.PlayerID], g.Images, screen, drawOptions)
 
 	if g.State == utils.GameStateCraft {
 		DrawCraftingUI(g, screen, drawOptions)

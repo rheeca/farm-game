@@ -102,6 +102,15 @@ const (
 	InputKeyD
 	InputMouseLeft
 	InputMouseRight
+	InputKey1
+	InputKey2
+	InputKey3
+	InputKey4
+	InputKey5
+	InputKey6
+	InputKey7
+	InputKey8
+	InputKey9
 )
 
 // Player sprite sheet
