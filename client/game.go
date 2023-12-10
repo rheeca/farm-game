@@ -102,6 +102,7 @@ func listenForEvents(g *ClientGame) {
 			body, _ := json.Marshal(data.Body)
 			json.Unmarshal(body, &gamePacket)
 			g.Data = &gamePacket
+			g.CurrentMap = g.Data.Players[g.PlayerID].CurrentMap
 		}
 
 		packet.Destroy()

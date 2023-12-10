@@ -46,7 +46,7 @@ func isFarmLand(g *Game, tileX, tileY int) bool {
 		return false
 	}
 	if !g.Maps[utils.FarmMap].Layers[utils.FarmingLandLayer].Tiles[tileY*utils.MapColumns+tileX].IsNil() &&
-		!hasMapCollisions(g, 0, 0, model.CollisionBody{X: tileX * utils.TileWidth, Y: tileY * utils.TileHeight,
+		!hasMapCollisions(g, utils.FarmMap, 0, 0, model.CollisionBody{X: tileX * utils.TileWidth, Y: tileY * utils.TileHeight,
 			Width: utils.UnitSize, Height: utils.UnitSize}) {
 		return true
 	} else {

@@ -34,22 +34,38 @@ func getClientInputs(g *Game) {
 			p.Direction = utils.Back
 			p.State = utils.WalkState
 			p.Dy -= utils.MovementSpeed
-			p.UpdateLocation()
+			if !playerHasCollisions(g, p) {
+				p.UpdateLocation()
+			} else {
+				p.Dy = 0
+			}
 		} else if g.clientInputs[p.PlayerID].Input == utils.InputKeyA {
 			p.Direction = utils.Left
 			p.State = utils.WalkState
 			p.Dx -= utils.MovementSpeed
-			p.UpdateLocation()
+			if !playerHasCollisions(g, p) {
+				p.UpdateLocation()
+			} else {
+				p.Dx = 0
+			}
 		} else if g.clientInputs[p.PlayerID].Input == utils.InputKeyS {
 			p.Direction = utils.Front
 			p.State = utils.WalkState
 			p.Dy += utils.MovementSpeed
-			p.UpdateLocation()
+			if !playerHasCollisions(g, p) {
+				p.UpdateLocation()
+			} else {
+				p.Dy = 0
+			}
 		} else if g.clientInputs[p.PlayerID].Input == utils.InputKeyD {
 			p.Direction = utils.Right
 			p.State = utils.WalkState
 			p.Dx += utils.MovementSpeed
-			p.UpdateLocation()
+			if !playerHasCollisions(g, p) {
+				p.UpdateLocation()
+			} else {
+				p.Dx = 0
+			}
 		} else if p.StateTTL == 0 {
 			p.State = utils.IdleState
 		}
@@ -100,7 +116,7 @@ func checkKeyboardOnPlayState(g *Game) {
 		player.Direction = utils.Left
 		player.State = utils.WalkState
 		player.Dx -= utils.MovementSpeed
-		if !playerHasCollisions(g) {
+		if !playerHasCollisions(g, g.Data.Players[g.PlayerID]) {
 			player.UpdateLocation()
 		} else {
 			player.Dx = 0
@@ -110,7 +126,7 @@ func checkKeyboardOnPlayState(g *Game) {
 		player.Direction = utils.Right
 		player.State = utils.WalkState
 		player.Dx += utils.MovementSpeed
-		if !playerHasCollisions(g) {
+		if !playerHasCollisions(g, g.Data.Players[g.PlayerID]) {
 			player.UpdateLocation()
 		} else {
 			player.Dx = 0
@@ -119,7 +135,7 @@ func checkKeyboardOnPlayState(g *Game) {
 		player.Direction = utils.Back
 		player.State = utils.WalkState
 		player.Dy -= utils.MovementSpeed
-		if !playerHasCollisions(g) {
+		if !playerHasCollisions(g, g.Data.Players[g.PlayerID]) {
 			player.UpdateLocation()
 		} else {
 			player.Dy = 0
@@ -129,7 +145,7 @@ func checkKeyboardOnPlayState(g *Game) {
 		player.Direction = utils.Front
 		player.State = utils.WalkState
 		player.Dy += utils.MovementSpeed
-		if !playerHasCollisions(g) {
+		if !playerHasCollisions(g, g.Data.Players[g.PlayerID]) {
 			player.UpdateLocation()
 		} else {
 			player.Dy = 0
