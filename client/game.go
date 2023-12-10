@@ -12,7 +12,9 @@ import (
 	"github.com/codecat/go-enet"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
+	"github.com/hajimehoshi/ebiten/v2/text"
 	"github.com/lafriks/go-tiled"
+	"golang.org/x/image/colornames"
 )
 
 type ClientGame struct {
@@ -64,6 +66,7 @@ func (g *ClientGame) Update() error {
 func (g *ClientGame) Draw(screen *ebiten.Image) {
 	drawOptions := ebiten.DrawImageOptions{}
 	if g.State == utils.GameStateWaitingForServer || g.Data == nil {
+		text.Draw(screen, "Waiting for server...", utils.LoadFont(16), 250, 300, colornames.Brown)
 		return
 	}
 
