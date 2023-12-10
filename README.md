@@ -1,9 +1,22 @@
 # 2D Game Design - Project 3
 By Rheeca Guion
 
+![alt-text](client/assets/icons/chicken.png)
 ![alt-text](client/assets/icons/character.png)
+![alt-text](client/assets/icons/character_purple.png)
+![alt-text](client/assets/icons/potted_sunflower.png)
 
 This project is a farming and crafting game. All requirements for Project 3 have been completed.
+
+For Part 2, a multiplayer feature has been added. Players can work together to gather resources, craft materials and plant crops.
+
+## How to run
+To run the game, there must be a player that serves as the host. Other players can join as clients.
+### Server
+To start a host player, the game must be run from the root directory. This runs the main function in `server.go`.
+
+### Client
+To play the game as a client, the game must be run from the client directory. This runs the main function in `/client/client.go`.
 
 
 ## Controls
