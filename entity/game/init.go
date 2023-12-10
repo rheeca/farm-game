@@ -139,15 +139,14 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	}
 
 	DrawMap(g.Maps[g.CurrentMap], g.Images.Tilesets, screen, drawOptions)
-	DrawFarmPlots(g, screen, drawOptions)
-	if g.CurrentMap == utils.ForestMap {
-		DrawTrees(g, screen, drawOptions)
-	}
 	DrawObjects(g.Data.Environment.Objects[g.CurrentMap], g.Images, screen, drawOptions)
-
-	if g.CurrentMap == utils.AnimalsMap {
-		DrawChickens(g, screen, drawOptions)
-		DrawCows(g, screen, drawOptions)
+	if g.CurrentMap == utils.ForestMap {
+		DrawTrees(g.Data.Environment.Trees, g.Images, screen, drawOptions)
+	} else if g.CurrentMap == utils.FarmMap {
+		DrawFarmPlots(g.Data.Environment.Plots, g.Images, screen, drawOptions)
+	} else if g.CurrentMap == utils.AnimalsMap {
+		DrawChickens(g.Data.Chickens, screen, drawOptions)
+		DrawCows(g.Data.Cows, screen, drawOptions)
 	}
 
 	DrawPlayers(g.CurrentMap, g.Data.Players, g.Images, screen, drawOptions)

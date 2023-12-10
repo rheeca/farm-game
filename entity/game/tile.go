@@ -2,11 +2,11 @@ package game
 
 import (
 	"guion-2d-project3/entity/model"
+	"guion-2d-project3/entity/player"
 	"guion-2d-project3/utils"
 )
 
-func calculateTargetTile(g *Game) (tileX, tileY int) {
-	player := g.Data.Players[g.PlayerID]
+func calculateTargetTile(player *player.Player) (tileX, tileY int) {
 	tileX = player.Collision.X / utils.TileWidth
 	tileY = (player.Collision.Y + player.Collision.Height) / utils.TileHeight
 	if player.Direction == utils.Front {

@@ -2,6 +2,7 @@ package game
 
 import (
 	"fmt"
+	"guion-2d-project3/entity/animal"
 	"guion-2d-project3/entity/loader"
 	"guion-2d-project3/entity/model"
 	"guion-2d-project3/entity/player"
@@ -48,14 +49,14 @@ func DrawMap(gMap *tiled.Map, tilesets map[string]*ebiten.Image, screen *ebiten.
 	}
 }
 
-func DrawTrees(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
-	for _, t := range g.Data.Environment.Trees {
+func DrawTrees(trees []model.Object, images loader.ImageCollection, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+	for _, t := range trees {
 		if t.IsNil {
 			continue
 		}
 		drawOptions.GeoM.Reset()
 		drawOptions.GeoM.Translate(float64(t.XLoc), float64(t.YLoc))
-		screen.DrawImage(g.Images.TreeSprites.SubImage(image.Rect(t.Frame*t.Sprite.Width,
+		screen.DrawImage(images.TreeSprites.SubImage(image.Rect(t.Frame*t.Sprite.Width,
 			0,
 			t.Frame*t.Sprite.Width+t.Sprite.Width,
 			t.Sprite.Height)).(*ebiten.Image), &drawOptions)
@@ -219,8 +220,8 @@ func DrawPlayers(currentMap int, players map[string]*player.Player, images loade
 	}
 }
 
-func DrawChickens(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
-	for _, c := range g.Data.Chickens {
+func DrawChickens(chickens []*animal.Chicken, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+	for _, c := range chickens {
 		drawOptions.GeoM.Reset()
 
 		var spriteHeight, yLoc int
@@ -239,8 +240,8 @@ func DrawChickens(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOpt
 	}
 }
 
-func DrawCows(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
-	for _, c := range g.Data.Cows {
+func DrawCows(cows []*animal.Cow, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+	for _, c := range cows {
 		drawOptions.GeoM.Reset()
 		drawOptions.GeoM.Translate(float64(c.XLoc), float64(c.YLoc))
 		screen.DrawImage(c.Spritesheet.SubImage(image.Rect(c.Frame*utils.CowSpriteWidth,
@@ -250,11 +251,8 @@ func DrawCows(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions
 	}
 }
 
-func DrawFarmPlots(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
-	if g.CurrentMap != utils.FarmMap {
-		return
-	}
-	for _, p := range g.Data.Environment.Plots {
+func DrawFarmPlots(plots []model.Plot, images loader.ImageCollection, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+	for _, p := range plots {
 		// draw soil
 		drawOptions.GeoM.Reset()
 		drawOptions.GeoM.Translate(float64(p.XTile*utils.TileWidth), float64(p.YTile*utils.TileHeight))
@@ -270,7 +268,7 @@ func DrawFarmPlots(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOp
 		}
 		tileToDrawX := tileID % 11
 		tileToDrawY := tileID / 11
-		screen.DrawImage(g.Images.Tilesets[tileset].SubImage(image.Rect(tileToDrawX*utils.TileWidth,
+		screen.DrawImage(images.Tilesets[tileset].SubImage(image.Rect(tileToDrawX*utils.TileWidth,
 			tileToDrawY*utils.TileHeight,
 			tileToDrawX*utils.TileWidth+utils.TileWidth,
 			tileToDrawY*utils.TileHeight+utils.TileHeight)).(*ebiten.Image), &drawOptions)
@@ -279,14 +277,14 @@ func DrawFarmPlots(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOp
 		if p.HasPlant && !p.ReadyForHarvest {
 			drawOptions.GeoM.Reset()
 			drawOptions.GeoM.Translate(float64(p.XTile*utils.TileWidth), float64(p.YTile*utils.TileHeight))
-			screen.DrawImage(g.Images.FarmingPlants.SubImage(image.Rect(0,
+			screen.DrawImage(images.FarmingPlants.SubImage(image.Rect(0,
 				utils.UnitSize*utils.PlantTomato,
 				utils.UnitSize,
 				(utils.UnitSize*utils.PlantTomato)+utils.UnitSize)).(*ebiten.Image), &drawOptions)
 		} else if p.ReadyForHarvest {
 			drawOptions.GeoM.Reset()
 			drawOptions.GeoM.Translate(float64(p.XTile*utils.TileWidth), float64(p.YTile*utils.TileHeight))
-			screen.DrawImage(g.Images.FarmingPlants.SubImage(image.Rect(96,
+			screen.DrawImage(images.FarmingPlants.SubImage(image.Rect(96,
 				utils.UnitSize*utils.PlantTomato,
 				96+utils.UnitSize,
 				(utils.UnitSize*utils.PlantTomato)+utils.UnitSize)).(*ebiten.Image), &drawOptions)

@@ -71,8 +71,19 @@ func (g *ClientGame) Draw(screen *ebiten.Image) {
 
 	if g.Data != nil {
 		if g.Data.Environment != nil {
+			if g.CurrentMap == utils.ForestMap {
+				game.DrawTrees(g.Data.Environment.Trees, g.Images, screen, drawOptions)
+			} else if g.CurrentMap == utils.FarmMap {
+				game.DrawFarmPlots(g.Data.Environment.Plots, g.Images, screen, drawOptions)
+			}
 			game.DrawObjects(g.Data.Environment.Objects[g.CurrentMap], g.Images, screen, drawOptions)
 		}
+
+		if g.CurrentMap == utils.AnimalsMap {
+			game.DrawChickens(g.Data.Chickens, screen, drawOptions)
+			game.DrawCows(g.Data.Cows, screen, drawOptions)
+		}
+
 		game.DrawPlayers(g.CurrentMap, g.Data.Players, g.Images, screen, drawOptions)
 		game.DrawBackpack(g.Data.Players[g.PlayerID], g.Images, screen, drawOptions)
 	}

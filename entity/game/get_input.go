@@ -272,7 +272,7 @@ func onLeftClickOnPlayState(g *Game, player *player.Player, mouseX, mouseY int) 
 		player.Frame = 0
 		player.StateTTL = utils.PlayerFrameCount
 
-		tileX, tileY := calculateTargetTile(g)
+		tileX, tileY := calculateTargetTile(player)
 		if isFarmLand(g, tileX, tileY) {
 			g.Data.Environment.AddPlot(tileX, tileY)
 		}
@@ -313,12 +313,12 @@ func onLeftClickOnPlayState(g *Game, player *player.Player, mouseX, mouseY int) 
 		player.Frame = 0
 		player.StateTTL = utils.PlayerFrameCount
 
-		tileX, tileY := calculateTargetTile(g)
+		tileX, tileY := calculateTargetTile(player)
 		if isFarmLand(g, tileX, tileY) {
 			g.Data.Environment.WaterPlot(tileX, tileY)
 		}
 	} else if utils.IsSeed(player.Backpack[player.EquippedItem].ID) {
-		tileX, tileY := calculateTargetTile(g)
+		tileX, tileY := calculateTargetTile(player)
 		if isFarmLand(g, tileX, tileY) {
 			if g.Data.Environment.PlantSeedInPlot(tileX, tileY, utils.PlantTomato) {
 				player.RemoveFromBackpackByIndexAndCount(player.EquippedItem, 1)
@@ -328,7 +328,7 @@ func onLeftClickOnPlayState(g *Game, player *player.Player, mouseX, mouseY int) 
 }
 
 func onRightClickOnPlayState(g *Game, player *player.Player, mouseX, mouseY int) {
-	tileX, tileY := calculateTargetTile(g)
+	tileX, tileY := calculateTargetTile(player)
 	// if target tile is an object
 	for i, o := range g.Data.Environment.Objects[player.CurrentMap] {
 		if isClicked(mouseX, mouseY, o.Sprite) {
@@ -421,7 +421,7 @@ func onRightClickOnPlayState(g *Game, player *player.Player, mouseX, mouseY int)
 	}
 
 	// harvest plant
-	tileX, tileY = calculateTargetTile(g)
+	tileX, tileY = calculateTargetTile(player)
 	if isFarmLand(g, tileX, tileY) {
 		hasHarvest, plantType := g.Data.Environment.HarvestPlant(tileX, tileY)
 		if hasHarvest {
