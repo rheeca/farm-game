@@ -12,6 +12,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"sync"
 
 	"github.com/gofrs/uuid"
 	"github.com/hajimehoshi/ebiten/v2"
@@ -29,6 +30,8 @@ type Game struct {
 	Images       loader.ImageCollection
 	Sounds       loader.SoundCollection
 	UIState      model.UIState
+	clientInputs map[string]model.ClientInputPacket
+	lock         sync.Mutex
 }
 
 type GameData struct {
@@ -99,16 +102,22 @@ func NewGame(embeddedAssets embed.FS) Game {
 			Chickens:    chickens,
 			Cows:        cows,
 		},
-		Maps:       gameMaps,
-		CurrentMap: currentMap,
-		PlayerID:   playerChar.PlayerID,
-		Images:     images,
-		Sounds:     sounds,
+		Maps:         gameMaps,
+		CurrentMap:   currentMap,
+		PlayerID:     playerChar.PlayerID,
+		Images:       images,
+		Sounds:       sounds,
+		clientInputs: map[string]model.ClientInputPacket{},
+		lock:         sync.Mutex{},
 	}
 }
 
 func (g *Game) Update() error {
-	g.Data.Players[g.PlayerID].UpdateFrame(g.CurrentFrame)
+	for _, player := range g.Data.Players {
+		player.UpdateFrame(g.CurrentFrame)
+	}
+	getClientInputs(g)
+
 	getPlayerInput(g)
 
 	if g.State == utils.GameStatePlay {

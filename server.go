@@ -27,14 +27,14 @@ func main() {
 
 	gameObj := game.NewGame(EmbeddedAssets)
 
-	go runServer(host, gameObj)
+	go runServer(host, &gameObj)
 	err = ebiten.RunGame(&gameObj)
 	if err != nil {
 		fmt.Println("failed to run game:", err)
 	}
 }
 
-func runServer(host enet.Host, g game.Game) {
+func runServer(host enet.Host, g *game.Game) {
 	defer func() {
 		host.Destroy()
 		enet.Deinitialize()
@@ -55,7 +55,7 @@ func runServer(host enet.Host, g game.Game) {
 		case enet.EventDisconnect:
 			log.Println("peer disconnected: ", ev.GetPeer().GetAddress())
 		case enet.EventReceive:
-			processClientAction(&g, ev)
+			processClientAction(g, ev)
 
 			// send game data to client
 			data := model.DataPacket{
@@ -76,6 +76,12 @@ func processClientAction(g *game.Game, ev enet.Event) {
 	packet := ev.GetPacket()
 	defer packet.Destroy()
 
-	// test receive data
-	// log.Println("received from client:", string(packet.GetData()))
+	var data model.DataPacket
+	json.Unmarshal(packet.GetData(), &data)
+	if data.Type == utils.PacketClientInput {
+		var inPacket model.ClientInputPacket
+		body, _ := json.Marshal(data.Body)
+		json.Unmarshal(body, &inPacket)
+		g.UpdateClientInput(inPacket)
+	}
 }

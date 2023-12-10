@@ -11,6 +11,7 @@ import (
 
 	"github.com/codecat/go-enet"
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/lafriks/go-tiled"
 )
 
@@ -46,6 +47,7 @@ func NewClientGame(embeddedAssets embed.FS, peer enet.Peer, host enet.Host) Clie
 		State:      utils.GameStateWaitingForServer,
 		Maps:       gameMaps,
 		CurrentMap: currentMap,
+		PlayerID:   peer.GetAddress().String(),
 		Images:     images,
 		Sounds:     sounds,
 	}
@@ -106,7 +108,38 @@ func listenForEvents(g *ClientGame) {
 }
 
 func sendUpdatesToServer(g *ClientGame) {
-	clientInput := model.ClientInputPacket{}
-	data, _ := json.Marshal(clientInput)
+	clientInput := getInput(g)
+	dataObj := model.DataPacket{
+		Type: utils.PacketClientInput,
+		Body: clientInput,
+	}
+	data, _ := json.Marshal(dataObj)
 	g.peer.SendString(string(data), 0, enet.PacketFlagReliable)
+}
+
+func getInput(g *ClientGame) (input model.ClientInputPacket) {
+	input.PlayerID = g.PlayerID
+	if ebiten.IsKeyPressed(ebiten.KeyW) {
+		input.Input = utils.InputKeyW
+	} else if ebiten.IsKeyPressed(ebiten.KeyA) {
+		input.Input = utils.InputKeyA
+	} else if ebiten.IsKeyPressed(ebiten.KeyS) {
+		input.Input = utils.InputKeyS
+	} else if ebiten.IsKeyPressed(ebiten.KeyD) {
+		input.Input = utils.InputKeyD
+	} else if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+		mouseX, mouseY := ebiten.CursorPosition()
+		input.Input = utils.InputMouseLeft
+		input.MouseX = mouseX
+		input.MouseY = mouseY
+	} else if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonRight) {
+		mouseX, mouseY := ebiten.CursorPosition()
+		input.Input = utils.InputMouseRight
+		input.MouseX = mouseX
+		input.MouseY = mouseY
+	} else {
+		input.Input = utils.InputNone
+	}
+
+	return input
 }

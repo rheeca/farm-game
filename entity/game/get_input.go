@@ -8,6 +8,12 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
+func (g *Game) UpdateClientInput(clientInput model.ClientInputPacket) {
+	g.lock.Lock()
+	defer g.lock.Unlock()
+	g.clientInputs[clientInput.PlayerID] = clientInput
+}
+
 func getPlayerInput(g *Game) {
 	if g.State == utils.GameStateCustomChar {
 		checkMouseOnCustomCharState(g)
@@ -16,6 +22,36 @@ func getPlayerInput(g *Game) {
 	} else if g.State == utils.GameStatePlay {
 		checkMouseOnPlayState(g)
 		checkKeyboardOnPlayState(g)
+	}
+}
+
+func getClientInputs(g *Game) {
+	g.lock.Lock()
+	defer g.lock.Unlock()
+	for _, p := range g.Data.Players {
+		if g.clientInputs[p.PlayerID].Input == utils.InputKeyW {
+			p.Direction = utils.Back
+			p.State = utils.WalkState
+			p.Dy -= utils.MovementSpeed
+			p.UpdateLocation()
+		} else if g.clientInputs[p.PlayerID].Input == utils.InputKeyA {
+			p.Direction = utils.Left
+			p.State = utils.WalkState
+			p.Dx -= utils.MovementSpeed
+			p.UpdateLocation()
+		} else if g.clientInputs[p.PlayerID].Input == utils.InputKeyS {
+			p.Direction = utils.Front
+			p.State = utils.WalkState
+			p.Dy += utils.MovementSpeed
+			p.UpdateLocation()
+		} else if g.clientInputs[p.PlayerID].Input == utils.InputKeyD {
+			p.Direction = utils.Right
+			p.State = utils.WalkState
+			p.Dx += utils.MovementSpeed
+			p.UpdateLocation()
+		} else if p.StateTTL == 0 {
+			p.State = utils.IdleState
+		}
 	}
 }
 

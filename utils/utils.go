@@ -93,6 +93,17 @@ const (
 	NumOfDirections
 )
 
+// Player input
+const (
+	InputNone = iota
+	InputKeyW
+	InputKeyA
+	InputKeyS
+	InputKeyD
+	InputMouseLeft
+	InputMouseRight
+)
+
 // Player sprite sheet
 const (
 	PlayerFrameCount   = 8
@@ -192,10 +203,11 @@ const (
 
 // net
 const (
-	PacketPlayerID = "PlayerID"
-	PacketGameData = "GameData"
-	ServerAddress  = "127.0.0.1"
-	ServerPort     = 8095
+	PacketPlayerID    = "PlayerID"
+	PacketGameData    = "GameData"
+	PacketClientInput = "ClientInput"
+	ServerAddress     = "127.0.0.1"
+	ServerPort        = 8095
 )
 
 func LoadMapFromEmbedded(EmbeddedAssets embed.FS, name string) (*tiled.Map, error) {

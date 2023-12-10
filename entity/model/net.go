@@ -10,4 +10,8 @@ type PlayerIDPacket struct {
 }
 
 type ClientInputPacket struct {
+	PlayerID string
+	Input    int
+	MouseX   int
+	MouseY   int
 }
