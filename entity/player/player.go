@@ -4,11 +4,14 @@ import (
 	"guion-2d-project3/entity/loader"
 	"guion-2d-project3/entity/model"
 	"guion-2d-project3/utils"
+
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 type Player struct {
 	PlayerID     string
 	Spritesheet  int
+	GameState    int
 	Frame        int
 	State        int
 	StateTTL     int
@@ -22,12 +25,14 @@ type Player struct {
 	Backpack     [utils.BackpackSize]model.BackpackItem
 	EquippedItem int
 	CurrentMap   int
+	UIState      model.UIState
 }
 
 func NewPlayer(playerID string, startingX, startingY int, images loader.ImageCollection) *Player {
 	return &Player{
 		PlayerID:    playerID,
 		Spritesheet: utils.DefaultPlayerImg,
+		GameState:   utils.GameStateCustomChar,
 		XLoc:        startingX - 39,
 		YLoc:        startingY - 35,
 		Sprite: model.SpriteBody{
@@ -197,4 +202,14 @@ func (p *Player) UpdateFrame(currentFrame int) {
 			p.Frame = 0
 		}
 	}
+}
+
+func (p *Player) SetErrorMessage(message string) {
+	p.UIState.ErrorMessage = message
+	p.UIState.ErrorMessageTTL = 60
+}
+
+func (p *Player) ShowImage(image *ebiten.Image) {
+	p.UIState.ImageToShow = image
+	p.UIState.ImageTTL = 60
 }

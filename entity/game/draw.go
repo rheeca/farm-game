@@ -144,17 +144,17 @@ func DrawObjects(objects []model.Object, images loader.ImageCollection, screen *
 	}
 }
 
-func DrawCraftingUI(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+func DrawCraftingUI(player *player.Player, images loader.ImageCollection, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
 	// draw box
 	drawOptions.GeoM.Reset()
 	drawOptions.GeoM.Translate(0, 0)
-	screen.DrawImage(g.Images.CraftingUI, &drawOptions)
+	screen.DrawImage(images.CraftingUI, &drawOptions)
 
 	// draw selected tile
 	drawOptions.GeoM.Reset()
-	drawOptions.GeoM.Translate(float64(utils.CraftingUIFirstBoxX+(utils.CraftingUISpacing*(g.UIState.SelectedRecipe%utils.CraftingUIColumns))),
-		float64(utils.CraftingUIFirstBoxY+(utils.CraftingUISpacing*(g.UIState.SelectedRecipe/utils.CraftingUIColumns))))
-	screen.DrawImage(g.Images.SelectedItem, &drawOptions)
+	drawOptions.GeoM.Translate(float64(utils.CraftingUIFirstBoxX+(utils.CraftingUISpacing*(player.UIState.SelectedRecipe%utils.CraftingUIColumns))),
+		float64(utils.CraftingUIFirstBoxY+(utils.CraftingUISpacing*(player.UIState.SelectedRecipe/utils.CraftingUIColumns))))
+	screen.DrawImage(images.SelectedItem, &drawOptions)
 
 	// draw recipes
 	var x int
@@ -162,7 +162,7 @@ func DrawCraftingUI(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageO
 		drawOptions.GeoM.Reset()
 		drawOptions.GeoM.Translate(float64(utils.CraftingUIFirstSlotX+(x%(utils.CraftingUIColumns*utils.CraftingUISpacing))),
 			float64(utils.CraftingUIFirstSlotY+(utils.CraftingUISpacing*(i/utils.CraftingUIColumns))))
-		screen.DrawImage(g.Images.FarmItems.SubImage(image.Rect((itemID%utils.FarmItemsColumns)*utils.UnitSize,
+		screen.DrawImage(images.FarmItems.SubImage(image.Rect((itemID%utils.FarmItemsColumns)*utils.UnitSize,
 			(itemID/utils.FarmItemsColumns)*utils.UnitSize,
 			(itemID%utils.FarmItemsColumns)*utils.UnitSize+utils.UnitSize,
 			(itemID/utils.FarmItemsColumns)*utils.UnitSize+utils.UnitSize)).(*ebiten.Image), &drawOptions)
@@ -170,11 +170,11 @@ func DrawCraftingUI(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageO
 	}
 
 	// draw recipe ingredients
-	for i, item := range utils.RecipeDetails[utils.Recipes[g.UIState.SelectedRecipe]].Materials {
+	for i, item := range utils.RecipeDetails[utils.Recipes[player.UIState.SelectedRecipe]].Materials {
 		drawOptions.GeoM.Reset()
 		drawOptions.GeoM.Translate(float64(utils.RecipeItemX+(i*64)),
 			float64(utils.RecipeItemY))
-		screen.DrawImage(g.Images.FarmItems.SubImage(image.Rect((item.ID%utils.FarmItemsColumns)*utils.UnitSize,
+		screen.DrawImage(images.FarmItems.SubImage(image.Rect((item.ID%utils.FarmItemsColumns)*utils.UnitSize,
 			(item.ID/utils.FarmItemsColumns)*utils.UnitSize,
 			(item.ID%utils.FarmItemsColumns)*utils.UnitSize+utils.UnitSize,
 			(item.ID/utils.FarmItemsColumns)*utils.UnitSize+utils.UnitSize)).(*ebiten.Image), &drawOptions)
@@ -182,20 +182,20 @@ func DrawCraftingUI(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageO
 	}
 }
 
-func DrawCharacterCustomizationUI(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+func DrawCharacterCustomizationUI(player *player.Player, images loader.ImageCollection, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
 	// draw box
 	drawOptions.GeoM.Reset()
 	drawOptions.GeoM.Translate(0, 0)
-	screen.DrawImage(g.Images.CharacterCustomizationUI, &drawOptions)
+	screen.DrawImage(images.CharacterCustomizationUI, &drawOptions)
 
 	// draw selected tile
 	drawOptions.GeoM.Reset()
-	drawOptions.GeoM.Translate(float64(utils.CharacterUIFirstBoxX+(utils.CharacterUISpacing*(g.UIState.SelectedCharacter%utils.CharacterUIColumns))),
-		float64(utils.CharacterUIFirstBoxY+(utils.CharacterUISpacing*(g.UIState.SelectedCharacter/utils.CharacterUIColumns))))
-	screen.DrawImage(g.Images.SelectedCharacter, &drawOptions)
+	drawOptions.GeoM.Translate(float64(utils.CharacterUIFirstBoxX+(utils.CharacterUISpacing*(player.UIState.SelectedCharacter%utils.CharacterUIColumns))),
+		float64(utils.CharacterUIFirstBoxY+(utils.CharacterUISpacing*(player.UIState.SelectedCharacter/utils.CharacterUIColumns))))
+	screen.DrawImage(images.SelectedCharacter, &drawOptions)
 
 	// draw characters
-	for i, img := range g.Images.Characters {
+	for i, img := range images.Characters {
 		drawOptions.GeoM.Reset()
 		drawOptions.GeoM.Translate(float64(utils.CharacterUIFirstSlotX+(utils.CharacterUISpacing*(i%utils.CharacterUIColumns))),
 			float64(utils.CharacterUIFirstSlotY+(utils.CharacterUISpacing*(i/utils.CharacterUIColumns))))
@@ -330,24 +330,24 @@ func DrawBackpack(player *player.Player, images loader.ImageCollection, screen *
 	screen.DrawImage(images.ButtonDelete, &drawOptions)
 }
 
-func DrawImageToShow(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
-	if g.UIState.ImageTTL > 0 {
+func DrawImageToShow(p *player.Player, images loader.ImageCollection, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+	if p.UIState.ImageTTL > 0 {
 		drawOptions.GeoM.Reset()
 		drawOptions.GeoM.Translate(0, 0)
-		screen.DrawImage(g.Images.BlackScreen, &drawOptions)
-		g.UIState.ImageTTL -= 1
-		if g.UIState.ImageTTL == 0 {
-			g.UIState.ImageToShow = nil
+		screen.DrawImage(images.BlackScreen, &drawOptions)
+		p.UIState.ImageTTL -= 1
+		if p.UIState.ImageTTL == 0 {
+			p.UIState.ImageToShow = nil
 		}
 	}
 }
 
-func DrawErrorMessage(g *Game, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
-	if g.UIState.ErrorMessageTTL > 0 {
-		text.Draw(screen, g.UIState.ErrorMessage, utils.LoadFont(12), 12, 20, colornames.Brown)
-		g.UIState.ErrorMessageTTL -= 1
-		if g.UIState.ErrorMessageTTL == 0 {
-			g.UIState.ErrorMessage = ""
+func DrawErrorMessage(p *player.Player, screen *ebiten.Image, drawOptions ebiten.DrawImageOptions) {
+	if p.UIState.ErrorMessageTTL > 0 {
+		text.Draw(screen, p.UIState.ErrorMessage, utils.LoadFont(12), 12, 20, colornames.Brown)
+		p.UIState.ErrorMessageTTL -= 1
+		if p.UIState.ErrorMessageTTL == 0 {
+			p.UIState.ErrorMessage = ""
 		}
 	}
 }

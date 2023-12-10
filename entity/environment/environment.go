@@ -139,7 +139,8 @@ func (e *Environment) ResetDay() {
 		e.Trees[i].IsNil = false
 	}
 	for i, o := range e.Objects[utils.ForestMap] {
-		if o.IsNil && (o.Type == utils.ItemMapStone3 || o.Type == utils.ItemMapWood) {
+		if o.IsNil && (o.Type == utils.ItemMapStone3 || o.Type == utils.ItemMapWood || o.Type == utils.MapWeed ||
+			o.Type == utils.MapSunflower || o.Type == utils.MapBlueflower || o.Type == utils.MapPinkDyeFlower || o.Type == utils.MapBlueDyeFlower) {
 			e.Objects[utils.ForestMap][i].IsNil = false
 		}
 	}

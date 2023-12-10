@@ -63,30 +63,40 @@ func (g *ClientGame) Update() error {
 
 func (g *ClientGame) Draw(screen *ebiten.Image) {
 	drawOptions := ebiten.DrawImageOptions{}
-	game.DrawMap(g.Maps[g.CurrentMap], g.Images.Tilesets, screen, drawOptions)
-
-	if g.State == utils.GameStateWaitingForServer {
+	if g.State == utils.GameStateWaitingForServer || g.Data == nil {
 		return
 	}
 
-	if g.Data != nil {
-		if g.Data.Environment != nil {
-			if g.CurrentMap == utils.ForestMap {
-				game.DrawTrees(g.Data.Environment.Trees, g.Images, screen, drawOptions)
-			} else if g.CurrentMap == utils.FarmMap {
-				game.DrawFarmPlots(g.Data.Environment.Plots, g.Images, screen, drawOptions)
-			}
-			game.DrawObjects(g.Data.Environment.Objects[g.CurrentMap], g.Images, screen, drawOptions)
-		}
-
-		if g.CurrentMap == utils.AnimalsMap {
-			game.DrawChickens(g.Data.Chickens, screen, drawOptions)
-			game.DrawCows(g.Data.Cows, screen, drawOptions)
-		}
-
-		game.DrawPlayers(g.CurrentMap, g.Data.Players, g.Images, screen, drawOptions)
-		game.DrawBackpack(g.Data.Players[g.PlayerID], g.Images, screen, drawOptions)
+	if g.State == utils.GameStateCustomChar {
+		game.DrawCharacterCustomizationUI(g.Data.Players[g.PlayerID], g.Images, screen, drawOptions)
+		return
 	}
+
+	game.DrawMap(g.Maps[g.CurrentMap], g.Images.Tilesets, screen, drawOptions)
+
+	if g.Data.Environment != nil {
+		if g.CurrentMap == utils.ForestMap {
+			game.DrawTrees(g.Data.Environment.Trees, g.Images, screen, drawOptions)
+		} else if g.CurrentMap == utils.FarmMap {
+			game.DrawFarmPlots(g.Data.Environment.Plots, g.Images, screen, drawOptions)
+		}
+		game.DrawObjects(g.Data.Environment.Objects[g.CurrentMap], g.Images, screen, drawOptions)
+	}
+
+	if g.CurrentMap == utils.AnimalsMap {
+		game.DrawChickens(g.Data.Chickens, screen, drawOptions)
+		game.DrawCows(g.Data.Cows, screen, drawOptions)
+	}
+
+	game.DrawPlayers(g.CurrentMap, g.Data.Players, g.Images, screen, drawOptions)
+	game.DrawBackpack(g.Data.Players[g.PlayerID], g.Images, screen, drawOptions)
+
+	if g.State == utils.GameStateCraft {
+		game.DrawCraftingUI(g.Data.Players[g.PlayerID], g.Images, screen, drawOptions)
+	}
+
+	game.DrawImageToShow(g.Data.Players[g.PlayerID], g.Images, screen, drawOptions)
+	game.DrawErrorMessage(g.Data.Players[g.PlayerID], screen, drawOptions)
 }
 
 func (g *ClientGame) Layout(oWidth, oHeight int) (sWidth, sHeight int) {
@@ -98,7 +108,7 @@ func listenForEvents(g *ClientGame) {
 	switch ev.GetType() {
 	case enet.EventConnect:
 		log.Println("connected to the server!")
-		g.State = utils.GameStatePlay
+		g.State = utils.GameStateCustomChar
 
 	case enet.EventDisconnect:
 		log.Println("lost connection to the server!")
@@ -114,6 +124,7 @@ func listenForEvents(g *ClientGame) {
 			json.Unmarshal(body, &gamePacket)
 			g.Data = &gamePacket
 			g.CurrentMap = g.Data.Players[g.PlayerID].CurrentMap
+			g.State = g.Data.Players[g.PlayerID].GameState
 		}
 
 		packet.Destroy()

@@ -29,7 +29,6 @@ type Game struct {
 	PlayerID     string
 	Images       loader.ImageCollection
 	Sounds       loader.SoundCollection
-	UIState      model.UIState
 	clientInputs map[string]model.ClientInputPacket
 	lock         sync.Mutex
 }
@@ -95,7 +94,7 @@ func NewGame(embeddedAssets embed.FS) Game {
 		cows = append(cows, cow)
 	}
 	return Game{
-		State: utils.GameStateCustomChar,
+		State: playerChar.GameState,
 		Data: &GameData{
 			Environment: env,
 			Players:     players,
@@ -113,6 +112,7 @@ func NewGame(embeddedAssets embed.FS) Game {
 }
 
 func (g *Game) Update() error {
+	g.State = g.Data.Players[g.PlayerID].GameState
 	for _, player := range g.Data.Players {
 		player.UpdateFrame(g.CurrentFrame)
 	}
@@ -120,7 +120,8 @@ func (g *Game) Update() error {
 
 	getPlayerInput(g)
 
-	if g.State == utils.GameStatePlay {
+	// if multiplayer, game will continue to update even if host player is not on Play state
+	if len(g.Data.Players) > 1 || g.State == utils.GameStatePlay {
 		g.CurrentFrame += 1
 		if g.CurrentMap == utils.AnimalsMap {
 			updateAnimals(g)
@@ -134,7 +135,7 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	drawOptions := ebiten.DrawImageOptions{}
 	if g.State == utils.GameStateCustomChar {
-		DrawCharacterCustomizationUI(g, screen, drawOptions)
+		DrawCharacterCustomizationUI(g.Data.Players[g.PlayerID], g.Images, screen, drawOptions)
 		return
 	}
 
@@ -153,25 +154,15 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	DrawBackpack(g.Data.Players[g.PlayerID], g.Images, screen, drawOptions)
 
 	if g.State == utils.GameStateCraft {
-		DrawCraftingUI(g, screen, drawOptions)
+		DrawCraftingUI(g.Data.Players[g.PlayerID], g.Images, screen, drawOptions)
 	}
 
-	DrawImageToShow(g, screen, drawOptions)
-	DrawErrorMessage(g, screen, drawOptions)
+	DrawImageToShow(g.Data.Players[g.PlayerID], g.Images, screen, drawOptions)
+	DrawErrorMessage(g.Data.Players[g.PlayerID], screen, drawOptions)
 }
 
 func (g *Game) Layout(oWidth, oHeight int) (sWidth, sHeight int) {
 	return oWidth, oHeight
-}
-
-func (g *Game) SetErrorMessage(message string) {
-	g.UIState.ErrorMessage = message
-	g.UIState.ErrorMessageTTL = 60
-}
-
-func (g *Game) ShowImage(image *ebiten.Image) {
-	g.UIState.ImageToShow = image
-	g.UIState.ImageTTL = 60
 }
 
 func SetConstants(gameMap *tiled.Map, images loader.ImageCollection) {
